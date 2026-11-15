@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.5.0">
-<!-- family-dashboard 1.5.0 · 채팅 메시지 하나씩 지우기(×): 엄마는 모두, 각자는 자기 메시지만 -->
+<meta name="app-version" content="1.6.0">
+<!-- family-dashboard 1.6.0 · 휴강(skipDates): 22·23일 수업 쉬기, 28일 Luna 영어 보충수업 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1541,6 +1541,8 @@ function seedState(){
     /* 가족 메모: 각자 자기 메모를 남겨요. 적은 사람만 지울 수 있어요. */
     memos: [],
     schedule: {
+      /* 휴강: { 'YYYY-MM-DD': ['ls1', ...] } — 그 날만 그 수업을 건너뛰어요 */
+      skipDates: {},
       lessons: [
         { id:'ls1', kid:'Stella', day:0, time:'20:00', subject:'영어' },
         { id:'ls2', kid:'Stella', day:3, time:'20:00', subject:'영어' },
@@ -1615,6 +1617,9 @@ function normalize(saved){
   if(['전체'].concat(PEOPLE).indexOf(s.ui.memoFilter) < 0) s.ui.memoFilter = '전체';
   if(['calendar','todo','allowance','chat','memo','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
+  /* 휴강 표도 날짜 키가 계속 늘어나는 표라서 mergeDefaults로는 살아남지 않아요 — 직접 살려요 */
+  var savedSkip = (isObject(saved) && isObject(saved.schedule) && isObject(saved.schedule.skipDates))
+    ? saved.schedule.skipDates : {};
   if(!isObject(s.schedule) || !Array.isArray(s.schedule.lessons)) s.schedule = base.schedule;
   s.schedule.lessons = s.schedule.lessons.filter(function(l){
     return isObject(l) && KIDS.indexOf(l.kid) >= 0 && num(l.day, -1) >= 0 && num(l.day, -1) <= 6 && l.time && l.subject;
@@ -1627,6 +1632,20 @@ function normalize(saved){
       subject: String(l.subject).slice(0, 12),
       completedDate: l.completedDate ? String(l.completedDate) : ''
     };
+  });
+  s.schedule.skipDates = {};
+  Object.keys(savedSkip).forEach(function(d){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
+    var v = savedSkip[d];
+    var ids = Array.isArray(v)
+      ? v
+      : (isObject(v) ? Object.keys(v).map(function(k){ return v[k]; }) : []);
+    var picked = [];
+    ids.forEach(function(id){
+      var x = String(id == null ? '' : id).trim();
+      if(x && picked.indexOf(x) < 0) picked.push(x);
+    });
+    if(picked.length) s.schedule.skipDates[d] = picked;
   });
   if(!isObject(s.settings)) s.settings = base.settings;
   if(typeof s.settings.localOnly !== 'boolean') s.settings.localOnly = false;
@@ -1813,7 +1832,7 @@ function syncPayload(){
     missions: state.missions,
     todos: state.todos,
     stamps: state.stamps,
-    schedule: state.schedule,
+    schedule: state.schedule,          /* lessons + skipDates(휴강) 함께 실려요 */
     dailyTodo: state.dailyTodo,
     calendarEvents: state.calendarEvents,
     prepTodo: state.prepTodo,
@@ -1970,6 +1989,23 @@ function sharedSignature(st){
   }catch(e){ return ''; }
 }
 
+/* 원격 schedule을 그대로 쓰되, 휴강(skipDates)을 모르는 예전 버전 기기가 전체를 다시 써도
+   이 기기에 적어둔 휴강이 사라지지 않게 지켜요. 지켜낸 경우에는 원격에도 다시 올려요. */
+var remoteSkipRestored = false;
+function remoteScheduleFor(remote){
+  var rs = isObject(remote.schedule) ? remote.schedule : state.schedule;
+  if(!isObject(rs)) return state.schedule;
+  var out = {};
+  Object.keys(rs).forEach(function(k){ out[k] = rs[k]; });
+  var remoteHas = isObject(out.skipDates) && Object.keys(out.skipDates).length > 0;
+  var mine = (isObject(state.schedule) && isObject(state.schedule.skipDates)) ? state.schedule.skipDates : null;
+  if(!remoteHas && mine && Object.keys(mine).length){
+    out.skipDates = mine;
+    remoteSkipRestored = true;
+  }
+  return out;
+}
+
 function applyRemote(remote){
   if(!isObject(remote)) return;
   var wasApplying = sync.applying;
@@ -1980,13 +2016,14 @@ function applyRemote(remote){
       ? remote.chat.messages
       : [];
     var before = sharedSignature(state);
+    remoteSkipRestored = false;
     var next = normalize({
       version: SCHEMA_VERSION,
       allowance: isObject(remote.allowance) ? remote.allowance : state.allowance,
       missions: isObject(remote.missions) ? remote.missions : state.missions,
       todos: Array.isArray(remote.todos) ? remote.todos : state.todos,
       stamps: isObject(remote.stamps) ? remote.stamps : state.stamps,
-      schedule: isObject(remote.schedule) ? remote.schedule : state.schedule,
+      schedule: remoteScheduleFor(remote),
       /* 가족이 함께 보는 표 — 원격에 없으면 '지운 것'으로 보고 이 기기에도 비워요 */
       dailyTodo: isObject(remote.dailyTodo) ? remote.dailyTodo : {},
       calendarEvents: isObject(remote.calendarEvents) ? remote.calendarEvents : {},
@@ -2006,8 +2043,12 @@ function applyRemote(remote){
     });
     /* 받은 내용이 지금 화면과 같으면 다시 그리지 않아요 (탭이 흔들리거나 스크롤이 튀지 않게) */
     var same = sharedSignature(next) === before;
+    var restoredSkip = remoteSkipRestored;
     state = next;
     writeLocal();
+    /* 예전 버전 기기가 지운 휴강을 되살렸으면 원격에도 한 번 다시 올려요 (반복되지 않게 한 번만) */
+    remoteSkipRestored = false;
+    if(restoredSkip) setTimeout(function(){ if(!sync.applying) queuePush(); }, 800);
     if(same){ sync.applying = wasApplying; return; }
     renderAll();
     showTab(state.ui.tab || 'calendar', true);
@@ -2243,10 +2284,27 @@ function tomorrowDay(){
   return (new Date().getDay() + 1) % 7;
 }
 
+/* 내일 날짜 키 (이 기기 시간 기준) — 휴강 확인에 써요 */
+function tomorrowKey(){
+  return dateKey(daysAgo(-1));
+}
+
+/* 그 날만 쉬는 수업인지 — schedule.skipDates['YYYY-MM-DD'] 안에 수업 id가 있으면 그 날은 휴강이에요 */
+function isLessonSkippedOn(lessonId, dayKey){
+  var sk = (state && state.schedule && isObject(state.schedule.skipDates)) ? state.schedule.skipDates : null;
+  if(!sk) return false;
+  var list = sk[dayKey];
+  if(Array.isArray(list)) return list.indexOf(lessonId) >= 0;
+  if(isObject(list)) return Object.keys(list).some(function(k){ return list[k] === lessonId; });
+  return false;
+}
+
 function prepClassesFor(kid){
   var day = tomorrowDay();
+  var key = tomorrowKey();
   return state.schedule.lessons.filter(function(l){
     if(l.kid !== kid || l.day !== day) return false;
+    if(isLessonSkippedOn(l.id, key)) return false;   /* 내일이 휴강이면 준비 숙제도 없어요 */
     var sub = String(l.subject || '');
     return sub.indexOf('영어') >= 0 || sub.indexOf('중국어') >= 0;
   });
@@ -3591,7 +3649,11 @@ function calWeekdayOf(key){
 
 function calLessonsOn(key){
   var wd = calWeekdayOf(key);
-  return lessonsSorted().filter(function(l){ return l.day === wd; });
+  return lessonsSorted().filter(function(l){
+    if(l.day !== wd) return false;
+    if(isLessonSkippedOn(l.id, key)) return false;   /* 휴강한 날은 달력에 수업이 없어요 */
+    return true;
+  });
 }
 
 function calMoneyOn(key){
