@@ -1811,6 +1811,9 @@ function kidSwitchHTML(active, label){
    ========================================================= */
 function currentKid(){ return state.ui.kid; }
 
+/* 지우기는 엄마만 — 이 기기의 프로필이 '엄마'일 때만 보여요 */
+function isMom(){ return !!(state && state.chat && state.chat.me === '엄마'); }
+
 function allowanceTotals(kid){
   var a = state.allowance[kid];
   var study = 0, deposit = 0, spend = 0;
@@ -1951,7 +1954,7 @@ function renderAllowLog(kid){
         '<span class="li-main"><span class="li-name">' + esc(ledgerName(e)) + '</span>' +
         '<span class="li-time">' + esc(e.time || '') + '</span></span>' +
         '<span class="li-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? usdSigned(e.amount) : usd(-num(e.amount, 0))) + '</span>' +
-        '<button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="이 기록 지우기">×</button>' +
+        (isMom() ? '<button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="이 기록 지우기">×</button>' : '') +
         '</div>';
     });
     html += '</div>';
@@ -2063,7 +2066,7 @@ function renderMission(){
       return '<div class="mission-row">' +
         '<span class="mr-emoji" aria-hidden="true">🎯</span>' +
         '<span class="mr-text">' + esc(m.text) + '</span>' +
-        '<button class="mr-del" type="button" data-mdel="' + esc(m.id) + '" aria-label="미션 삭제">×</button>' +
+        (isMom() ? '<button class="mr-del" type="button" data-mdel="' + esc(m.id) + '" aria-label="미션 삭제">×</button>' : '') +
         '</div>';
     }).join('');
   }
@@ -2207,9 +2210,12 @@ function renderSchedule(){
         '<span class="dc-name">' + esc(name) + '</span>' +
         (list.length
           ? list.map(function(l){
-              return '<button class="lc-chip' + (l.completedDate === todayKey() ? ' lc-done' : '') + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' ' + timeLabel(l.time)) + ' 수업 지우기">' +
-                '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
-                '<span class="lc-sub">' + esc(l.subject) + '</span>' +
+              var chipInner = '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
+                '<span class="lc-sub">' + esc(l.subject) + '</span>';
+              var chipClass = 'lc-chip' + (l.completedDate === todayKey() ? ' lc-done' : '');
+              if(!isMom()) return '<span class="' + chipClass + '" data-kid="' + esc(l.kid) + '">' + chipInner + '</span>';
+              return '<button class="' + chipClass + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' ' + timeLabel(l.time)) + ' 수업 지우기">' +
+                chipInner +
                 '</button>';
             }).join('')
           : '<span class="dc-empty">·</span>') +
@@ -2263,7 +2269,7 @@ function renderTodos(){
         '<button class="check" type="button" aria-pressed="' + (!!t.done) + '" aria-label="' + esc(t.text) + ' 완료 표시">✓</button>' +
         '<span class="t-text">' + esc(t.text) + (t.done && paid ? ' <span class="done-tag">오늘 몫 완료</span>' : '') + '</span>' +
         '<span class="t-owner">' + mascot(t.owner) + esc(t.owner) + '</span>' +
-        '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="할 일 삭제">×</button>' +
+        (isMom() ? '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="할 일 삭제">×</button>' : '') +
         '</div>';
     }).join('');
   }
@@ -2451,6 +2457,9 @@ function renderStamps(){
 
   var rewardInput = $('#stampRewardInput');
   if(document.activeElement !== rewardInput) rewardInput.value = st.reward || '';
+
+  var resetBtn = $('#stampReset');
+  if(resetBtn) resetBtn.hidden = !isMom();
 }
 
 function stampSlot(i){
@@ -3125,7 +3134,7 @@ function openSettings(){
       '<div class="kv"><span>쓰는 공간</span><b>약 ' + bytesLabel(storageBytes()) + '</b></div>' +
       '<div class="modal-actions" style="margin-top:10px">' +
         '<button class="btn ghost sm" type="button" id="exportBtn">📤 내보내기</button>' +
-        '<button class="btn pink sm" type="button" id="resetBtn">처음으로</button>' +
+        (isMom() ? '<button class="btn pink sm" type="button" id="resetBtn">처음으로</button>' : '') +
       '</div>' +
     '</div>' +
     '<p class="small muted" style="text-align:center;margin-top:4px">우리 가족 대시보드 · 실시간 동기화 1.1 버전</p>' +
@@ -3174,7 +3183,8 @@ function openSettings(){
           toast('백업 파일을 내려받았어요');
         }catch(e){ toast('내보내기를 할 수 없어요'); }
       });
-      $('#resetBtn', back).addEventListener('click', function(){
+      var resetAllBtn = $('#resetBtn', back);
+      if(resetAllBtn) resetAllBtn.addEventListener('click', function(){
         close();
         confirmModal('처음 데이터로 돌아갈까요?', '용돈 기록, 도장, 채팅이 모두 지워지고 처음 예시 데이터로 돌아가요. 같이 쓰는 기기에서도 똑같이 바뀌어요.', '처음으로', function(){
           try{ localStorage.removeItem(STORE_KEY); }catch(e){}
@@ -3281,6 +3291,7 @@ function bindEvents(){
   $('#allowLog').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-del]') : null;
     if(!b) return;
+    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
     var id = b.getAttribute('data-del');
     var log = state.allowance[currentKid()].log;
     state.allowance[currentKid()].log = log.filter(function(x){ return x.id !== id; });
@@ -3306,6 +3317,7 @@ function bindEvents(){
   $('#missionList').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-mdel]') : null;
     if(!b) return;
+    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
     var id = b.getAttribute('data-mdel');
     state.missions.items = state.missions.items.filter(function(m){ return m.id !== id; });
     save();
@@ -3323,6 +3335,7 @@ function bindEvents(){
   });
   $('#todoList').addEventListener('click', function(e){
     var del = e.target.closest ? e.target.closest('[data-tdel]') : null;
+    if(del && !isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
     if(del){
       var did = del.getAttribute('data-tdel');
       state.todos = state.todos.filter(function(t){ return t.id !== did; });
@@ -3365,6 +3378,7 @@ function bindEvents(){
   $('#weekGrid').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-lesson]') : null;
     if(!b) return;
+    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
     var id = b.getAttribute('data-lesson');
     var les = null;
     state.schedule.lessons.forEach(function(l){ if(l.id === id) les = l; });
@@ -3396,6 +3410,7 @@ function bindEvents(){
   });
   $('#stampUndo').addEventListener('click', undoStamp);
   $('#stampReset').addEventListener('click', function(){
+    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
     confirmModal('도장판을 새로 시작할까요?', currentStampKid() + '의 도장이 모두 지워져요. 선물 문구는 그대로 남아요.', '새로 시작', function(){
       state.stamps[currentStampKid()].slots = [null, null, null, null, null, null, null, null, null, null];
       save();
@@ -3413,6 +3428,7 @@ function bindEvents(){
     save(true);
     renderChatWho();
     renderChat();
+    renderAll();  /* 프로필이 바뀌면 지우기 버튼도 바로 보이거나 숨겨져요 */
     toast('이제 ' + state.chat.me + '(으)로 말해요');
   });
   $('#chatLock').addEventListener('change', function(){
