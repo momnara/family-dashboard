@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.8.1">
-<!-- family-dashboard 1.8.1 · 완료 표시 문구 '오늘 몫 완료' → '완료' / 1.8.0 · 주중(월~금)에만 하는 할 일 지원(주말 숨김·주중 배지), Stella·Luna '간식통, 물병 가져다 놓기' 추가 -->
+<meta name="app-version" content="1.9.0">
+<!-- family-dashboard 1.9.0 · 할 일 요일별 미리 보기(오늘+6일, 읽기 전용) · 주간 스케줄(가족 일정까지) -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -371,6 +371,35 @@ main{padding-top:2px}
 .filter-pills::-webkit-scrollbar{display:none}
 .filter-pills .pill{flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:0 12px}
 .filter-pills .av{width:22px;height:22px}
+/* 요일별 미리 보기 — 오늘 + 앞으로 6일 */
+.day-bar{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:7px}
+.day-bar::-webkit-scrollbar{display:none}
+.day-pill{
+  flex:0 0 auto;min-height:33px;padding:0 10px;border-radius:11px;border:1.5px solid #EFE3CE;
+  background:#FFFCF4;font-size:11.5px;font-weight:700;color:var(--ink-soft);white-space:nowrap;
+  transition:all .15s ease;
+}
+.day-pill:active{transform:scale(.96)}
+.day-pill.active{border-color:#A8CDEA;background:#EAF4FE;color:#3D6B92;box-shadow:0 2px 0 #CFE3F4}
+.day-pill.active.today{border-color:#F6C980;background:#FFEFC9;color:#7A5726;box-shadow:0 2px 0 #F3D79A}
+.preview-note{
+  margin:0 0 8px;padding:8px 11px;border-radius:12px;background:#EEF6FE;
+  border:1.5px dashed #BBD9F1;color:#406D8D;font-size:11.5px;font-weight:700;line-height:1.45;
+}
+.preview-note[hidden]{display:none}
+.todo-item.preview{background:#FDFDFB;border-style:dashed;border-color:#E7E3DA}
+.todo-item.preview .check{border-style:dashed;border-color:#DCD6CB;background:#FBFAF6;color:transparent}
+.todo-item.preview .check[disabled]{cursor:default;opacity:.9}
+.todo-item.preview .t-text{color:#7C8478}
+/* 주간 스케줄 — 그 날 가족 일정(달력 메모) */
+.day-col .dc-events{display:flex;flex-direction:column;gap:3px;margin-top:3px}
+.day-col .dc-event{
+  display:flex;align-items:flex-start;gap:2px;font-size:9px;line-height:1.3;
+  background:#F1F8EE;border:1px solid #D2E8CB;color:#4A6E45;
+  border-radius:8px;padding:3px 3px;word-break:break-word;
+}
+.day-col .dc-event .ev-em{font-size:8px;line-height:1.4;flex:0 0 auto}
+.day-col .dc-event .ev-txt{min-width:0}
 .todo-progress{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .progress-track{flex:1;height:9px;border-radius:999px;background:#F4E9D7;overflow:hidden}
 .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#FFD98A,#FFB7C5);transition:width .35s cubic-bezier(.2,.9,.3,1);width:0%}
@@ -423,7 +452,7 @@ main{padding-top:2px}
 .day-col.today{border-color:#F6CF8E;background:linear-gradient(180deg,#FFF7E1,#FFEFE6);box-shadow:0 3px 0 #F3DDB4}
 .day-col.today .dc-name{color:#8A6530}
 .day-col.today .dc-date{color:#A2701F}
-.day-col .dc-empty{display:block;text-align:center;font-size:11px;color:#E7D9C6;line-height:1.2}
+.day-col .dc-empty{display:block;text-align:center;font-size:9px;color:#CBBEAC;line-height:1.2;padding-top:8px;letter-spacing:-.2px}
 .lc-chip{display:block;width:100%;min-height:34px;border:none;border-left:3px solid #FFB7C5;border-radius:9px;background:#FFF7FA;padding:3px 2px;margin-bottom:3px;text-align:center;font-size:9.5px;line-height:1.2;color:#7A5A66}
 .lc-chip[data-kid="Luna"]{border-left-color:#B9A6F0;background:#F7F4FF;color:#5F5780}
 .lc-chip .lc-time{display:block;font-family:var(--font-title);font-size:9.5px;color:#8A6530}
@@ -1039,6 +1068,8 @@ main{padding-top:2px}
       <div class="card">
         <h2><span class="h2-emoji" aria-hidden="true">✅</span>할 일 체크</h2>
         <p class="card-sub">한 아이의 오늘 할 일을 <b>모두</b> 끝내면 용돈 +$1.00 (하루 한 번) · 다 끝내면 하이파이브 🙌</p>
+        <div class="day-bar" id="todoDayBar" role="group" aria-label="요일별 할 일 미리 보기"></div>
+        <p class="preview-note" id="todoPreviewNote" hidden></p>
         <div class="filter-pills" id="todoFilter" role="group" aria-label="사람별로 보기"></div>
         <div id="hiFiveSlot"></div>
         <div class="todo-progress">
@@ -1050,18 +1081,11 @@ main{padding-top:2px}
           <button class="btn ghost sm" id="todoDailyReset" type="button">🔄 오늘 체크 초기화</button>
           <span class="small muted">새로운 하루를 시작할 때 눌러요</span>
         </div>
-        <form class="add-form" id="todoForm">
-          <label class="sr-only" for="todoOwner">누구의 할 일</label>
-          <select class="input" id="todoOwner" style="max-width:104px;padding:0 8px"></select>
-          <label class="sr-only" for="todoInput">할 일 내용</label>
-          <input class="input" id="todoInput" type="text" placeholder="할 일을 적어주세요" maxlength="40" autocomplete="off">
-          <button class="btn primary sm" type="submit">추가</button>
-        </form>
       </div>
 
       <div class="card schedule-card">
-        <h2><span class="h2-emoji" aria-hidden="true">🗓️</span>주간 수업 시간표</h2>
-        <p class="card-sub">오늘 수업은 위에 모아 보여줘요. 이번 주 날짜와 함께 보고, 수업을 누르면 지울 수 있어요. 휴강한 수업은 회색 <b>휴강</b>으로 표시돼요.</p>
+        <h2><span class="h2-emoji" aria-hidden="true">🗓️</span>주간 스케줄</h2>
+        <p class="card-sub">이번 주 수업과 가족 일정을 한눈에 봐요. 오늘 수업은 위에 모아 보여주고, 수업을 누르면 지울 수 있어요. 휴강한 수업은 회색 <b>휴강</b>으로 표시돼요.</p>
         <div class="sched-today" id="schedToday"></div>
         <div class="week-grid" id="weekGrid"></div>
         <form class="sched-form" id="lessonForm">
@@ -1231,7 +1255,7 @@ main{padding-top:2px}
    ========================================================= */
 var STORE_KEY = 'chiikawa-family-dashboard-v1';
 var DEVICE_KEY = 'chiikawa-family-dashboard-device-v1';
-var SCHEMA_VERSION = 6;                 // 6 = USD + 매일 할 일 + 주간 수업 시간표 + '하루 다 하면 $1' 적립 버전
+var SCHEMA_VERSION = 6;                 // 6 = USD + 매일 할 일 + 주간 스케줄/수업 + '하루 다 하면 $1' 적립 버전
 var DEFAULT_FIREBASE_URL = 'https://family-dashboard-ccc9b-default-rtdb.firebaseio.com';
 var DB_PATH = 'familyDashboard/v1';
 /* 가족 채팅 푸시 알림 — ntfy.sh (무료·가입 없음). 토픽 이름을 아는 기기만 알림을 받아요. */
@@ -1295,15 +1319,26 @@ function isWeekdayToday(){
   var d = new Date().getDay();
   return d >= 1 && d <= 5;
 }
-/* 그 할 일을 오늘 목록에 보여야 하는지. weekdaysOnly인 할 일은 주말에 숨겨요 */
-function isTodoActiveToday(t){
-  return !(t && t.weekdaysOnly && !isWeekdayToday());
+/* 그 할 일을 그 날(dateObj, 없으면 오늘) 목록에 보여야 하는지. weekdaysOnly인 할 일은 주말에 숨겨요 */
+function isTodoActiveOn(t, dateObj){
+  if(!t) return false;
+  if(!t.weekdaysOnly) return true;
+  var d = (dateObj || new Date()).getDay();
+  return d >= 1 && d <= 5;
 }
+function isTodoActiveToday(t){ return isTodoActiveOn(t, new Date()); }
 function daysAgo(n){
   var d = new Date();
   d.setHours(12, 0, 0, 0);
   d.setDate(d.getDate() - n);
   return d;
+}
+/* 오늘에서 offset일 뒤(정오 기준) — 달이 바뀌거나 서머타임이 바뀌어도 날짜가 안 밀려요 */
+function daysFromToday(offset){ return daysAgo(-(offset || 0)); }
+/* 어떤 날에서 n일 뒤 — '내일 수업 준비 숙제'를 날짜별로 볼 때 써요 */
+function addDays(d, n){
+  var base = d || new Date();
+  return new Date(base.getFullYear(), base.getMonth(), base.getDate() + (n || 0), 12, 0, 0, 0);
 }
 function hm(d){
   var x = d || new Date();
@@ -1608,7 +1643,7 @@ function seedState(){
     calendarEvents: {},
     /* 내일 수업 준비 숙제 체크: { '수업id': 'YYYY-MM-DD' } */
     prepTodo: {},
-    ui: { tab:'calendar', kid:'Stella', todoFilter:'전체', memoFilter:'전체' }
+    ui: { tab:'calendar', kid:'Stella', todoFilter:'전체', memoFilter:'전체', todoDayOffset:0 }
   };
 }
 
@@ -1674,6 +1709,9 @@ function normalize(saved){
   if(KIDS.indexOf(s.ui.kid) < 0) s.ui.kid = 'Stella';
   if(['전체'].concat(PEOPLE).indexOf(s.ui.todoFilter) < 0) s.ui.todoFilter = '전체';
   if(['전체'].concat(PEOPLE).indexOf(s.ui.memoFilter) < 0) s.ui.memoFilter = '전체';
+  /* 요일별 미리 보기(0=오늘 ~ 6) — 이 기기 화면에서만 쓰는 값이에요 */
+  var dayOff = Math.round(num(s.ui.todoDayOffset, 0));
+  s.ui.todoDayOffset = (dayOff >= 0 && dayOff <= 6) ? dayOff : 0;
   if(['calendar','todo','allowance','chat','memo','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
   /* 휴강 표도 날짜 키가 계속 늘어나는 표라서 mergeDefaults로는 살아남지 않아요 — 직접 살려요 */
@@ -2403,14 +2441,15 @@ function coinBurst(anchor, count){
 }
 
 /* 오늘 $1.00은 하루 한 번 — 할 일을 '모두' 체크한 뒤 용돈 탭에서 직접 받아요 */
-/* 내일 영어·중국어 수업이 있으면 그 전날 '준비 숙제'를 오늘 할 일에 넣어요 */
-function tomorrowDay(){
-  return (new Date().getDay() + 1) % 7;
+/* 내일 영어·중국어 수업이 있으면 그 전날 '준비 숙제'를 '그 날' 할 일에 넣어요.
+   dateObj를 안 주면 오늘 — 요일별 미리 보기에서는 그 날짜를 넘겨요. */
+function tomorrowDay(dateObj){
+  return addDays(dateObj || new Date(), 1).getDay();
 }
 
-/* 내일 날짜 키 (이 기기 시간 기준) — 휴강 확인에 써요 */
-function tomorrowKey(){
-  return dateKey(daysAgo(-1));
+/* 어떤 날의 다음 날 날짜 키 (이 기기 시간 기준) — 휴강 확인에 써요 */
+function tomorrowKey(dateObj){
+  return dateKey(addDays(dateObj || new Date(), 1));
 }
 
 /* 그 날만 쉬는 수업인지 — schedule.skipDates['YYYY-MM-DD'] 안에 수업 id가 있으면 그 날은 휴강이에요 */
@@ -2423,9 +2462,10 @@ function isLessonSkippedOn(lessonId, dayKey){
   return false;
 }
 
-function prepClassesFor(kid){
-  var day = tomorrowDay();
-  var key = tomorrowKey();
+function prepClassesFor(kid, dateObj){
+  var next = addDays(dateObj || new Date(), 1);   /* 준비 숙제는 '그 날'의 다음 날 수업을 봐요 */
+  var day = next.getDay();
+  var key = dateKey(next);
   return state.schedule.lessons.filter(function(l){
     if(l.kid !== kid || l.day !== day) return false;
     if(isLessonSkippedOn(l.id, key)) return false;   /* 내일이 휴강이면 준비 숙제도 없어요 */
@@ -2438,12 +2478,12 @@ function prepDoneFor(l){
   return !!(state.prepTodo && state.prepTodo[l.id] === todayKey());
 }
 
-function shownPrepClasses(){
+function shownPrepClasses(dateObj){
   var f = state.ui.todoFilter;
   var kids = f === '전체' ? KIDS : (KIDS.indexOf(f) >= 0 ? [f] : []);
   var out = [];
   kids.forEach(function(k){
-    prepClassesFor(k).forEach(function(l){ out.push(l); });
+    prepClassesFor(k, dateObj).forEach(function(l){ out.push(l); });
   });
   return out;
 }
@@ -2586,8 +2626,9 @@ var hiFiveTimer = null;
 
 function filteredTodos(){
   var f = state.ui.todoFilter;
-  /* 주중 전용 할 일은 주말에 목록에서 숨겨요 */
-  var active = state.todos.filter(isTodoActiveToday);
+  /* 주중 전용 할 일은 보고 있는 날(미리 보기 날짜)이 주말이면 숨겨요 */
+  var viewDate = daysFromToday(todoDayOffset());
+  var active = state.todos.filter(function(t){ return isTodoActiveOn(t, viewDate); });
   if(f !== '전체'){
     return active.filter(function(t){ return t.owner === f; });
   }
@@ -2597,6 +2638,62 @@ function filteredTodos(){
     var bk = KIDS.indexOf(b.owner) >= 0 ? 0 : 1;
     return ak - bk;
   });
+}
+
+/* =========================================================
+   요일별 미리 보기 — 오늘(0)부터 6일 뒤까지, 그 날의 할 일을 보기만 해요
+   이 값은 이 기기 화면에서만 쓰고 Firebase에 올리지 않아요.
+   미리 보기에서는 체크·추가·지우기를 막아서 오늘 기록(done·dailyDone·prepTodo·용돈)이 안 바뀌어요.
+   ========================================================= */
+function todoDayOffset(){
+  var n = Math.round(num(state && state.ui ? state.ui.todoDayOffset : 0, 0));
+  if(!(n >= 0 && n <= 6)) n = 0;
+  return n;
+}
+function isTodoPreview(){ return todoDayOffset() > 0; }
+function todoViewDate(){ return daysFromToday(todoDayOffset()); }
+function previewBannerText(dateObj){
+  var d = dateObj || todoViewDate();
+  return '👀 ' + (d.getMonth() + 1) + '/' + d.getDate() + ' (' + WEEKDAYS[d.getDay()] + ') 미리 보기 · 체크는 오늘 날짜에만 가능해요';
+}
+
+function renderTodoDayBar(){
+  var box = $('#todoDayBar');
+  if(!box) return;
+  var cur = todoDayOffset();
+  var html = '';
+  for(var i = 0; i < 7; i++){
+    var d = daysFromToday(i);
+    var label = i === 0
+      ? '오늘 (' + WEEKDAYS[d.getDay()] + ')'
+      : WEEKDAYS[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate();
+    html += '<button class="day-pill' + (i === cur ? ' active' : '') + (i === 0 ? ' today' : '') + '" type="button" data-day-offset="' + i + '" aria-pressed="' + (i === cur ? 'true' : 'false') + '">' + esc(label) + '</button>';
+  }
+  box.innerHTML = html;
+  var note = $('#todoPreviewNote');
+  if(note){
+    if(cur > 0){
+      note.textContent = previewBannerText(daysFromToday(cur));
+      note.hidden = false;
+    } else {
+      note.textContent = '';
+      note.hidden = true;
+    }
+  }
+}
+
+function setTodoDayOffset(n){
+  var v = Math.round(num(n, 0));
+  if(!(v >= 0 && v <= 6)) v = 0;
+  state.ui.todoDayOffset = v;   /* 이 기기 화면에서만 — 원격에 안 보내요 */
+  renderTodos();
+}
+
+function blockInPreview(what){
+  if(!isTodoPreview()) return false;
+  var d = todoViewDate();
+  toast((d.getMonth() + 1) + '/' + d.getDate() + ' 미리 보기 중이라 ' + what + ' 안 돼요. \'오늘\'로 돌아가서 해주세요!');
+  return true;
 }
 
 function renderTodoFilter(){
@@ -2682,24 +2779,38 @@ function renderSchedule(){
     grid.innerHTML = WEEKDAYS.map(function(name, i){
       var wk = week[i];
       var list = all.filter(function(l){ return l.day === i; });
-      return '<div class="day-col' + (i === today ? ' today' : '') + '">' +
-        '<span class="dc-name">' + esc(name) +
+      /* 그 날 가족 일정(달력에 적은 메모)도 같이 보여줘요 */
+      var events = calEventsOn(wk.key).slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
+      var head = '<span class="dc-name">' + esc(name) +
           '<span class="dc-date">' + esc(wk.md) + '</span>' +
-        '</span>' +
-        (list.length
-          ? list.map(function(l){
-              var skipped = isLessonSkippedOn(l.id, wk.key);
-              var chipInner = '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
-                '<span class="lc-sub">' + esc(l.subject) + '</span>' +
-                (skipped ? '<span class="lc-skip">휴강</span>' : '');
-              var chipClass = 'lc-chip' + (l.completedDate === todayK ? ' lc-done' : '') + (skipped ? ' lc-off' : '');
-              var chipLabel = l.kid + ' ' + l.subject + ' ' + timeLabel(l.time) + (skipped ? ' · 이번 주 휴강' : '');
-              if(!isMom()) return '<span class="' + chipClass + '" data-kid="' + esc(l.kid) + '" title="' + esc(chipLabel) + '">' + chipInner + '</span>';
-              return '<button class="' + chipClass + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(chipLabel) + ' 수업 지우기">' +
-                chipInner +
-                '</button>';
-            }).join('')
-          : '<span class="dc-empty">·</span>') +
+        '</span>';
+      if(!list.length && !events.length){
+        return '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
+          '<span class="dc-empty">일정 없음</span></div>';
+      }
+      var lessonHtml = list.map(function(l){
+        var skipped = isLessonSkippedOn(l.id, wk.key);
+        var chipInner = '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
+          '<span class="lc-sub">' + esc(l.subject) + '</span>' +
+          (skipped ? '<span class="lc-skip">휴강</span>' : '');
+        var chipClass = 'lc-chip' + (l.completedDate === todayK ? ' lc-done' : '') + (skipped ? ' lc-off' : '');
+        var chipLabel = l.kid + ' ' + l.subject + ' ' + timeLabel(l.time) + (skipped ? ' · 이번 주 휴강' : '');
+        if(!isMom()) return '<span class="' + chipClass + '" data-kid="' + esc(l.kid) + '" title="' + esc(chipLabel) + '">' + chipInner + '</span>';
+        return '<button class="' + chipClass + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(chipLabel) + ' 수업 지우기">' +
+          chipInner +
+          '</button>';
+      }).join('');
+      var eventHtml = events.map(function(m){
+        var who = String(m.who || '가족');
+        var text = String(m.text || '');
+        return '<span class="dc-event" title="' + esc(who + ' · ' + text) + '">' +
+          '<span class="ev-em" aria-hidden="true">📝</span>' +
+          '<span class="ev-txt">' + esc(text) + '</span>' +
+        '</span>';
+      }).join('');
+      return '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
+        lessonHtml +
+        (eventHtml ? '<span class="dc-events">' + eventHtml + '</span>' : '') +
         '</div>';
     }).join('');
   }
@@ -2727,26 +2838,27 @@ function completeLesson(id){
 
 function renderTodos(){
   renderTodoFilter();
+  renderTodoDayBar();
 
-  var ownerSel = $('#todoOwner');
-  if(!ownerSel.options.length){
-    ownerSel.innerHTML = PEOPLE.map(function(p){ return '<option value="' + p + '">' + esc(p) + '</option>'; }).join('');
-    ownerSel.value = 'Stella';
-  }
+  var offset = todoDayOffset();
+  var preview = offset > 0;   /* 미리 보기: 그 날 할 일을 보기만 하고 오늘 기록은 안 건드려요 */
+  var viewDate = daysFromToday(offset);
 
   var list = filteredTodos();
-  var prep = shownPrepClasses();
-  var done = list.filter(function(t){ return t.done; }).length + prep.filter(prepDoneFor).length;
+  var prep = shownPrepClasses(viewDate);
+  var done = preview ? 0 : (list.filter(function(t){ return t.done; }).length + prep.filter(prepDoneFor).length);
   var total = list.length + prep.length;
-  var pct = total ? Math.round(done / total * 100) : 0;
+  var pct = preview ? 0 : (total ? Math.round(done / total * 100) : 0);
   $('#todoProgressBar').style.width = pct + '%';
-  $('#todoProgressText').textContent = done + ' / ' + total + ' 완료';
+  $('#todoProgressText').textContent = preview
+    ? ('미리 보기 · 할 일 ' + total + '개')
+    : (done + ' / ' + total + ' 완료');
 
   var prepHtml = prep.map(function(l){
-    var pdone = prepDoneFor(l);
+    var pdone = preview ? false : prepDoneFor(l);
     var locked = kidLockedFor(l.kid);
-    return '<div class="todo-item prep' + (pdone ? ' done' : '') + (locked ? ' locked' : '') + '" data-prep-toggle="' + esc(l.id) + '"' + (locked ? ' aria-disabled="true"' : '') + '>' +
-      '<button class="check" type="button" aria-pressed="' + pdone + '" aria-label="내일 ' + esc(l.subject) + ' 수업 숙제 완료 표시">✓</button>' +
+    return '<div class="todo-item prep' + (pdone ? ' done' : '') + (locked ? ' locked' : '') + (preview ? ' preview' : '') + '"' + (preview ? ' aria-disabled="true"' : ' data-prep-toggle="' + esc(l.id) + '"') + '>' +
+      '<button class="check" type="button"' + (preview ? ' disabled' : '') + ' aria-pressed="' + (pdone ? 'true' : 'false') + '" aria-label="' + esc('내일 ' + l.subject + ' 수업 숙제') + (preview ? ' (미리 보기, 체크 불가)' : ' 완료 표시') + '">✓</button>' +
       '<span class="t-text">내일 ' + esc(l.subject) + ' 수업 숙제 <span class="prep-when">(' + esc(WEEKDAYS[l.day]) + ' ' + esc(l.time) + ')</span></span>' +
       '<span class="t-owner">' + mascot(l.kid) + esc(l.kid) + (locked ? '<span class="t-lock" aria-hidden="true">🔒</span>' : '') + '</span>' +
       '</div>';
@@ -2755,21 +2867,25 @@ function renderTodos(){
   var box = $('#todoList');
   if(!list.length && !prep.length){
     box.innerHTML = '<div class="empty"><span class="em">🌱</span>' +
-      (state.ui.todoFilter === '전체' ? '할 일을 추가해보세요.' : esc(state.ui.todoFilter) + '의 할 일을 추가해보세요.') +
+      (preview
+        ? '이 날은 할 일이 없어요. 느긋한 하루 🍃'
+        : (state.ui.todoFilter === '전체' ? '할 일이 없어요.' : esc(state.ui.todoFilter) + ' 할 일이 없어요.')) +
       '</div>';
   } else {
     box.innerHTML = prepHtml + list.map(function(t){
-      var paid = KIDS.indexOf(t.owner) >= 0 && !!(state.dailyTodo[t.owner] && state.dailyTodo[t.owner][todayKey()]);
+      var paid = !preview && KIDS.indexOf(t.owner) >= 0 && !!(state.dailyTodo[t.owner] && state.dailyTodo[t.owner][todayKey()]);
       var locked = kidLockedFor(t.owner);
-      return '<div class="todo-item' + (t.done ? ' done' : '') + (locked ? ' locked' : '') + '" data-toggle="' + esc(t.id) + '"' + (locked ? ' aria-disabled="true"' : '') + '>' +
-        '<button class="check" type="button" aria-pressed="' + (!!t.done) + '" aria-label="' + esc(t.text) + (t.weekdaysOnly ? ' (주중)' : '') + ' 완료 표시">✓</button>' +
+      return '<div class="todo-item' + ((t.done && !preview) ? ' done' : '') + (locked ? ' locked' : '') + (preview ? ' preview' : '') + '"' + (preview ? ' aria-disabled="true"' : ' data-toggle="' + esc(t.id) + '"') + '>' +
+        '<button class="check" type="button"' + (preview ? ' disabled' : '') + ' aria-pressed="' + ((t.done && !preview) ? 'true' : 'false') + '" aria-label="' + esc(t.text) + (t.weekdaysOnly ? ' (주중)' : '') + (preview ? ' (미리 보기, 체크 불가)' : ' 완료 표시') + '">✓</button>' +
         '<span class="t-text">' + (t.weekdaysOnly ? '<span class="wd-tag" title="월~금에만 하는 할 일">주중</span> ' : '') + esc(t.text) + (t.done && paid ? ' <span class="done-tag">완료</span>' : '') + '</span>' +
         '<span class="t-owner">' + mascot(t.owner) + esc(t.owner) + (locked ? '<span class="t-lock" aria-hidden="true">🔒</span>' : '') + '</span>' +
-        (isMom() ? '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="할 일 삭제">×</button>' : '') +
+        (isMom() && !preview ? '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="할 일 삭제">×</button>' : '') +
         '</div>';
     }).join('');
   }
-  checkHiFive();
+
+  if(preview) hiFiveShown = false;   /* 미리 보기에서는 하이파이브를 띄우지 않아요 */
+  else checkHiFive();
 }
 
 function checkHiFive(){
@@ -2817,6 +2933,7 @@ function showHiFive(whoOverride){
 }
 
 function togglePrep(id){
+  if(blockInPreview('준비 숙제 체크')) return;
   var les = null;
   state.schedule.lessons.forEach(function(l){ if(l.id === id) les = l; });
   if(!les) return;
@@ -2845,6 +2962,7 @@ function togglePrep(id){
 }
 
 function toggleTodo(id, anchor){
+  if(blockInPreview('할 일 체크')) return;
   var t = null;
   state.todos.forEach(function(x){ if(x.id === id) t = x; });
   if(!t) return;
@@ -2874,22 +2992,10 @@ function toggleTodo(id, anchor){
   }
 }
 
-function addTodo(){
-  var text = $('#todoInput').value.trim();
-  var owner = $('#todoOwner').value;
-  if(!text){ toast('할 일 내용을 적어주세요'); return; }
-  state.todos.unshift({ id: uid('td'), owner: owner, text: text.slice(0, 40), done: false, date: todayKey() });
-  save();
-  $('#todoInput').value = '';
-  if(state.ui.todoFilter !== '전체' && state.ui.todoFilter !== owner){
-    state.ui.todoFilter = owner;
-  }
-  renderTodos();
-  toast(owner + ' 할 일을 추가했어요');
-}
 function resetDailyChecks(){
   var cleared = 0;
   var t = todayKey();
+  state.ui.todoDayOffset = 0;   /* 초기화하면 항상 '오늘'로 돌아와요 */
   state.todos.forEach(function(x){
     if(x.done) cleared++;
     x.done = false;
@@ -4303,6 +4409,7 @@ function bindEvents(){
   });
   $('#todoList').addEventListener('click', function(e){
     var del = e.target.closest ? e.target.closest('[data-tdel]') : null;
+    if(del && blockInPreview('할 일 지우기')) return;
     if(del && !isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
     if(del){
       var did = del.getAttribute('data-tdel');
@@ -4318,11 +4425,12 @@ function bindEvents(){
     if(!row) return;
     toggleTodo(row.getAttribute('data-toggle'), row);
   });
-  $('#todoForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    addTodo();
-  });
   $('#todoDailyReset').addEventListener('click', resetDailyChecks);
+  $('#todoDayBar').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-day-offset]') : null;
+    if(!b) return;
+    setTodoDayOffset(b.getAttribute('data-day-offset'));
+  });
 
   /* weekly class schedule */
   $('#lessonForm').addEventListener('submit', function(e){
@@ -4518,6 +4626,7 @@ function bindEvents(){
    ========================================================= */
 function init(){
   state = loadState();
+  state.ui.todoDayOffset = 0;   /* 요일별 미리 보기는 앱을 열면 항상 '오늘'부터 보여줘요 */
 
   $('#headerMascot').innerHTML = chickSVG();
 
