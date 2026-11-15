@@ -2155,8 +2155,8 @@ function filteredTodos(){
 function renderTodoFilter(){
   var box = $('#todoFilter');
   var f = state.ui.todoFilter;
-  /* 아이들(Stella·Luna)이 앞으로, 그다음 전체·어른 순서 */
-  var order = KIDS.concat(['전체'], PEOPLE.filter(function(p){ return KIDS.indexOf(p) < 0; }));
+  /* 아이들(Stella·Luna)이 앞으로, 그다음 어른, 전체는 맨 끝 */
+  var order = KIDS.concat(PEOPLE.filter(function(p){ return KIDS.indexOf(p) < 0; })).concat(['전체']);
   var html = '';
   order.forEach(function(p){
     var active = f === p ? ' active' : '';
