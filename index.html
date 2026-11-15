@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.7.0">
-<!-- family-dashboard 1.7.0 · 달력에 '할 일 모두 완료'(⭐ Stella · 🌙 Luna) 표시, 주간 시간표에 이번 주 날짜(휴강 표시) -->
+<meta name="app-version" content="1.7.1">
+<!-- family-dashboard 1.7.1 · 달력에 '할 일 모두 완료' 이름 배지(Stella 분홍 · Luna 하늘) 표시, 주간 시간표에 이번 주 날짜(휴강 표시), 수업 완료 다시 눌러 취소 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -503,12 +503,15 @@ main{padding-top:2px}
 .cc-dot.m{background:#F3C065}
 .cc-dot.e{background:#8FD0A6}
 .cc-dot.none{background:#EFE6DA}
-/* 할 일 모두 완료 표시 — 7칸 그리드를 넘치지 않게 왼쪽 위에 작게 겹쳐 둬요 */
-.cal-cell .cc-badges{
-  position:absolute;top:2px;left:2px;display:flex;flex-direction:column;align-items:flex-start;
-  gap:0;line-height:1;font-size:8.5px;pointer-events:none;user-select:none;
+/* 할 일 모두 완료 — 이름 알약 배지 (S = Stella 분홍 · L = Luna 하늘). 7칸 그리드를 넘지 않게 작게 */
+.cal-cell .cc-tags{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2px;width:100%;line-height:1}
+.cc-name-tag{
+  display:inline-block;max-width:100%;padding:0 2px;border-radius:999px;border:1px solid;
+  font-family:var(--font-title);font-size:8.5px;line-height:11px;text-align:center;letter-spacing:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.cal-cell .cc-badges span{display:block;line-height:1;text-shadow:0 1px 0 #fff}
+.cc-name-tag.s{background:#FFE4EC;border-color:#FFB6CC;color:#B83260}
+.cc-name-tag.l{background:#E0F2FE;border-color:#93C5FD;color:#1D4ED8}
 .cal-cell.has-done{border-color:#F7DFA8}
 .cal-cell.today.has-done{border-color:#F0BE71}
 .cal-legend{display:flex;flex-wrap:wrap;gap:6px 11px;margin-top:10px;font-size:10.5px;color:var(--ink-soft)}
@@ -553,7 +556,7 @@ main{padding-top:2px}
 .cal-done-row .cd-note{display:block;font-size:10px;color:#8AA894}
 .cal-done-row .cd-mark{flex:0 0 auto;font-size:12px;color:#5E9C73;background:#F1FAF3;border:1.5px solid #D6EEDA;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .cal-legend .cc-badge-key{font-size:9.5px;line-height:1}
-
+.cal-legend .cc-name-tag{font-size:8.5px;line-height:12px;padding:0 5px}
 /* ---------- stamps ---------- */
 .stamp-card{background:linear-gradient(170deg,#FFFDF6,#FFF8E8 60%,#FFF1F4);border-color:#F6E3C8}
 .stamp-progress{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -997,7 +1000,7 @@ main{padding-top:2px}
           <span><i class="cc-dot l"></i>Luna 수업</span>
           <span><i class="cc-dot m"></i>용돈 기록</span>
           <span><i class="cc-dot e"></i>가족 메모</span>
-          <span><span class="cc-badge-key" aria-hidden="true">⭐🌙</span>할 일 모두 완료</span>
+          <span><span class="cc-name-tag s">Stella</span> <span class="cc-name-tag l">Luna</span> 할 일 모두 완료</span>
         </div>
       </div>
 
@@ -3857,10 +3860,10 @@ function renderCalendar(){
     dailyDone.forEach(function(k){ extra.push(k + ' 할 일 완료'); });
 
     cells.push('<button class="' + cls + '" type="button" role="gridcell" data-date="' + key + '" aria-label="' + esc(label + (extra.length ? '· ' + extra.join(', ') : '')) + '" aria-pressed="' + (key === calView.sel) + '">' +
-      (dailyDone.length
-        ? '<span class="cc-badges" aria-hidden="true">' + dailyDone.map(function(k){ return '<span>' + doneEmoji(k) + '</span>'; }).join('') + '</span>'
-        : '') +
       '<span class="cc-day">' + i + '</span>' +
+      (dailyDone.length
+        ? '<span class="cc-tags" aria-hidden="true">' + dailyDone.map(function(k){ var luna = k === 'Luna'; return '<span class="cc-name-tag ' + (luna ? 'l' : 's') + '">' + (luna ? 'L' : 'S') + '</span>'; }).join('') + '</span>'
+        : '') +
       '<span class="cc-dots">' + dots + '</span>' +
       '</button>');
   }
