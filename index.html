@@ -768,7 +768,6 @@ main{padding-top:2px}
     <button class="tab active" type="button" data-tab="calendar" aria-selected="true"><span class="ico" aria-hidden="true">📅</span>달력</button>
     <button class="tab" type="button" data-tab="todo" aria-selected="false"><span class="ico" aria-hidden="true">✅</span>할 일</button>
     <button class="tab" type="button" data-tab="allowance" aria-selected="false"><span class="ico" aria-hidden="true">💰</span>용돈</button>
-    <button class="tab" type="button" data-tab="stamp" aria-selected="false"><span class="ico" aria-hidden="true">🌟</span>도장판</button>
     <button class="tab" type="button" data-tab="chat" aria-selected="false"><span class="ico" aria-hidden="true">💬</span>채팅</button>
     <button class="tab" type="button" data-tab="timer" aria-selected="false"><span class="ico" aria-hidden="true">⏰</span>타이머</button>
   </nav>
@@ -932,32 +931,6 @@ main{padding-top:2px}
           <input class="input" id="lessonSubject" type="text" placeholder="과목 (예: 영어)" maxlength="12" autocomplete="off">
           <button class="btn primary sm" type="submit">추가</button>
         </form>
-      </div>
-    </section>
-
-    <!-- ============ 4. 도장판 ============ -->
-    <section class="panel" id="panel-stamp" aria-label="미션 도장판">
-      <div class="kid-switch" id="stampKidSwitch" role="group" aria-label="아이 선택"></div>
-
-      <div class="card stamp-card">
-        <h2><span class="h2-emoji" aria-hidden="true">🌟</span>미션 도장판</h2>
-        <p class="card-sub" id="stampSub">미션을 하나 끝낼 때마다 도장을 하나씩 찍어요. 10개를 모으면 선물!</p>
-        <div class="stamp-progress">
-          <span class="sp-count" id="stampCount">0 / 10</span>
-          <span class="sp-note" id="stampNote">도장을 눌러서 찍어보세요</span>
-        </div>
-        <div class="stamp-grid" id="stampGrid" role="group" aria-label="도장 10칸"></div>
-
-        <div class="stamp-reward">
-          <div class="sr-label"><span aria-hidden="true">🎁</span>10개를 모으면 받는 선물 (부모님이 적어주세요)</div>
-          <label class="sr-only" for="stampRewardInput">도장 10개 보상</label>
-          <input id="stampRewardInput" type="text" maxlength="60" placeholder="예: $5.00 용돈 보너스!">
-        </div>
-
-        <div class="stamp-actions">
-          <button class="btn ghost sm" id="stampUndo" type="button">마지막 도장 취소</button>
-          <button class="btn ghost sm" id="stampReset" type="button">도장판 새로 시작</button>
-        </div>
       </div>
     </section>
 
@@ -1442,7 +1415,7 @@ function seedState(){
     dailyTodo: { Stella: {}, Luna: {} },
     /* 가족 달력 메모: { 'YYYY-MM-DD': [ {id, text, who, ts} ] } — 날짜 키가 계속 늘어나요 */
     calendarEvents: {},
-    ui: { tab:'calendar', kid:'Stella', stampKid:'Stella', todoFilter:'전체' }
+    ui: { tab:'calendar', kid:'Stella', todoFilter:'전체' }
   };
 }
 
@@ -1492,9 +1465,8 @@ function normalize(saved){
   if(!Array.isArray(s.chat.messages)) s.chat.messages = [];
   if(PEOPLE.indexOf(s.chat.me) < 0) s.chat.me = 'Stella';
   if(KIDS.indexOf(s.ui.kid) < 0) s.ui.kid = 'Stella';
-  if(KIDS.indexOf(s.ui.stampKid) < 0) s.ui.stampKid = 'Stella';
   if(['전체'].concat(PEOPLE).indexOf(s.ui.todoFilter) < 0) s.ui.todoFilter = '전체';
-  if(['calendar','todo','allowance','stamp','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
+  if(['calendar','todo','allowance','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
   if(!isObject(s.schedule) || !Array.isArray(s.schedule.lessons)) s.schedule = base.schedule;
   s.schedule.lessons = s.schedule.lessons.filter(function(l){
@@ -2346,141 +2318,6 @@ function resetDailyChecks(){
   save();
   renderTodos();
   toast(cleared ? '오늘 체크를 모두 풀었어요. 새로운 하루 시작! 🌤️' : '이미 모두 체크가 풀려 있어요');
-}
-
-/* =========================================================
-   4) Mission stamp board
-   ========================================================= */
-function currentStampKid(){ return state.ui.stampKid; }
-
-function stampSVG(kind){
-  var k = ((num(kind, 0) % 3) + 3) % 3;
-  if(k === 1){
-    return '<svg class="stamp-mark" viewBox="0 0 60 60" role="img" aria-label="하트 도장">' +
-      '<g transform="rotate(-8 30 30)" stroke="#E48FA3" stroke-width="1.8" stroke-linejoin="round">' +
-        '<path d="M30 52C11 39 6 27 13 19c6-7 15-4 17 3 2-7 11-10 17-3 7 8 2 20-17 33Z" fill="#FFC0CE"/>' +
-        '<circle cx="23" cy="27" r="1.9" fill="#5C4A3D" stroke="none"/>' +
-        '<circle cx="37" cy="27" r="1.9" fill="#5C4A3D" stroke="none"/>' +
-        '<ellipse cx="19" cy="32" rx="3" ry="2" fill="#FF8FA6" stroke="none" opacity=".6"/>' +
-        '<ellipse cx="41" cy="32" rx="3" ry="2" fill="#FF8FA6" stroke="none" opacity=".6"/>' +
-        '<path d="M26 32q4 3.6 8 0" fill="none" stroke="#5C4A3D" stroke-width="1.6" stroke-linecap="round"/>' +
-      '</g></svg>';
-  }
-  if(k === 2){
-    return '<svg class="stamp-mark" viewBox="0 0 60 60" role="img" aria-label="꽃 도장">' +
-      '<g transform="rotate(6 30 30)" stroke="#D9A24E" stroke-width="1.6" stroke-linejoin="round">' +
-        '<g fill="#FFE0A8">' +
-          '<circle cx="30" cy="10" r="7"/><circle cx="46" cy="20" r="7"/><circle cx="46" cy="40" r="7"/>' +
-          '<circle cx="30" cy="50" r="7"/><circle cx="14" cy="40" r="7"/><circle cx="14" cy="20" r="7"/>' +
-        '</g>' +
-        '<circle cx="30" cy="30" r="12" fill="#FFD166"/>' +
-        '<circle cx="26" cy="28" r="1.8" fill="#5C4A3D" stroke="none"/>' +
-        '<circle cx="34" cy="28" r="1.8" fill="#5C4A3D" stroke="none"/>' +
-        '<path d="M26.5 33q3.5 3 7 0" fill="none" stroke="#5C4A3D" stroke-width="1.6" stroke-linecap="round"/>' +
-        '<ellipse cx="22" cy="32" rx="2.6" ry="1.7" fill="#FFB7C5" stroke="none"/>' +
-        '<ellipse cx="38" cy="32" rx="2.6" ry="1.7" fill="#FFB7C5" stroke="none"/>' +
-      '</g></svg>';
-  }
-  return '<svg class="stamp-mark" viewBox="0 0 60 60" role="img" aria-label="별 도장">' +
-    '<g transform="rotate(-8 30 30)" stroke="#E0A63F" stroke-width="1.7" stroke-linejoin="round">' +
-      '<path d="M30 4l6.8 14.7 16.2 2.1-11.9 11.2 3 16.1L30 40.1l-14.1 8 3-16.1L7 20.8l16.2-2.1Z" fill="#FFD166"/>' +
-      '<circle cx="24" cy="27" r="1.9" fill="#5C4A3D" stroke="none"/>' +
-      '<circle cx="36" cy="27" r="1.9" fill="#5C4A3D" stroke="none"/>' +
-      '<ellipse cx="20" cy="32" rx="3" ry="2" fill="#FFB7C5" stroke="none"/>' +
-      '<ellipse cx="40" cy="32" rx="3" ry="2" fill="#FFB7C5" stroke="none"/>' +
-      '<path d="M26 32q4 3.6 8 0" fill="none" stroke="#5C4A3D" stroke-width="1.6" stroke-linecap="round"/>' +
-    '</g></svg>';
-}
-
-function stampSlotDate(key){
-  var p = String(key).split('-');
-  return Number(p[1]) + '/' + Number(p[2]);
-}
-
-function renderStamps(){
-  var kid = currentStampKid();
-  var st = state.stamps[kid];
-  var filled = st.slots.filter(Boolean).length;
-
-  var sw = $('#stampKidSwitch');
-  if(sw) sw.innerHTML = kidSwitchHTML(kid, '의 도장판');
-
-  $('#stampCount').textContent = filled + ' / 10';
-  $('#stampNote').textContent = filled >= 10
-    ? '도장을 다 모았어요! 🎉'
-    : (filled ? '선물까지 ' + (10 - filled) + '개 남았어요' : '빈 칸을 눌러 도장을 찍어보세요');
-
-  var grid = $('#stampGrid');
-  grid.innerHTML = st.slots.map(function(s, i){
-    if(s){
-      return '<button class="stamp-slot filled" type="button" data-slot="' + i + '" aria-label="' + i + '번째 칸, ' + esc(shortDate(s.date)) + ' 도장">' +
-        stampSVG(s.kind) +
-        '<span class="stamp-date">' + stampSlotDate(s.date) + '</span>' +
-        '</button>';
-    }
-    return '<button class="stamp-slot" type="button" data-slot="' + i + '" aria-label="' + (i + 1) + '번째 칸, 눌러서 도장 찍기">' +
-      '<span class="slot-num">' + (i + 1) + '</span></button>';
-  }).join('');
-
-  var rewardInput = $('#stampRewardInput');
-  if(document.activeElement !== rewardInput) rewardInput.value = st.reward || '';
-
-  var resetBtn = $('#stampReset');
-  if(resetBtn) resetBtn.hidden = !isMom();
-}
-
-function stampSlot(i){
-  var kid = currentStampKid();
-  var st = state.stamps[kid];
-  if(st.slots[i]){
-    toast(shortDate(st.slots[i].date) + '에 찍은 도장이에요 ⭐');
-    return;
-  }
-  var filled = st.slots.filter(Boolean).length;
-  /* 이번 클릭으로 9 → 10이 된 순간에만 $5.00 보너스를 한 번 적립해요 (모달을 닫거나 다시 그려도 또 적립되지 않아요) */
-  var completed = filled === 9;
-  st.slots[i] = { date: todayKey(), kind: filled % 3 };
-  if(completed){
-    addLedger(kid, 'deposit', roundCents(STAMP_BONUS), '도장 10개 완성 보너스!');
-  } else {
-    save();
-  }
-  renderStamps();
-  var btn = $('#stampGrid [data-slot="' + i + '"]');
-  if(btn){
-    btn.classList.add('anim');
-  }
-  if(completed){
-    coinBurst(btn || $('#stampGrid'), 10);
-    renderAllowance();
-    if(currentKid() === kid) bumpTotal();
-    showStampReward(kid);
-  } else {
-    toast('도장 하나! ' + (10 - filled - 1) + '개 더 모으면 ' + usd(STAMP_BONUS) + ' 선물이에요 🌟');
-  }
-}
-
-function showStampReward(kid){
-  var st = state.stamps[kid];
-  openModal(
-    '<div class="mascot-big">' + mascotSVG(kid) + '</div>' +
-    '<h2 style="justify-content:center">도장 10개 완성! 🎉</h2>' +
-    '<p class="modal-sub" style="text-align:center">' + esc(kid) + '가 도장을 다 모았어요.<br><b>' + usd(STAMP_BONUS) + ' 보너스 적립!</b><br>용돈기입장에도 차곡차곡 넣어뒀어요 🪙</p>' +
-    '<div style="text-align:center;font-family:var(--font-title);font-size:17px;color:#8A4E60;background:#FFF2D9;border:2px dashed #F3D79A;border-radius:16px;padding:14px">🎁 ' + esc(st.reward || '선물 약속을 적어주세요') + '</div>' +
-    '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>좋아요!</button></div>'
-  );
-}
-
-function undoStamp(){
-  var kid = currentStampKid();
-  var st = state.stamps[kid];
-  var last = -1;
-  st.slots.forEach(function(s, i){ if(s) last = i; });
-  if(last < 0){ toast('취소할 도장이 없어요'); return; }
-  st.slots[last] = null;
-  save();
-  renderStamps();
-  toast('마지막 도장을 지웠어요');
 }
 
 /* =========================================================
@@ -3431,7 +3268,6 @@ function renderAll(){
   renderTodos();
   renderSchedule();
   renderCalendar();
-  renderStamps();
   renderChatWho();
   renderChat();
   renderAlarm();
@@ -3554,34 +3390,6 @@ function bindEvents(){
       save();
       renderSchedule();
       toast('수업을 지웠어요');
-    }, true);
-  });
-
-  /* stamp */
-  $('#stampKidSwitch').addEventListener('click', function(e){
-    var b = e.target.closest ? e.target.closest('[data-kid]') : null;
-    if(!b) return;
-    state.ui.stampKid = b.getAttribute('data-kid');
-    save(true);
-    renderStamps();
-  });
-  $('#stampGrid').addEventListener('click', function(e){
-    var b = e.target.closest ? e.target.closest('[data-slot]') : null;
-    if(!b) return;
-    stampSlot(Number(b.getAttribute('data-slot')));
-  });
-  $('#stampRewardInput').addEventListener('input', function(){
-    state.stamps[currentStampKid()].reward = this.value.slice(0, 60);
-    save();
-  });
-  $('#stampUndo').addEventListener('click', undoStamp);
-  $('#stampReset').addEventListener('click', function(){
-    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
-    confirmModal('도장판을 새로 시작할까요?', currentStampKid() + '의 도장이 모두 지워져요. 선물 문구는 그대로 남아요.', '새로 시작', function(){
-      state.stamps[currentStampKid()].slots = [null, null, null, null, null, null, null, null, null, null];
-      save();
-      renderStamps();
-      toast('도장판을 새로 시작해요 🌟');
     }, true);
   });
 
