@@ -1000,7 +1000,7 @@ main{padding-top:2px}
    ========================================================= */
 var STORE_KEY = 'chiikawa-family-dashboard-v1';
 var DEVICE_KEY = 'chiikawa-family-dashboard-device-v1';
-var SCHEMA_VERSION = 3;                 // 3 = USD + 매일 할 일 + 주간 수업 시간표 버전
+var SCHEMA_VERSION = 4;                 // 4 = USD + 매일 할 일(영어 필사 포함) + 주간 수업 시간표 버전
 var DEFAULT_FIREBASE_URL = 'https://family-dashboard-ccc9b-default-rtdb.firebaseio.com';
 var DB_PATH = 'familyDashboard/v1';
 var KIDS = ['Stella', 'Luna'];
@@ -1340,10 +1340,12 @@ function seedState(){
       { id:'td1', owner:'Stella', text:'Bomi 맵테스트', done:false, date:t },
       { id:'td2', owner:'Stella', text:'수학문제 3장', done:false, date:t },
       { id:'td3', owner:'Stella', text:'국어문제 1장', done:false, date:t },
-      { id:'td4', owner:'Stella', text:'바이올린 연습 20분', done:false, date:t },
-      { id:'td5', owner:'Luna', text:'Bomi 맵테스트', done:false, date:t },
-      { id:'td6', owner:'Luna', text:'수학문제 3장', done:false, date:t },
-      { id:'td7', owner:'Luna', text:'국어문제 1장', done:false, date:t }
+      { id:'td4', owner:'Stella', text:'영어 필사 15분', done:false, date:t },
+      { id:'td5', owner:'Stella', text:'바이올린 연습 20분', done:false, date:t },
+      { id:'td6', owner:'Luna', text:'Bomi 맵테스트', done:false, date:t },
+      { id:'td7', owner:'Luna', text:'수학문제 3장', done:false, date:t },
+      { id:'td8', owner:'Luna', text:'국어문제 1장', done:false, date:t },
+      { id:'td9', owner:'Luna', text:'영어 필사 15분', done:false, date:t }
     ],
     stamps: {
       Stella: {
