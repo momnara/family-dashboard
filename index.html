@@ -2141,16 +2141,30 @@ var hiFiveTimer = null;
 
 function filteredTodos(){
   var f = state.ui.todoFilter;
-  if(f === '전체') return state.todos;
-  return state.todos.filter(function(t){ return t.owner === f; });
+  if(f !== '전체'){
+    return state.todos.filter(function(t){ return t.owner === f; });
+  }
+  /* '전체'에서는 Stella·Luna 할 일이 위로 오게 (각자 순서는 그대로) */
+  return state.todos.slice().sort(function(a, b){
+    var ak = KIDS.indexOf(a.owner) >= 0 ? 0 : 1;
+    var bk = KIDS.indexOf(b.owner) >= 0 ? 0 : 1;
+    return ak - bk;
+  });
 }
 
 function renderTodoFilter(){
   var box = $('#todoFilter');
   var f = state.ui.todoFilter;
-  var html = '<button class="pill' + (f === '전체' ? ' active' : '') + '" type="button" data-filter="전체">전체</button>';
-  PEOPLE.forEach(function(p){
-    html += '<button class="pill' + (f === p ? ' active' : '') + '" type="button" data-filter="' + p + '">' + mascot(p) + esc(p) + '</button>';
+  /* 아이들(Stella·Luna)이 앞으로, 그다음 전체·어른 순서 */
+  var order = KIDS.concat(['전체'], PEOPLE.filter(function(p){ return KIDS.indexOf(p) < 0; }));
+  var html = '';
+  order.forEach(function(p){
+    var active = f === p ? ' active' : '';
+    if(p === '전체'){
+      html += '<button class="pill' + active + '" type="button" data-filter="전체">전체</button>';
+    } else {
+      html += '<button class="pill' + active + '" type="button" data-filter="' + p + '">' + mascot(p) + esc(p) + '</button>';
+    }
   });
   box.innerHTML = html;
 }
