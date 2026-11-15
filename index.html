@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.6.0">
-<!-- family-dashboard 1.6.0 · 휴강(skipDates): 22·23일 수업 쉬기, 28일 Luna 영어 보충수업 -->
+<meta name="app-version" content="1.7.0">
+<!-- family-dashboard 1.7.0 · 달력에 '할 일 모두 완료'(⭐ Stella · 🌙 Luna) 표시, 주간 시간표에 이번 주 날짜(휴강 표시) -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -418,14 +418,19 @@ main{padding-top:2px}
 .week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
 .day-col{border-radius:13px;border:1.5px solid #F1E7F8;background:rgba(255,255,255,.78);padding:6px 3px 7px;min-height:80px;overflow:hidden}
 .day-col .dc-name{display:block;text-align:center;font-family:var(--font-title);font-size:11px;color:var(--ink-soft);margin-bottom:5px}
+.day-col .dc-date{display:block;margin-top:1px;font-family:var(--font-title);font-size:9px;color:#B49B7C;letter-spacing:-.2px;line-height:1.1}
 .day-col.today{border-color:#F6CF8E;background:linear-gradient(180deg,#FFF7E1,#FFEFE6);box-shadow:0 3px 0 #F3DDB4}
 .day-col.today .dc-name{color:#8A6530}
+.day-col.today .dc-date{color:#A2701F}
 .day-col .dc-empty{display:block;text-align:center;font-size:11px;color:#E7D9C6;line-height:1.2}
 .lc-chip{display:block;width:100%;min-height:34px;border:none;border-left:3px solid #FFB7C5;border-radius:9px;background:#FFF7FA;padding:3px 2px;margin-bottom:3px;text-align:center;font-size:9.5px;line-height:1.2;color:#7A5A66}
 .lc-chip[data-kid="Luna"]{border-left-color:#B9A6F0;background:#F7F4FF;color:#5F5780}
 .lc-chip .lc-time{display:block;font-family:var(--font-title);font-size:9.5px;color:#8A6530}
 .lc-chip .lc-sub{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lc-chip:active{transform:scale(.95)}
+/* 이번 주 휴강 — 수업은 그대로 보이되 회색으로 죽이고 '휴강'을 적어요 */
+.lc-chip.lc-off{background:#F5F2F7;border-left-color:#CFC6DA;color:#9C93A6}
+.lc-chip .lc-skip{display:block;margin-top:1px;font-size:8.5px;line-height:1.1;color:#A292AE;letter-spacing:-.3px;white-space:nowrap}
 .sched-form{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
 .sched-form .input{min-height:40px;font-size:12.5px;padding:0 8px;width:auto}
 .sched-form #lessonKid{flex:0 0 84px}
@@ -498,6 +503,14 @@ main{padding-top:2px}
 .cc-dot.m{background:#F3C065}
 .cc-dot.e{background:#8FD0A6}
 .cc-dot.none{background:#EFE6DA}
+/* 할 일 모두 완료 표시 — 7칸 그리드를 넘치지 않게 왼쪽 위에 작게 겹쳐 둬요 */
+.cal-cell .cc-badges{
+  position:absolute;top:2px;left:2px;display:flex;flex-direction:column;align-items:flex-start;
+  gap:0;line-height:1;font-size:8.5px;pointer-events:none;user-select:none;
+}
+.cal-cell .cc-badges span{display:block;line-height:1;text-shadow:0 1px 0 #fff}
+.cal-cell.has-done{border-color:#F7DFA8}
+.cal-cell.today.has-done{border-color:#F0BE71}
 .cal-legend{display:flex;flex-wrap:wrap;gap:6px 11px;margin-top:10px;font-size:10.5px;color:var(--ink-soft)}
 .cal-legend span{display:inline-flex;align-items:center;gap:4px}
 .cal-legend .cc-dot{width:7px;height:7px}
@@ -532,6 +545,14 @@ main{padding-top:2px}
 .cal-memo .cm-meta{display:block;font-size:10px;color:var(--ink-faint);margin-top:2px}
 .cal-memo .del{border:none;background:transparent;color:#CDBBA6;font-size:16px;width:28px;height:28px;border-radius:9px;flex:0 0 auto}
 .cal-memo .del:active{background:#FFF1E8}
+/* 날짜별 할 일 모두 완료 줄 */
+.cal-done-row{display:flex;align-items:center;gap:8px;font-size:12px;background:#fff;border:1.5px solid #D8EEDC;border-radius:13px;padding:6px 9px;margin-bottom:5px}
+.cal-done-row .cd-ava{width:23px;height:23px;flex:0 0 auto}
+.cal-done-row .cd-main{flex:1 1 auto;min-width:0;line-height:1.3}
+.cal-done-row .cd-main b{font-weight:700}
+.cal-done-row .cd-note{display:block;font-size:10px;color:#8AA894}
+.cal-done-row .cd-mark{flex:0 0 auto;font-size:12px;color:#5E9C73;background:#F1FAF3;border:1.5px solid #D6EEDA;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.cal-legend .cc-badge-key{font-size:9.5px;line-height:1}
 
 /* ---------- stamps ---------- */
 .stamp-card{background:linear-gradient(170deg,#FFFDF6,#FFF8E8 60%,#FFF1F4);border-color:#F6E3C8}
@@ -976,6 +997,7 @@ main{padding-top:2px}
           <span><i class="cc-dot l"></i>Luna 수업</span>
           <span><i class="cc-dot m"></i>용돈 기록</span>
           <span><i class="cc-dot e"></i>가족 메모</span>
+          <span><span class="cc-badge-key" aria-hidden="true">⭐🌙</span>할 일 모두 완료</span>
         </div>
       </div>
 
@@ -987,6 +1009,10 @@ main{padding-top:2px}
         <div class="cal-block">
           <h3><span aria-hidden="true">🎒</span>이날 수업</h3>
           <div id="calClasses"></div>
+        </div>
+        <div class="cal-block" id="calDoneBlock" hidden>
+          <h3><span aria-hidden="true">✅</span>이날 할 일 모두 완료</h3>
+          <div id="calDone"></div>
         </div>
         <div class="cal-block">
           <h3><span aria-hidden="true">🪙</span>이날 용돈 기록</h3>
@@ -1031,7 +1057,7 @@ main{padding-top:2px}
 
       <div class="card schedule-card">
         <h2><span class="h2-emoji" aria-hidden="true">🗓️</span>주간 수업 시간표</h2>
-        <p class="card-sub">오늘 수업은 위에 모아 보여줘요. 수업을 누르면 지울 수 있어요.</p>
+        <p class="card-sub">오늘 수업은 위에 모아 보여줘요. 이번 주 날짜와 함께 보고, 수업을 누르면 지울 수 있어요. 휴강한 수업은 회색 <b>휴강</b>으로 표시돼요.</p>
         <div class="sched-today" id="schedToday"></div>
         <div class="week-grid" id="weekGrid"></div>
         <form class="sched-form" id="lessonForm">
@@ -1559,6 +1585,9 @@ function seedState(){
     ntfyOn: true,
     meta: { updatedAt: 0 },
     dailyTodo: { Stella: {}, Luna: {} },
+    /* 날짜별 '할 일 모두 완료' 표: { 'YYYY-MM-DD': true }
+       dailyTodo는 '오늘 $1.00을 받았는지'라서 따로 둬요. 달력의 ⭐·🌙가 이 표를 봐요 */
+    dailyDone: { Stella: {}, Luna: {} },
     /* 가족 달력 메모: { 'YYYY-MM-DD': [ {id, text, who, ts} ] } — 날짜 키가 계속 늘어나요 */
     calendarEvents: {},
     /* 내일 수업 준비 숙제 체크: { '수업id': 'YYYY-MM-DD' } */
@@ -1664,6 +1693,17 @@ function normalize(saved){
       if(/^\d{4}-\d{2}-\d{2}$/.test(d) && src[d]) out[d] = true;
     });
     s.dailyTodo[k] = out;
+  });
+  /* dailyDone도 날짜 키가 계속 늘어나는 표라서 직접 살려요 */
+  var savedDone = (isObject(saved) && isObject(saved.dailyDone)) ? saved.dailyDone : {};
+  s.dailyDone = {};
+  KIDS.forEach(function(k){
+    var srcDone = isObject(savedDone[k]) ? savedDone[k] : {};
+    var outDone = {};
+    Object.keys(srcDone).forEach(function(d){
+      if(/^\d{4}-\d{2}-\d{2}$/.test(d) && srcDone[d]) outDone[d] = true;
+    });
+    s.dailyDone[k] = outDone;
   });
   if(['clock','countdown'].indexOf(s.alarm.mode) < 0) s.alarm.mode = 'clock';
   /* 가족 달력 메모도 날짜 키가 계속 늘어나는 표라서 직접 살려요 */
@@ -1812,6 +1852,7 @@ function writeLocal(){
 
 /* skipPush=true 이면 이 기기에만 저장해요(원격에 보내지 않음) */
 function save(skipPush){
+  refreshDailyDone();   /* 오늘 할 일을 전부 끝냈는지 날짜별로 남겨요 (달력 ⭐·🌙) */
   if(!skipPush && !sync.applying && state.meta) state.meta.updatedAt = Date.now();
   var ok = writeLocal();
   if(!skipPush && !sync.applying) queuePush();
@@ -1834,6 +1875,7 @@ function syncPayload(){
     stamps: state.stamps,
     schedule: state.schedule,          /* lessons + skipDates(휴강) 함께 실려요 */
     dailyTodo: state.dailyTodo,
+    dailyDone: state.dailyDone,
     calendarEvents: state.calendarEvents,
     prepTodo: state.prepTodo,
     chat: { messages: state.chat.messages },
@@ -1985,7 +2027,7 @@ function onRemoteValue(snap){
 
 function sharedSignature(st){
   try{
-    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.calendarEvents, st.prepTodo, st.chat.messages, st.memos, st.timer, st.alarm]);
+    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.dailyDone, st.calendarEvents, st.prepTodo, st.chat.messages, st.memos, st.timer, st.alarm]);
   }catch(e){ return ''; }
 }
 
@@ -2006,6 +2048,29 @@ function remoteScheduleFor(remote){
   return out;
 }
 
+/* dailyDone(날짜별 '할 일 모두 완료')도 같은 방식으로 지켜요.
+   dailyDone을 모르는 1.6 이하 기기가 전체를 다시 써도 우리가 적어둔 기록이 사라지지 않게요.
+   (지우는 기능은 없어서, 원격이 비어 있으면 '지운 것'이 아니라 '모르는 것'으로 봐요) */
+var remoteDailyRestored = false;
+function remoteDailyDoneFor(remote){
+  var hasRemote = false;
+  if(isObject(remote.dailyDone)){
+    hasRemote = KIDS.some(function(k){
+      return isObject(remote.dailyDone[k]) && Object.keys(remote.dailyDone[k]).length > 0;
+    });
+  }
+  if(hasRemote) return remote.dailyDone;
+  var mine = isObject(state.dailyDone) ? state.dailyDone : null;
+  var hasMine = !!mine && KIDS.some(function(k){
+    return isObject(mine[k]) && Object.keys(mine[k]).length > 0;
+  });
+  if(hasMine){
+    remoteDailyRestored = true;
+    return mine;
+  }
+  return isObject(remote.dailyDone) ? remote.dailyDone : {};
+}
+
 function applyRemote(remote){
   if(!isObject(remote)) return;
   var wasApplying = sync.applying;
@@ -2017,6 +2082,7 @@ function applyRemote(remote){
       : [];
     var before = sharedSignature(state);
     remoteSkipRestored = false;
+    remoteDailyRestored = false;
     var next = normalize({
       version: SCHEMA_VERSION,
       allowance: isObject(remote.allowance) ? remote.allowance : state.allowance,
@@ -2026,6 +2092,7 @@ function applyRemote(remote){
       schedule: remoteScheduleFor(remote),
       /* 가족이 함께 보는 표 — 원격에 없으면 '지운 것'으로 보고 이 기기에도 비워요 */
       dailyTodo: isObject(remote.dailyTodo) ? remote.dailyTodo : {},
+      dailyDone: remoteDailyDoneFor(remote),
       calendarEvents: isObject(remote.calendarEvents) ? remote.calendarEvents : {},
       prepTodo: isObject(remote.prepTodo) ? remote.prepTodo : {},
       /* 이 기기의 프로필/잠금은 절대 덮어쓰지 않아요 */
@@ -2043,11 +2110,12 @@ function applyRemote(remote){
     });
     /* 받은 내용이 지금 화면과 같으면 다시 그리지 않아요 (탭이 흔들리거나 스크롤이 튀지 않게) */
     var same = sharedSignature(next) === before;
-    var restoredSkip = remoteSkipRestored;
+    var restoredSkip = remoteSkipRestored || remoteDailyRestored;
     state = next;
     writeLocal();
-    /* 예전 버전 기기가 지운 휴강을 되살렸으면 원격에도 한 번 다시 올려요 (반복되지 않게 한 번만) */
+    /* 예전 버전 기기가 지운 휴강/dailyDone을 되살렸으면 원격에도 한 번 다시 올려요 (반복되지 않게 한 번만) */
     remoteSkipRestored = false;
+    remoteDailyRestored = false;
     if(restoredSkip) setTimeout(function(){ if(!sync.applying) queuePush(); }, 800);
     if(same){ sync.applying = wasApplying; return; }
     renderAll();
@@ -2341,6 +2409,34 @@ function claimedToday(kid){
   return !!(state.dailyTodo && isObject(state.dailyTodo[kid]) && state.dailyTodo[kid][todayKey()]);
 }
 
+/* ---------- 날짜별 '할 일 모두 완료' 기록 (달력의 ⭐ Stella · 🌙 Luna) ----------
+   dailyTodo는 '$1.00을 받았는지'라서 그대로 두고, 여기에 그 날 할 일을 전부 끝냈는지 따로 남겨요.
+   어제 체크를 그대로 둔 채 날짜만 바뀐 경우까지 '오늘 완료'로 잘못 남기지 않게,
+   오늘 손댄 흔적(오늘 날짜로 체크한 할 일이나 준비 숙제)이 있을 때만 오늘 칸을 채워요. */
+function doneTodayEvidence(kid, day){
+  var hit = false;
+  state.todos.forEach(function(x){
+    if(x.owner === kid && x.done && x.date === day) hit = true;
+  });
+  if(hit) return true;
+  prepClassesFor(kid).forEach(function(l){
+    if(state.prepTodo && state.prepTodo[l.id] === day) hit = true;
+  });
+  return hit;
+}
+
+function refreshDailyDone(){
+  if(!state || !Array.isArray(state.todos)) return;
+  if(!isObject(state.dailyDone)) state.dailyDone = { Stella: {}, Luna: {} };
+  var day = todayKey();
+  KIDS.forEach(function(k){
+    if(!isObject(state.dailyDone[k])) state.dailyDone[k] = {};
+    var st = todoStats(k);
+    if(st.total > 0 && st.done === st.total && doneTodayEvidence(k, day)) state.dailyDone[k][day] = true;
+    else delete state.dailyDone[k][day];
+  });
+}
+
 /* ---------- 이 기기 잠금 규칙 ----------
    기기를 Stella 프로필로 잠그면 Luna 항목은 건드릴 수 없고, 그 반대도 마찬가지예요.
    엄마·아빠이거나 잠그지 않았을 때는 둘 다 함께 봐요. */
@@ -2477,6 +2573,19 @@ function lessonsSorted(){
   });
 }
 
+/* 이번 주(일~토) 날짜 — 주간 시간표에 요일과 함께 실제 날짜를 보여줘요 */
+function weekDays(){
+  var base = new Date();
+  base.setHours(12, 0, 0, 0);
+  base.setDate(base.getDate() - base.getDay());   /* 이번 주 일요일 */
+  var out = [];
+  for(var i = 0; i < 7; i++){
+    var d = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i, 12, 0, 0, 0);
+    out.push({ wd: i, key: dateKey(d), md: (d.getMonth() + 1) + '/' + d.getDate() });
+  }
+  return out;
+}
+
 function renderSchedule(){
   var today = new Date().getDay();
   var all = lessonsSorted();
@@ -2501,7 +2610,7 @@ function renderSchedule(){
             '<span class="st-who"><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) +
             '<span class="st-time">' + esc(timeLabel(l.time)) + '</span></span>' +
             (done
-              ? '<span class="lesson-done done">수업 완료 ✓</span>'
+              ? '<button class="lesson-done done" type="button" data-lesson-done="' + esc(l.id) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' 수업 완료 취소') + '">수업 완료 ✓</button>'
               : '<button class="lesson-done" type="button" data-lesson-done="' + esc(l.id) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' 수업 완료로 표시') + '">수업 완료</button>') +
             '</div>';
         }).join('')
@@ -2510,17 +2619,25 @@ function renderSchedule(){
 
   var grid = $('#weekGrid');
   if(grid){
+    var week = weekDays();
+    var todayK = todayKey();
     grid.innerHTML = WEEKDAYS.map(function(name, i){
+      var wk = week[i];
       var list = all.filter(function(l){ return l.day === i; });
       return '<div class="day-col' + (i === today ? ' today' : '') + '">' +
-        '<span class="dc-name">' + esc(name) + '</span>' +
+        '<span class="dc-name">' + esc(name) +
+          '<span class="dc-date">' + esc(wk.md) + '</span>' +
+        '</span>' +
         (list.length
           ? list.map(function(l){
+              var skipped = isLessonSkippedOn(l.id, wk.key);
               var chipInner = '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
-                '<span class="lc-sub">' + esc(l.subject) + '</span>';
-              var chipClass = 'lc-chip' + (l.completedDate === todayKey() ? ' lc-done' : '');
-              if(!isMom()) return '<span class="' + chipClass + '" data-kid="' + esc(l.kid) + '">' + chipInner + '</span>';
-              return '<button class="' + chipClass + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' ' + timeLabel(l.time)) + ' 수업 지우기">' +
+                '<span class="lc-sub">' + esc(l.subject) + '</span>' +
+                (skipped ? '<span class="lc-skip">휴강</span>' : '');
+              var chipClass = 'lc-chip' + (l.completedDate === todayK ? ' lc-done' : '') + (skipped ? ' lc-off' : '');
+              var chipLabel = l.kid + ' ' + l.subject + ' ' + timeLabel(l.time) + (skipped ? ' · 이번 주 휴강' : '');
+              if(!isMom()) return '<span class="' + chipClass + '" data-kid="' + esc(l.kid) + '" title="' + esc(chipLabel) + '">' + chipInner + '</span>';
+              return '<button class="' + chipClass + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(chipLabel) + ' 수업 지우기">' +
                 chipInner +
                 '</button>';
             }).join('')
@@ -2534,7 +2651,14 @@ function completeLesson(id){
   var les = null;
   state.schedule.lessons.forEach(function(l){ if(l.id === id) les = l; });
   if(!les) return;
-  if(les.completedDate === todayKey()){ toast('오늘은 이미 완료했어요 ✓'); return; }
+  /* 누르면 완료, 한 번 더 누르면 취소 — 잘못 눌렀을 때 바로 되돌릴 수 있어요 */
+  if(les.completedDate === todayKey()){
+    les.completedDate = '';
+    save();
+    renderAll();
+    toast(les.kid + ' ' + les.subject + ' 수업 완료를 취소했어요');
+    return;
+  }
   /* 수업은 완료 표시만 해요. 용돈은 '오늘 할 일 모두 완료'에서 한 번만 적립! */
   les.completedDate = todayKey();
   save();
@@ -2648,6 +2772,7 @@ function togglePrep(id){
   var revoked = !nowDone && cancelTodayClaim(les.kid);
   renderTodos();
   renderAllowance();
+  renderCalendar();
   if(revoked) return;
   var st = todoStats(les.kid);
   if(nowDone && st.total > 0 && st.done === st.total){
@@ -2673,6 +2798,7 @@ function toggleTodo(id, anchor){
   var revoked = !t.done && cancelTodayClaim(t.owner);
   renderTodos();
   renderAllowance();   /* 용돈 탭 버튼이 바로 열리거나 잠겨요 */
+  renderCalendar();    /* 달력의 ⭐·🌙도 바로 맞춰요 */
   if(revoked) return;
   var left = state.todos.filter(function(x){ return x.owner === t.owner && !x.done; }).length;
   var justAll = t.done && KIDS.indexOf(t.owner) >= 0 && left === 0;
@@ -2716,6 +2842,7 @@ function resetDailyChecks(){
   save();
   renderTodos();
   renderAllowance();
+  renderCalendar();
   toast(cleared ? '오늘 체크를 모두 풀었어요. 새로운 하루 시작! 🌤️' : '이미 모두 체크가 풀려 있어요');
 }
 
@@ -3668,6 +3795,20 @@ function calMoneyOn(key){
   return out;
 }
 
+/* 그 날 할 일을 모두 끝낸 아이들 — dailyDone(날짜별 완료)이나 dailyTodo($1 받음) 중 하나라도 있으면 완료로 봐요 */
+function calDailyDoneOn(dayKey){
+  var out = [];
+  KIDS.forEach(function(k){
+    var marked = !!(state.dailyDone && isObject(state.dailyDone[k]) && state.dailyDone[k][dayKey]);
+    var claimed = !!(state.dailyTodo && isObject(state.dailyTodo[k]) && state.dailyTodo[k][dayKey]);
+    if(marked || claimed) out.push(k);
+  });
+  return out;
+}
+
+/* 달력·카드에 쓰는 아이별 완료 표시 */
+function doneEmoji(kid){ return kid === 'Luna' ? '🌙' : '⭐'; }
+
 function renderCalendar(){
   var title = $('#calTitle');
   if(!title) return;
@@ -3688,12 +3829,14 @@ function renderCalendar(){
     var lessons = calLessonsOn(key);
     var money = calMoneyOn(key);
     var memos = calEventsOn(key);
+    var dailyDone = calDailyDoneOn(key);
     var cls = 'cal-cell';
     if(wd === 0) cls += ' sun';
     if(wd === 6) cls += ' sat';
     if(key < todayK) cls += ' past';
     if(key === todayK) cls += ' today';
     if(key === calView.sel) cls += ' sel';
+    if(dailyDone.length) cls += ' has-done';
 
     var dots = '';
     var shown = 0;
@@ -3711,8 +3854,12 @@ function renderCalendar(){
     if(lessons.length) extra.push('수업 ' + lessons.length + '개');
     if(money.length) extra.push('용돈 기록 ' + money.length + '개');
     if(memos.length) extra.push('메모 ' + memos.length + '개');
+    dailyDone.forEach(function(k){ extra.push(k + ' 할 일 완료'); });
 
     cells.push('<button class="' + cls + '" type="button" role="gridcell" data-date="' + key + '" aria-label="' + esc(label + (extra.length ? '· ' + extra.join(', ') : '')) + '" aria-pressed="' + (key === calView.sel) + '">' +
+      (dailyDone.length
+        ? '<span class="cc-badges" aria-hidden="true">' + dailyDone.map(function(k){ return '<span>' + doneEmoji(k) + '</span>'; }).join('') + '</span>'
+        : '') +
       '<span class="cc-day">' + i + '</span>' +
       '<span class="cc-dots">' + dots + '</span>' +
       '</button>');
@@ -3757,6 +3904,21 @@ function renderCalendarDetail(){
             '</div>';
         }).join('')
       : '<div class="cal-empty">이날은 수업이 없어요 🐣</div>';
+  }
+
+  var doneBox = $('#calDone');
+  if(doneBox){
+    var doneKids = calDailyDoneOn(key);
+    var doneBlock = $('#calDoneBlock');
+    if(doneBlock) doneBlock.hidden = !doneKids.length;
+    doneBox.innerHTML = doneKids.map(function(k){
+      var claimed = !!(state.dailyTodo && isObject(state.dailyTodo[k]) && state.dailyTodo[k][key]);
+      return '<div class="cal-done-row">' + mascot(k, 'cd-ava') +
+        '<span class="cd-main"><b>' + esc(k) + '</b> ' + (key === todayKey() ? '오늘 ' : '') + '할 일 모두 완료' +
+        '<span class="cd-note">' + esc(doneEmoji(k)) + ' · ' + esc(claimed ? '용돈 ' + usd(1) + '도 받았어요' : '할 일을 모두 끝냈어요') + '</span></span>' +
+        '<span class="cd-mark" aria-hidden="true">✓</span>' +
+        '</div>';
+    }).join('');
   }
 
   var moneyBox = $('#calMoney');
@@ -4311,6 +4473,7 @@ function init(){
   timer.total = minutes * 60000;
   timer.remaining = timer.total;
 
+  refreshDailyDone();   /* 이 기기에 남아 있던 오늘 완료 기록을 먼저 맞춰요 */
   renderAll();
   showTab(state.ui.tab || 'calendar', true);
 
