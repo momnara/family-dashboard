@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
-<meta name="description" content="우리 가족 대시보드 - 공부 용돈, 랜덤 미션, 할 일, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.1.0">
-<!-- family-dashboard 1.1.0 · 실시간 동기화(Firebase) + USD -->
+<meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
+<meta name="app-version" content="1.2.0">
+<!-- family-dashboard 1.2.0 · 가족 달력(📅) + 용돈 $0.00 새 출발 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -410,6 +410,92 @@ main{padding-top:2px}
 @keyframes fall{0%{transform:translateY(-24px) rotate(0);opacity:0}12%{opacity:1}100%{transform:translateY(150px) rotate(220deg);opacity:0}}
 .hifive .hf-close{position:absolute;top:6px;right:8px;border:none;background:transparent;color:#B79A7C;font-size:16px;width:30px;height:30px;border-radius:50%}
 
+/* ---------- monthly family calendar ---------- */
+.cal-card{background:linear-gradient(170deg,#FFFDF6,#F4F8FF 58%,#FFF4F8);border-color:#E6E9F6}
+.cal-head{display:flex;align-items:center;gap:6px;margin-bottom:11px}
+.cal-nav{
+  flex:0 0 auto;width:38px;height:38px;border-radius:13px;border:2px solid var(--line);
+  background:#fff;color:#9C7B4F;font-size:12px;display:grid;place-items:center;
+  box-shadow:0 2px 0 #F1E2CB;transition:transform .1s ease,box-shadow .1s ease;
+}
+.cal-nav:active{transform:translateY(2px);box-shadow:none}
+.cal-month{flex:1 1 auto;min-width:0;text-align:center;line-height:1.2}
+.cal-month b{display:block;font-family:var(--font-title);font-size:17px;font-weight:400;color:#6B5A48;letter-spacing:-.3px;white-space:nowrap}
+.cal-month span{display:block;font-size:10px;color:var(--ink-faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-today{
+  flex:0 0 auto;min-height:38px;padding:0 11px;border-radius:12px;border:2px solid #F6DDA7;
+  background:#FFF8E4;color:#8A6530;font-family:var(--font-title);font-size:12px;
+  box-shadow:0 2px 0 #F1E2CB;
+}
+.cal-today:active{transform:translateY(2px);box-shadow:none}
+.cal-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:5px}
+.cal-week span{text-align:center;font-family:var(--font-title);font-size:11px;color:var(--ink-soft)}
+.cal-week span:first-child{color:#D08A9D}
+.cal-week span:last-child{color:#7FA6CF}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-cell{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:2px;
+  min-height:54px;padding:5px 1px 5px;border-radius:12px;border:1.5px solid #F1E9FA;
+  background:rgba(255,255,255,.9);box-shadow:0 2px 0 rgba(240,231,246,.7);
+  transition:transform .1s ease,background .15s ease,border-color .15s ease;
+}
+.cal-cell.blank{background:transparent;border:none;box-shadow:none;pointer-events:none}
+.cal-cell .cc-day{font-family:var(--font-title);font-size:12.5px;line-height:1;color:#7A6752}
+.cal-cell.sun{background:rgba(255,250,252,.95)}
+.cal-cell.sun .cc-day{color:#C97F94}
+.cal-cell.sat{background:rgba(249,252,255,.95)}
+.cal-cell.sat .cc-day{color:#7396BF}
+.cal-cell.past .cc-day{color:#B9A896}
+.cal-cell.today{border-color:#F6C980;background:linear-gradient(180deg,#FFF8E3,#FFEFE8)}
+.cal-cell.today .cc-day{color:#8A5A20}
+.cal-cell.today::after{
+  content:'';position:absolute;top:3px;right:4px;width:4px;height:4px;border-radius:50%;background:#F5A96B;
+}
+.cal-cell.sel{border-color:#F0A3B6;background:linear-gradient(180deg,#FFF1F6,#FFE5EE);box-shadow:0 3px 0 #F6C8D5}
+.cal-cell.sel .cc-day{color:#A4566A}
+.cal-cell:not(.blank):active{transform:scale(.95)}
+.cal-cell .cc-dots{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px;min-height:6px;width:100%}
+.cc-dot{display:block;width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.cc-dot.s{background:#F7A8BC}
+.cc-dot.l{background:#B9A6F0}
+.cc-dot.m{background:#F3C065}
+.cc-dot.e{background:#8FD0A6}
+.cc-dot.none{background:#EFE6DA}
+.cal-legend{display:flex;flex-wrap:wrap;gap:6px 11px;margin-top:10px;font-size:10.5px;color:var(--ink-soft)}
+.cal-legend span{display:inline-flex;align-items:center;gap:4px}
+.cal-legend .cc-dot{width:7px;height:7px}
+.cal-detail-card{background:linear-gradient(170deg,#FFFDF7,#FFF6FA);border-color:#F7E3EC}
+.cal-detail-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.cal-detail-head h2{margin-bottom:0}
+.cal-tag{
+  font-family:var(--font-title);font-size:11px;color:#A4566A;background:#FFE9EF;
+  border:1.5px solid #F8CDD9;border-radius:999px;padding:3px 9px;
+}
+.cal-block{border-top:1px dashed #F1E3CC;padding-top:10px;margin-top:10px}
+.cal-block:first-of-type{border-top:none;padding-top:0;margin-top:0}
+.cal-block h3{font-family:var(--font-title);font-size:13px;font-weight:400;color:#7A6752;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.cal-empty{font-size:11.5px;color:var(--ink-faint);padding:9px 10px;border:2px dashed var(--line);border-radius:12px;background:#FFFCF5;text-align:center}
+.cal-class-row{display:flex;align-items:center;gap:8px;font-size:12px;background:#fff;border:1.5px solid #F3E4C8;border-radius:13px;padding:6px 9px;margin-bottom:5px}
+.cal-class-row .av{width:23px;height:23px;flex:0 0 auto}
+.cal-class-row .cc-main{flex:1 1 auto;min-width:0;line-height:1.25}
+.cal-class-row .cc-main b{font-weight:700}
+.cal-class-row .cc-time{display:block;margin-top:1px;font-family:var(--font-title);font-size:10.5px;color:#8A6530;white-space:nowrap}
+.cal-class-row .cc-done{flex:0 0 auto;font-size:10.5px;color:#79B98C;background:#F1FAF3;border:1.5px solid #D6EEDA;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.cal-money-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 1px;border-top:1px dashed #F3EAD8}
+.cal-money-row:first-of-type{border-top:none}
+.cal-money-row .cm-ico{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:12px;background:#FFF7E6;border:1px solid #F6E7CB;flex:0 0 auto}
+.cal-money-row .cm-main{flex:1 1 auto;min-width:0;line-height:1.25}
+.cal-money-row .cm-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-money-row .cm-who{display:block;font-size:10px;color:var(--ink-faint)}
+.cal-money-row .cm-amt{font-family:var(--font-title);font-size:13px;white-space:nowrap}
+.cal-money-row .cm-amt.plus{color:#4E9A6D}
+.cal-money-row .cm-amt.minus{color:#C9737F}
+.cal-memo{display:flex;align-items:flex-start;gap:7px;background:#FFFCF2;border:1.5px solid #F3E7CB;border-radius:12px;padding:7px 9px;margin-bottom:5px;font-size:12px;line-height:1.45}
+.cal-memo .cm-text{flex:1 1 auto;min-width:0;word-break:break-word}
+.cal-memo .cm-meta{display:block;font-size:10px;color:var(--ink-faint);margin-top:2px}
+.cal-memo .del{border:none;background:transparent;color:#CDBBA6;font-size:16px;width:28px;height:28px;border-radius:9px;flex:0 0 auto}
+.cal-memo .del:active{background:#FFF1E8}
+
 /* ---------- stamps ---------- */
 .stamp-card{background:linear-gradient(170deg,#FFFDF6,#FFF8E8 60%,#FFF1F4);border-color:#F6E3C8}
 .stamp-progress{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -680,8 +766,8 @@ main{padding-top:2px}
   </div>
   <nav class="tabs" id="tabs" aria-label="메뉴">
     <button class="tab active" type="button" data-tab="allowance" aria-selected="true"><span class="ico" aria-hidden="true">💰</span>용돈</button>
-    <button class="tab" type="button" data-tab="mission" aria-selected="false"><span class="ico" aria-hidden="true">🎲</span>랜덤미션</button>
     <button class="tab" type="button" data-tab="todo" aria-selected="false"><span class="ico" aria-hidden="true">✅</span>할 일</button>
+    <button class="tab" type="button" data-tab="calendar" aria-selected="false"><span class="ico" aria-hidden="true">📅</span>달력</button>
     <button class="tab" type="button" data-tab="stamp" aria-selected="false"><span class="ico" aria-hidden="true">🌟</span>도장판</button>
     <button class="tab" type="button" data-tab="chat" aria-selected="false"><span class="ico" aria-hidden="true">💬</span>채팅</button>
     <button class="tab" type="button" data-tab="timer" aria-selected="false"><span class="ico" aria-hidden="true">⏰</span>타이머</button>
@@ -763,32 +849,52 @@ main{padding-top:2px}
       </div>
     </section>
 
-    <!-- ============ 2. 랜덤 미션 ============ -->
-    <section class="panel" id="panel-mission" aria-label="가족 랜덤 미션">
-      <div class="card mission-hero">
-        <h2 style="justify-content:center">🎲 오늘의 랜덤 미션</h2>
-        <div class="mission-slot" id="missionSlot"><span><span class="slot-emoji">🐣</span>버튼을 눌러 오늘의 미션을 뽑아보세요!</span></div>
-        <div class="mission-actions">
-          <button class="btn primary" id="missionSpin" type="button">오늘의 랜덤 미션 뽑기!</button>
-          <button class="btn mint" id="missionComplete" type="button" hidden>미션 완료 ✓</button>
+    <!-- ============ 2. 가족 달력 ============ -->
+    <section class="panel" id="panel-calendar" aria-label="가족 달력">
+      <div class="card cal-card">
+        <div class="cal-head">
+          <button class="cal-nav" id="calPrev" type="button" aria-label="이전 달">◀</button>
+          <div class="cal-month">
+            <b id="calTitle">오늘</b>
+            <span id="calSub">수업 · 용돈 · 가족 메모를 한눈에</span>
+          </div>
+          <button class="cal-nav" id="calNext" type="button" aria-label="다음 달">▶</button>
+          <button class="cal-today" id="calTodayBtn" type="button">오늘</button>
         </div>
-        <p class="small muted" id="missionHint" style="margin-top:10px"></p>
+        <div class="cal-week" aria-hidden="true">
+          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+        </div>
+        <div class="cal-grid" id="calGrid" role="grid" aria-label="월간 달력"></div>
+        <div class="cal-legend">
+          <span><i class="cc-dot s"></i>Stella 수업</span>
+          <span><i class="cc-dot l"></i>Luna 수업</span>
+          <span><i class="cc-dot m"></i>용돈 기록</span>
+          <span><i class="cc-dot e"></i>가족 메모</span>
+        </div>
       </div>
 
-      <div class="card">
-        <h2><span class="h2-emoji" aria-hidden="true">📝</span>우리 가족 미션 목록</h2>
-        <p class="card-sub">마음에 드는 미션을 넣고, 필요 없는 건 지울 수 있어요.</p>
-        <div class="mission-list" id="missionList"></div>
-        <form class="add-form" id="missionForm">
-          <label class="sr-only" for="missionInput">새 미션</label>
-          <input class="input" id="missionInput" type="text" placeholder="새 미션을 적어주세요" maxlength="40" autocomplete="off">
-          <button class="btn primary sm" type="submit">추가</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h2><span class="h2-emoji" aria-hidden="true">🏅</span>오늘 완료한 미션</h2>
-        <div class="mission-list" id="missionDoneList"></div>
+      <div class="card cal-detail-card">
+        <div class="cal-detail-head">
+          <h2><span class="h2-emoji" aria-hidden="true">🗓️</span><span id="calSelTitle">오늘</span></h2>
+          <span class="cal-tag" id="calSelTag" hidden>오늘</span>
+        </div>
+        <div class="cal-block">
+          <h3><span aria-hidden="true">🎒</span>이날 수업</h3>
+          <div id="calClasses"></div>
+        </div>
+        <div class="cal-block">
+          <h3><span aria-hidden="true">🪙</span>이날 용돈 기록</h3>
+          <div id="calMoney"></div>
+        </div>
+        <div class="cal-block">
+          <h3><span aria-hidden="true">📝</span>가족 메모</h3>
+          <div id="calMemos"></div>
+          <form class="add-form" id="calMemoForm">
+            <label class="sr-only" for="calMemoInput">가족 메모</label>
+            <input class="input" id="calMemoInput" type="text" maxlength="60" placeholder="이 날에 남길 메모 (예: 수족관 가는 날!)" autocomplete="off">
+            <button class="btn primary sm" type="submit">추가</button>
+          </form>
+        </div>
       </div>
     </section>
 
@@ -852,7 +958,7 @@ main{padding-top:2px}
         <div class="stamp-reward">
           <div class="sr-label"><span aria-hidden="true">🎁</span>10개를 모으면 받는 선물 (부모님이 적어주세요)</div>
           <label class="sr-only" for="stampRewardInput">도장 10개 보상</label>
-          <input id="stampRewardInput" type="text" maxlength="60" placeholder="예: 가족 영화관 데이트 🍿">
+          <input id="stampRewardInput" type="text" maxlength="60" placeholder="예: $5.00 용돈 보너스!">
         </div>
 
         <div class="stamp-actions">
@@ -1054,6 +1160,7 @@ function usd(n){ return (roundCents(n) < 0 ? '-$' : '$') + amountNum(n); }
 /* +$1.00 · -$2.50 */
 function usdSigned(n){ return (roundCents(n) < 0 ? '-$' : '+$') + amountNum(n); }
 var REWARD_PRESETS = [0.25, 0.5, 1];
+var STAMP_BONUS = 5;   /* 도장 10개를 다 모으면 용돈 +$5.00 */
 function isPresetReward(v){ return REWARD_PRESETS.indexOf(roundCents(v)) >= 0; }
 function pad2(n){ return (n < 10 ? '0' : '') + n; }
 function dateKey(d){
@@ -1294,35 +1401,9 @@ function seedState(){
   return {
     version: SCHEMA_VERSION,
     allowance: {
-      Stella: {
-        start: 44.2,
-        reward: 1,
-        log: [
-          { id:'al_s1', date:t, time:'오후 4:20', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_s2', date:t, time:'오후 4:05', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_s3', date:t, time:'오후 3:40', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_s4', date:t, time:'오후 3:10', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_s5', date:t, time:'오후 2:30', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_s6', date:t, time:'오후 1:50', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_s7', date:t, time:'오전 10:12', type:'deposit', amount:20, memo:'할머니 용돈' },
-          { id:'al_s8', date:t, time:'오전 9:30', type:'spend', amount:4.5, memo:'문구점 연필' },
-          { id:'al_s9', date:y, time:'오후 7:00', type:'deposit', amount:10, memo:'엄마가 입금' },
-          { id:'al_s10', date:y, time:'오후 5:20', type:'spend', amount:3.25, memo:'편의점 아이스크림' }
-        ]
-      },
-      Luna: {
-        start: 18.5,
-        reward: 1,
-        log: [
-          { id:'al_l1', date:t, time:'오후 4:35', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_l2', date:t, time:'오후 3:55', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_l3', date:t, time:'오후 2:10', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_l4', date:t, time:'오전 11:00', type:'deposit', amount:10, memo:'아빠가 입금' },
-          { id:'al_l5', date:y, time:'오후 6:40', type:'spend', amount:6, memo:'책 사기' },
-          { id:'al_l6', date:y, time:'오후 4:00', type:'study', amount:1, memo:'공부 완료' },
-          { id:'al_l7', date:y, time:'오후 3:20', type:'study', amount:1, memo:'공부 완료' }
-        ]
-      }
+      /* 새 학기 시작: 두 아이 모두 $0.00에서 차곡차곡 모으기 */
+      Stella: { start: 0, reward: 1, log: [] },
+      Luna: { start: 0, reward: 1, log: [] }
     },
     missions: {
       items: [
@@ -1354,37 +1435,14 @@ function seedState(){
       { id:'td9', owner:'Luna', text:'영어 필사 15분', done:false, date:t }
     ],
     stamps: {
-      Stella: {
-        reward: '가족 영화관 데이트 🍿',
-        slots: [
-          { date: dateKey(daysAgo(12)), kind:0 },
-          { date: dateKey(daysAgo(9)), kind:1 },
-          { date: dateKey(daysAgo(6)), kind:2 },
-          { date: dateKey(daysAgo(2)), kind:0 },
-          null, null, null, null, null, null
-        ]
-      },
-      Luna: {
-        reward: '아이스크림 파티 🍦',
-        slots: [
-          { date: dateKey(daysAgo(8)), kind:1 },
-          { date: dateKey(daysAgo(1)), kind:2 },
-          null, null, null, null, null, null, null, null
-        ]
-      }
+      Stella: { reward: '$5.00 용돈 보너스!', slots: [null, null, null, null, null, null, null, null, null, null] },
+      Luna: { reward: '$5.00 용돈 보너스!', slots: [null, null, null, null, null, null, null, null, null, null] }
     },
     chat: {
       me: 'Stella',
       locked: false,
-      messages: [
-        { id:'c1', who:'엄마', type:'text', text:'다들 오늘 하루도 수고했어요 💛 내일 저녁은 김치볶음밥!', ts: tsAt(-1, 19, 10), hearts:['아빠','Stella'] },
-        { id:'c2', who:'Stella', type:'text', text:'저 오늘 공부 6번 했어요! 용돈기입장 확인해주세요 😆', ts: tsAt(-1, 19, 14), hearts:['엄마'] },
-        { id:'c3', who:'Luna', type:'sticker', sticker:'love', ts: tsAt(-1, 19, 16), hearts:[] },
-        { id:'c4', who:'아빠', type:'sticker', sticker:'happy', ts: tsAt(-1, 19, 20), hearts:['Luna'] },
-        { id:'c5', who:'엄마', type:'voice', sample:true, dur:'0:06', ts: tsAt(0, 15, 14), hearts:[] },
-        { id:'c6', who:'아빠', type:'text', text:'이번 주말에 수족관 갈까? 🐟', ts: tsAt(0, 18, 7), hearts:[] },
-        { id:'c7', who:'Stella', type:'text', text:'좋아요!! 저 상어 보고 싶어요 🦈', ts: tsAt(0, 18, 9), hearts:['아빠'] }
-      ]
+      /* 대화 목록은 비어 있음 — 첫 메시지는 가족이 직접 남겨요 */
+      messages: []
     },
     schedule: {
       lessons: [
@@ -1400,6 +1458,8 @@ function seedState(){
     settings: { firebaseUrl: DEFAULT_FIREBASE_URL, localOnly: false },
     meta: { updatedAt: 0 },
     dailyTodo: { Stella: {}, Luna: {} },
+    /* 가족 달력 메모: { 'YYYY-MM-DD': [ {id, text, who, ts} ] } — 날짜 키가 계속 늘어나요 */
+    calendarEvents: {},
     ui: { tab:'allowance', kid:'Stella', stampKid:'Stella', todoFilter:'전체' }
   };
 }
@@ -1452,7 +1512,7 @@ function normalize(saved){
   if(KIDS.indexOf(s.ui.kid) < 0) s.ui.kid = 'Stella';
   if(KIDS.indexOf(s.ui.stampKid) < 0) s.ui.stampKid = 'Stella';
   if(['전체'].concat(PEOPLE).indexOf(s.ui.todoFilter) < 0) s.ui.todoFilter = '전체';
-  if(['allowance','mission','todo','stamp','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'allowance';
+  if(['allowance','todo','calendar','stamp','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'allowance';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
   if(!isObject(s.schedule) || !Array.isArray(s.schedule.lessons)) s.schedule = base.schedule;
   s.schedule.lessons = s.schedule.lessons.filter(function(l){
@@ -1483,6 +1543,29 @@ function normalize(saved){
     s.dailyTodo[k] = out;
   });
   if(['clock','countdown'].indexOf(s.alarm.mode) < 0) s.alarm.mode = 'clock';
+  /* 가족 달력 메모도 날짜 키가 계속 늘어나는 표라서 직접 살려요 */
+  var savedCal = (isObject(saved) && isObject(saved.calendarEvents)) ? saved.calendarEvents : {};
+  s.calendarEvents = {};
+  Object.keys(savedCal).forEach(function(d){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
+    var v = savedCal[d];
+    var arr = Array.isArray(v)
+      ? v
+      : (isObject(v) ? Object.keys(v).map(function(k){ return v[k]; }) : []);
+    var out = [];
+    arr.forEach(function(m){
+      if(!isObject(m)) return;
+      var text = String(m.text || '').trim().slice(0, 60);
+      if(!text) return;
+      out.push({
+        id: m.id ? String(m.id) : uid('ce'),
+        text: text,
+        who: PEOPLE.indexOf(m.who) >= 0 ? m.who : '가족',
+        ts: num(m.ts, 0)
+      });
+    });
+    if(out.length) s.calendarEvents[d] = out;
+  });
   return s;
 }
 
@@ -1604,6 +1687,7 @@ function syncPayload(){
     stamps: state.stamps,
     schedule: state.schedule,
     dailyTodo: state.dailyTodo,
+    calendarEvents: state.calendarEvents,
     chat: { messages: state.chat.messages },
     timer: state.timer,
     alarm: state.alarm,
@@ -1750,7 +1834,7 @@ function onRemoteValue(snap){
 
 function sharedSignature(st){
   try{
-    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.chat.messages, st.timer, st.alarm]);
+    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.calendarEvents, st.chat.messages, st.timer, st.alarm]);
   }catch(e){ return ''; }
 }
 
@@ -1759,9 +1843,10 @@ function applyRemote(remote){
   var wasApplying = sync.applying;
   sync.applying = true;
   try{
+    /* 원격에 메시지가 없으면 '대화를 지운 것'으로 보고 이 기기에도 비워요 */
     var msgs = (isObject(remote.chat) && Array.isArray(remote.chat.messages))
       ? remote.chat.messages
-      : state.chat.messages;
+      : [];
     var before = sharedSignature(state);
     var next = normalize({
       version: SCHEMA_VERSION,
@@ -1771,6 +1856,7 @@ function applyRemote(remote){
       stamps: isObject(remote.stamps) ? remote.stamps : state.stamps,
       schedule: isObject(remote.schedule) ? remote.schedule : state.schedule,
       dailyTodo: isObject(remote.dailyTodo) ? remote.dailyTodo : state.dailyTodo,
+      calendarEvents: isObject(remote.calendarEvents) ? remote.calendarEvents : state.calendarEvents,
       /* 이 기기의 프로필/잠금은 절대 덮어쓰지 않아요 */
       chat: { me: state.chat.me, locked: state.chat.locked, messages: msgs },
       timer: isObject(remote.timer) ? remote.timer : state.timer,
@@ -2028,109 +2114,6 @@ function doQuick(kind){
   renderAllowance();
   bumpTotal();
   toast((kind === 'deposit' ? '입금 ' : '사용 ') + usd(amount) + ' 기록했어요');
-}
-
-/* =========================================================
-   2) Random family mission
-   ========================================================= */
-var spinning = false;
-
-function renderMission(){
-  var slot = $('#missionSlot');
-  var cur = state.missions.current;
-  var hasToday = cur && cur.date === todayKey();
-  var btnDone = $('#missionComplete');
-  var hint = $('#missionHint');
-
-  if(hasToday){
-    slot.className = 'mission-slot result';
-    slot.innerHTML = '<span class="slot-tag">오늘의 미션</span><span>' + esc(cur.text) + '</span>';
-    btnDone.hidden = !!cur.done;
-    hint.textContent = cur.done
-      ? '오늘 미션 완료! 내일 또 만나요 🐥'
-      : '미션을 끝냈으면 옆의 완료 버튼을 눌러주세요';
-  } else {
-    slot.className = 'mission-slot';
-    slot.innerHTML = '<span><span class="slot-emoji">🐣</span>버튼을 눌러 오늘의 미션을 뽑아보세요!</span>';
-    btnDone.hidden = true;
-    hint.textContent = state.missions.done.length
-      ? '어제는 ' + esc(state.missions.done[0].text) + ' 미션을 했어요'
-      : '';
-  }
-
-  var list = $('#missionList');
-  if(!state.missions.items.length){
-    list.innerHTML = '<div class="empty"><span class="em">📝</span>미션 목록이 비었어요.<br>아래에서 새 미션을 추가해보세요.</div>';
-  } else {
-    list.innerHTML = state.missions.items.map(function(m){
-      return '<div class="mission-row">' +
-        '<span class="mr-emoji" aria-hidden="true">🎯</span>' +
-        '<span class="mr-text">' + esc(m.text) + '</span>' +
-        (isMom() ? '<button class="mr-del" type="button" data-mdel="' + esc(m.id) + '" aria-label="미션 삭제">×</button>' : '') +
-        '</div>';
-    }).join('');
-  }
-
-  var doneBox = $('#missionDoneList');
-  var todayDone = state.missions.done.filter(function(d){ return d.date === todayKey(); });
-  if(!todayDone.length){
-    doneBox.innerHTML = '<div class="empty"><span class="em">🏅</span>오늘 완료한 미션이 아직 없어요.</div>';
-  } else {
-    doneBox.innerHTML = todayDone.map(function(d){
-      return '<div class="mission-row">' +
-        '<span class="mr-emoji" aria-hidden="true">⭐</span>' +
-        '<span class="mr-text">' + esc(d.text) + '</span>' +
-        '<span class="done-tag">완료</span>' +
-        '</div>';
-    }).join('');
-  }
-}
-
-function spinMission(){
-  if(spinning) return;
-  var items = state.missions.items;
-  if(items.length < 1){ toast('미션을 하나 이상 추가해주세요'); return; }
-  var btn = $('#missionSpin');
-  var slot = $('#missionSlot');
-  spinning = true;
-  btn.disabled = true;
-  slot.className = 'mission-slot shuffling';
-  var ticks = 0;
-  var total = 16;
-  var iv = setInterval(function(){
-    var cand = items[Math.floor(Math.random() * items.length)];
-    slot.innerHTML = '<span class="slot-tag">두구두구…</span><span>' + esc(cand.text) + '</span>';
-    ticks++;
-    if(ticks >= total){
-      clearInterval(iv);
-      var pick = items[Math.floor(Math.random() * items.length)];
-      if(items.length > 1 && state.missions.current && pick.text === state.missions.current.text){
-        pick = items[(items.indexOf(pick) + 1) % items.length];
-      }
-      state.missions.current = { id: pick.id, text: pick.text, date: todayKey(), done: false };
-      save();
-      spinning = false;
-      btn.disabled = false;
-      renderMission();
-      toast('오늘의 미션은… ' + pick.text + ' 🎲');
-    }
-  }, 90);
-}
-
-function completeMission(){
-  var cur = state.missions.current;
-  if(!cur || cur.date !== todayKey() || cur.done) return;
-  cur.done = true;
-  state.missions.done.unshift({
-    id: uid('md'),
-    text: cur.text,
-    date: todayKey(),
-    by: state.chat.me
-  });
-  save();
-  renderMission();
-  coinBurst($('#missionComplete'), 6);
-  toast('미션 완료! 정말 잘했어요 🙌');
 }
 
 /* =========================================================
@@ -2484,17 +2467,26 @@ function stampSlot(i){
     return;
   }
   var filled = st.slots.filter(Boolean).length;
+  /* 이번 클릭으로 9 → 10이 된 순간에만 $5.00 보너스를 한 번 적립해요 (모달을 닫거나 다시 그려도 또 적립되지 않아요) */
+  var completed = filled === 9;
   st.slots[i] = { date: todayKey(), kind: filled % 3 };
-  save();
+  if(completed){
+    addLedger(kid, 'deposit', roundCents(STAMP_BONUS), '도장 10개 완성 보너스!');
+  } else {
+    save();
+  }
   renderStamps();
   var btn = $('#stampGrid [data-slot="' + i + '"]');
   if(btn){
     btn.classList.add('anim');
   }
-  if(filled + 1 >= 10){
+  if(completed){
+    coinBurst(btn || $('#stampGrid'), 10);
+    renderAllowance();
+    if(currentKid() === kid) bumpTotal();
     showStampReward(kid);
   } else {
-    toast('도장 하나! ' + (10 - filled - 1) + '개 더 모으면 선물이에요 🌟');
+    toast('도장 하나! ' + (10 - filled - 1) + '개 더 모으면 ' + usd(STAMP_BONUS) + ' 선물이에요 🌟');
   }
 }
 
@@ -2503,7 +2495,7 @@ function showStampReward(kid){
   openModal(
     '<div class="mascot-big">' + mascotSVG(kid) + '</div>' +
     '<h2 style="justify-content:center">도장 10개 완성! 🎉</h2>' +
-    '<p class="modal-sub" style="text-align:center">' + esc(kid) + '가 도장을 다 모았어요.<br>약속한 선물을 주세요!</p>' +
+    '<p class="modal-sub" style="text-align:center">' + esc(kid) + '가 도장을 다 모았어요.<br><b>' + usd(STAMP_BONUS) + ' 보너스 적립!</b><br>용돈기입장에도 차곡차곡 넣어뒀어요 🪙</p>' +
     '<div style="text-align:center;font-family:var(--font-title);font-size:17px;color:#8A4E60;background:#FFF2D9;border:2px dashed #F3D79A;border-radius:16px;padding:14px">🎁 ' + esc(st.reward || '선물 약속을 적어주세요') + '</div>' +
     '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>좋아요!</button></div>'
   );
@@ -2573,7 +2565,7 @@ function renderChat(){
   var msgs = state.chat.messages.slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
 
   if(!msgs.length){
-    box.innerHTML = '<div class="empty"><span class="em">💬</span>첫 인사를 건네보세요!</div>';
+    box.innerHTML = '<div class="empty"><span class="em">🐥</span>아직 대화가 없어요.<br>첫 메시지를 남겨보세요!</div>';
     return;
   }
 
@@ -3128,7 +3120,7 @@ function openSettings(){
     '<h2>⚙️ 설정</h2>' +
     '<div class="setting-block">' +
       '<h3>실시간 동기화</h3>' +
-      '<p>같은 주소를 쓰는 폰과 태블릿이 용돈·미션·할 일·도장·채팅을 함께 봐요. 인터넷이 잠깐 끊겨도 이 기기에 저장했다가 다시 연결되면 맞춰요.</p>' +
+      '<p>같은 주소를 쓰는 폰과 태블릿이 용돈·할 일·달력·도장·채팅을 함께 봐요. 인터넷이 잠깐 끊겨도 이 기기에 저장했다가 다시 연결되면 맞춰요.</p>' +
       '<div class="kv"><span>지금 상태</span><b id="syncStateLine">' + esc(syncModeLabel(sync.mode)) + '</b></div>' +
       '<p class="small muted" id="syncDetail" style="margin:6px 0 9px">' + esc(syncModeDetail(sync.mode)) + '</p>' +
       '<label class="sr-only" for="firebaseUrl">Firebase Realtime Database URL</label>' +
@@ -3222,9 +3214,240 @@ function openSettings(){
 }
 
 /* =========================================================
+   Monthly family calendar (📅 달력)
+   - 이번 달 달력 위에 수업·용돈·가족 메모를 작은 점으로 보여줘요
+   - 날짜를 누르면 아래 카드에 그날 내용이 모여요
+   ========================================================= */
+var calView = (function(){
+  var d = new Date();
+  return { y: d.getFullYear(), m: d.getMonth(), sel: todayKey() };
+})();
+
+function calKey(y, m, d){ return y + '-' + pad2(m + 1) + '-' + pad2(d); }
+
+function calEventsOn(key){
+  var list = state.calendarEvents ? state.calendarEvents[key] : null;
+  return Array.isArray(list) ? list : [];
+}
+
+function calWeekdayOf(key){
+  var p = String(key).split('-');
+  return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).getDay();
+}
+
+function calLessonsOn(key){
+  var wd = calWeekdayOf(key);
+  return lessonsSorted().filter(function(l){ return l.day === wd; });
+}
+
+function calMoneyOn(key){
+  var out = [];
+  KIDS.forEach(function(k){
+    var a = state.allowance[k];
+    if(!a || !Array.isArray(a.log)) return;
+    a.log.forEach(function(e){
+      if(e.date === key) out.push({ kid: k, e: e });
+    });
+  });
+  return out;
+}
+
+function renderCalendar(){
+  var title = $('#calTitle');
+  if(!title) return;
+  title.textContent = calView.y + '년 ' + (calView.m + 1) + '월';
+
+  var todayK = todayKey();
+  var first = new Date(calView.y, calView.m, 1);
+  var startWd = first.getDay();
+  var days = new Date(calView.y, calView.m + 1, 0).getDate();
+  var cells = [];
+  var i;
+
+  for(i = 0; i < startWd; i++) cells.push('<span class="cal-cell blank" aria-hidden="true"></span>');
+
+  for(i = 1; i <= days; i++){
+    var key = calKey(calView.y, calView.m, i);
+    var wd = (startWd + i - 1) % 7;
+    var lessons = calLessonsOn(key);
+    var money = calMoneyOn(key);
+    var memos = calEventsOn(key);
+    var cls = 'cal-cell';
+    if(wd === 0) cls += ' sun';
+    if(wd === 6) cls += ' sat';
+    if(key < todayK) cls += ' past';
+    if(key === todayK) cls += ' today';
+    if(key === calView.sel) cls += ' sel';
+
+    var dots = '';
+    var shown = 0;
+    var maxDots = 5;
+    lessons.forEach(function(l){
+      if(shown >= maxDots) return;
+      dots += '<i class="cc-dot ' + (l.kid === 'Luna' ? 'l' : 's') + '"></i>';
+      shown++;
+    });
+    if(money.length && shown < maxDots){ dots += '<i class="cc-dot m"></i>'; shown++; }
+    if(memos.length && shown < maxDots){ dots += '<i class="cc-dot e"></i>'; shown++; }
+
+    var label = (calView.m + 1) + '월 ' + i + '일 (' + WEEKDAYS[wd] + ') ';
+    var extra = [];
+    if(lessons.length) extra.push('수업 ' + lessons.length + '개');
+    if(money.length) extra.push('용돈 기록 ' + money.length + '개');
+    if(memos.length) extra.push('메모 ' + memos.length + '개');
+
+    cells.push('<button class="' + cls + '" type="button" role="gridcell" data-date="' + key + '" aria-label="' + esc(label + (extra.length ? '· ' + extra.join(', ') : '')) + '" aria-pressed="' + (key === calView.sel) + '">' +
+      '<span class="cc-day">' + i + '</span>' +
+      '<span class="cc-dots">' + dots + '</span>' +
+      '</button>');
+  }
+
+  var tail = (7 - ((startWd + days) % 7)) % 7;
+  for(i = 0; i < tail; i++) cells.push('<span class="cal-cell blank" aria-hidden="true"></span>');
+
+  var grid = $('#calGrid');
+  if(grid) grid.innerHTML = cells.join('');
+  renderCalendarDetail();
+}
+
+function renderCalendarDetail(){
+  var key = calView.sel;
+  if(!key) return;
+  var p = String(key).split('-');
+  var wd = calWeekdayOf(key);
+
+  var t = $('#calSelTitle');
+  if(t) t.textContent = Number(p[1]) + '월 ' + Number(p[2]) + '일 (' + WEEKDAYS[wd] + ')';
+  var tag = $('#calSelTag');
+  if(tag){
+    var rel = '';
+    if(key === todayKey()) rel = '오늘';
+    else if(key === dateKey(daysAgo(1))) rel = '어제';
+    else if(key === dateKey(daysAgo(-1))) rel = '내일';
+    tag.hidden = !rel;
+    tag.textContent = rel;
+  }
+
+  var lessonBox = $('#calClasses');
+  if(lessonBox){
+    var lessons = calLessonsOn(key);
+    lessonBox.innerHTML = lessons.length
+      ? lessons.map(function(l){
+          var done = l.completedDate === key;
+          return '<div class="cal-class-row">' + mascot(l.kid) +
+            '<span class="cc-main"><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) +
+            '<span class="cc-time">' + esc(timeLabel(l.time)) + '</span></span>' +
+            (done ? '<span class="cc-done">완료 ✓</span>' : '') +
+            '</div>';
+        }).join('')
+      : '<div class="cal-empty">이날은 수업이 없어요 🐣</div>';
+  }
+
+  var moneyBox = $('#calMoney');
+  if(moneyBox){
+    var money = calMoneyOn(key);
+    moneyBox.innerHTML = money.length
+      ? money.map(function(m){
+          var plus = m.e.type !== 'spend';
+          var amt = roundCents(num(m.e.amount, 0));
+          return '<div class="cal-money-row">' +
+            '<span class="cm-ico" aria-hidden="true">' + ledgerIcon(m.e.type) + '</span>' +
+            '<span class="cm-main"><span class="cm-name">' + esc(ledgerName(m.e)) + '</span>' +
+            '<span class="cm-who">' + esc(m.kid) + ' · ' + esc(m.e.time || '') + '</span></span>' +
+            '<span class="cm-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? usdSigned(amt) : usd(-amt)) + '</span>' +
+            '</div>';
+        }).join('')
+      : '<div class="cal-empty">이날은 용돈 기록이 없어요</div>';
+  }
+
+  var memoBox = $('#calMemos');
+  if(memoBox){
+    var memos = calEventsOn(key).slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
+    memoBox.innerHTML = memos.length
+      ? memos.map(function(m){
+          var when = '';
+          if(num(m.ts, 0) > 0){
+            var md = new Date(num(m.ts, 0));
+            when = shortDate(dateKey(md)) + ' ' + hm(md);
+          }
+          return '<div class="cal-memo">' +
+            '<span class="cm-text">' + esc(m.text) +
+            '<span class="cm-meta">' + esc(m.who || '가족') + (when ? ' · ' + esc(when) : '') + '</span></span>' +
+            (isMom() ? '<button class="del" type="button" data-memo-del="' + esc(m.id) + '" aria-label="이 메모 지우기">×</button>' : '') +
+            '</div>';
+        }).join('')
+      : '<div class="cal-empty">아직 메모가 없어요. 이 날에 가족 메모를 남겨보세요 ✏️</div>';
+  }
+}
+
+function calMove(delta){
+  var d = new Date(calView.y, calView.m + delta, 1);
+  calView.y = d.getFullYear();
+  calView.m = d.getMonth();
+  var now = new Date();
+  calView.sel = (calView.y === now.getFullYear() && calView.m === now.getMonth())
+    ? todayKey()
+    : calKey(calView.y, calView.m, 1);
+  renderCalendar();
+}
+
+function calGoToday(){
+  var d = new Date();
+  calView.y = d.getFullYear();
+  calView.m = d.getMonth();
+  calView.sel = todayKey();
+  renderCalendar();
+}
+
+function selectCalDate(key){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(key))) return;
+  var p = String(key).split('-');
+  calView.y = Number(p[0]);
+  calView.m = Number(p[1]) - 1;
+  calView.sel = String(key);
+  renderCalendar();
+}
+
+function addCalMemo(){
+  var input = $('#calMemoInput');
+  if(!input) return;
+  var text = String(input.value || '').trim().slice(0, 60);
+  if(!text){ toast('메모 내용을 적어주세요'); input.focus(); return; }
+  var key = calView.sel;
+  if(!key) return;
+  if(!isObject(state.calendarEvents)) state.calendarEvents = {};
+  if(!Array.isArray(state.calendarEvents[key])) state.calendarEvents[key] = [];
+  state.calendarEvents[key].push({
+    id: uid('ce'),
+    text: text,
+    who: state.chat.me || '가족',
+    ts: Date.now()
+  });
+  input.value = '';
+  save();
+  renderCalendar();
+  toast('메모를 남겼어요 📝');
+}
+
+function deleteCalMemo(id){
+  if(!isMom()) return;
+  var key = calView.sel;
+  var list = calEventsOn(key);
+  var next = list.filter(function(m){ return m.id !== id; });
+  if(next.length === list.length) return;
+  if(next.length) state.calendarEvents[key] = next;
+  else if(state.calendarEvents) delete state.calendarEvents[key];
+  save();
+  renderCalendar();
+  toast('메모를 지웠어요');
+}
+
+/* =========================================================
    Tabs + rendering all
    ========================================================= */
 function showTab(name, silent){
+  /* 없는 탭(예: 예전에 저장된 'mission')을 부르면 용돈 탭으로 돌아와요 */
+  if(!document.getElementById('panel-' + name)) name = 'allowance';
   state.ui.tab = name;
   if(!silent) save(true);
   $$('.tab').forEach(function(b){
@@ -3235,6 +3458,7 @@ function showTab(name, silent){
   $$('.panel').forEach(function(p){
     p.classList.toggle('active', p.id === 'panel-' + name);
   });
+  if(name === 'calendar') renderCalendar();
   if(!silent){ window.scrollTo(0, 0); }
   if(name === 'chat') scrollChat();
 }
@@ -3246,9 +3470,9 @@ function scrollChat(){
 
 function renderAll(){
   renderAllowance();
-  renderMission();
   renderTodos();
   renderSchedule();
+  renderCalendar();
   renderStamps();
   renderChatWho();
   renderChat();
@@ -3312,31 +3536,6 @@ function bindEvents(){
     save();
     renderAllowance();
     toast('기록을 지웠어요');
-  });
-
-  /* mission */
-  $('#missionSpin').addEventListener('click', spinMission);
-  $('#missionComplete').addEventListener('click', completeMission);
-  $('#missionForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    var input = $('#missionInput');
-    var text = input.value.trim();
-    if(!text){ toast('미션 내용을 적어주세요'); return; }
-    state.missions.items.push({ id: uid('m'), text: text.slice(0, 40) });
-    save();
-    input.value = '';
-    renderMission();
-    toast('미션을 추가했어요 🎯');
-  });
-  $('#missionList').addEventListener('click', function(e){
-    var b = e.target.closest ? e.target.closest('[data-mdel]') : null;
-    if(!b) return;
-    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
-    var id = b.getAttribute('data-mdel');
-    state.missions.items = state.missions.items.filter(function(m){ return m.id !== id; });
-    save();
-    renderMission();
-    toast('미션을 지웠어요');
   });
 
   /* todo */
@@ -3537,6 +3736,25 @@ function bindEvents(){
   $('#alarmPreviewBtn').addEventListener('click', function(){
     stopSleepSound();
     showSleepScreen();
+  });
+
+  /* calendar */
+  $('#calPrev').addEventListener('click', function(){ calMove(-1); });
+  $('#calNext').addEventListener('click', function(){ calMove(1); });
+  $('#calTodayBtn').addEventListener('click', calGoToday);
+  $('#calGrid').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-date]') : null;
+    if(!b) return;
+    selectCalDate(b.getAttribute('data-date'));
+  });
+  $('#calMemos').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-memo-del]') : null;
+    if(!b) return;
+    deleteCalMemo(b.getAttribute('data-memo-del'));
+  });
+  $('#calMemoForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    addCalMemo();
   });
 
   /* settings */
