@@ -78,6 +78,14 @@ header.top{
 .brand .brand-mascot{width:42px;height:42px;flex:0 0 auto;filter:drop-shadow(0 3px 4px rgba(199,163,108,.22))}
 .brand h1{font-family:var(--font-title);font-size:20px;font-weight:400;letter-spacing:-.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand p{font-size:11px;color:var(--ink-soft);margin-top:1px}
+.brand-line{display:flex;align-items:center;gap:6px;min-width:0}
+.lock-badge{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;
+  font-family:var(--font-title);font-size:11px;font-weight:400;line-height:1.3;
+  color:#8A6530;background:#FFF4D9;border:1.5px solid #F0D9AE;
+  border-radius:999px;padding:2px 8px;white-space:nowrap;
+}
+.lock-badge b{font-weight:400}
 .icon-btn{
   flex:0 0 auto;width:44px;height:44px;border-radius:15px;
   border:2px solid var(--line);background:#fff;
@@ -819,7 +827,10 @@ main{padding-top:2px}
     <div class="brand">
       <span class="brand-mascot" id="headerMascot" aria-hidden="true"></span>
       <div>
-        <h1>우리 가족 대시보드</h1>
+        <div class="brand-line">
+          <h1>우리 가족 대시보드</h1>
+          <span class="lock-badge" id="lockBadge" hidden></span>
+        </div>
         <p>오늘도 사이좋게, 조금씩 자라요 🌱</p>
       </div>
     </div>
@@ -2738,6 +2749,23 @@ function syncBell(){
   b.title = on ? '가족 채팅 알림 켜짐 · 눌러서 설정' : '가족 채팅 알림 꺼짐 · 눌러서 설정';
 }
 
+/* 제목 없에 이 기기를 잠근 프로필 이름을 보여줘요 */
+function renderLockBadge(){
+  var b = $('#lockBadge');
+  if(!b) return;
+  var on = !!(state && state.chat && state.chat.locked);
+  var me = (state && state.chat && state.chat.me) || '';
+  if(on && me){
+    b.hidden = false;
+    b.innerHTML = '🔒 <b>' + esc(me) + '</b>';
+    b.title = me + '(으)로 잠긴 기기예요';
+  } else {
+    b.hidden = true;
+    b.innerHTML = '';
+    b.removeAttribute('title');
+  }
+}
+
 function copyPlainText(text, done){
   function fallback(){
     var ok = false;
@@ -3685,6 +3713,7 @@ function renderAll(){
   renderChatWho();
   renderChat();
   syncBell();
+  renderLockBadge();
   renderAlarm();
   renderTimer();
 }
@@ -3826,6 +3855,9 @@ function bindEvents(){
     state.chat.locked = this.checked;
     save(true);
     renderChatWho();
+    renderLockBadge();
+    renderTodos();   /* 잠그면 다른 아이 항목이 바로 잠겨 보여요 */
+    renderAllowance();
     toast(this.checked ? '이 기기를 ' + state.chat.me + '로 잠갔어요 🔒' : '잠금을 풀었어요');
   });
   $('#chatForm').addEventListener('submit', function(e){
