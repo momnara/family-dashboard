@@ -368,10 +368,15 @@ main{padding-top:2px}
 /* ---------- weekly class schedule ---------- */
 .schedule-card{background:linear-gradient(170deg,#FFFDF6,#F7F2FF 62%,#FFF3F7);border-color:#EBDFF8}
 .sched-today{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.sched-today .st-line{display:flex;align-items:center;gap:7px;font-size:12.5px;background:#fff;border:1.5px solid #F3E4C8;border-radius:13px;padding:8px 10px}
+.sched-today .st-line{display:flex;align-items:center;gap:8px;font-size:12.5px;background:#fff;border:1.5px solid #F3E4C8;border-radius:13px;padding:7px 9px}
 .sched-today .st-line .av{width:23px;height:23px}
 .sched-today .st-line b{font-weight:700}
-.sched-today .st-line .st-time{margin-left:auto;font-family:var(--font-title);font-size:11.5px;color:#8A6530;white-space:nowrap}
+.sched-today .st-who{flex:1 1 auto;min-width:0;line-height:1.25}
+.sched-today .st-line .st-time{display:block;margin-top:1px;font-family:var(--font-title);font-size:10.5px;color:#8A6530;white-space:nowrap}
+.lesson-done{flex:0 0 auto;min-height:34px;padding:0 10px;border-radius:11px;border:1.5px solid #BEE4CB;background:#EFF9F2;color:#3F7352;font-family:var(--font-title);font-size:11.5px;box-shadow:0 2px 0 #CDE8D5;white-space:nowrap}
+.lesson-done:active{transform:translateY(2px);box-shadow:none}
+.lesson-done.done{display:inline-flex;align-items:center;min-height:30px;border-color:#DCEEDD;background:#F7FBF6;color:#79B98C;box-shadow:none;font-size:11px}
+.lc-chip.lc-done{background:#F1FAF3;border-left-color:#8FCFA0;color:#3F7352}
 .sched-today .st-empty{font-size:12px;color:var(--ink-faint);text-align:center;padding:11px;border:2px dashed var(--line);border-radius:13px;background:#FFFCF5}
 .week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
 .day-col{border-radius:13px;border:1.5px solid #F1E7F8;background:rgba(255,255,255,.78);padding:6px 3px 7px;min-height:80px;overflow:hidden}
@@ -649,6 +654,7 @@ main{padding-top:2px}
 @media (max-width:380px){
   .brand h1{font-size:18px}
   .sync-badge{font-size:9.5px;padding:0 7px;min-height:29px;gap:3px}
+  .lesson-done{font-size:10.5px;padding:0 8px}
   .tab{padding:0 10px;font-size:13px}
   .money-total{font-size:32px}
   .stamp-grid{gap:5px}
@@ -701,7 +707,7 @@ main{padding-top:2px}
 
         <div class="chips" id="allowChips">
           <span class="chip">시작 금액 <b id="chipStart">$0.00</b></span>
-          <span class="chip">공부 적립 <b id="chipStudy" class="plus">+$0.00</b></span>
+          <span class="chip">공부·숙제 적립 <b id="chipStudy" class="plus">+$0.00</b></span>
           <span class="chip">입금 <b id="chipDep" class="plus">+$0.00</b></span>
           <span class="chip">사용 <b id="chipSpend" class="minus">-$0.00</b></span>
         </div>
@@ -790,7 +796,7 @@ main{padding-top:2px}
     <section class="panel" id="panel-todo" aria-label="할 일 체크">
       <div class="card">
         <h2><span class="h2-emoji" aria-hidden="true">✅</span>할 일 체크</h2>
-        <p class="card-sub">한 사람이라도 할 일을 다 끝내면 하이파이브가 나와요 🙌</p>
+        <p class="card-sub">체크하면 그 아이 용돈이 +$1.00 쌓여요 · 한 사람이라도 다 끝내면 하이파이브 🙌</p>
         <div class="filter-pills" id="todoFilter" role="group" aria-label="사람별로 보기"></div>
         <div id="hiFiveSlot"></div>
         <div class="todo-progress">
@@ -1000,7 +1006,7 @@ main{padding-top:2px}
    ========================================================= */
 var STORE_KEY = 'chiikawa-family-dashboard-v1';
 var DEVICE_KEY = 'chiikawa-family-dashboard-device-v1';
-var SCHEMA_VERSION = 4;                 // 4 = USD + 매일 할 일(영어 필사 포함) + 주간 수업 시간표 버전
+var SCHEMA_VERSION = 5;                 // 5 = USD + 매일 할 일 + 주간 수업 시간표 + 숙제/수업 $1 적립 버전
 var DEFAULT_FIREBASE_URL = 'https://family-dashboard-ccc9b-default-rtdb.firebaseio.com';
 var DB_PATH = 'familyDashboard/v1';
 var KIDS = ['Stella', 'Luna'];
@@ -1306,15 +1312,15 @@ function seedState(){
       },
       Luna: {
         start: 18.5,
-        reward: 0.5,
+        reward: 1,
         log: [
-          { id:'al_l1', date:t, time:'오후 4:35', type:'study', amount:0.5, memo:'공부 완료' },
-          { id:'al_l2', date:t, time:'오후 3:55', type:'study', amount:0.5, memo:'공부 완료' },
-          { id:'al_l3', date:t, time:'오후 2:10', type:'study', amount:0.5, memo:'공부 완료' },
+          { id:'al_l1', date:t, time:'오후 4:35', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_l2', date:t, time:'오후 3:55', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_l3', date:t, time:'오후 2:10', type:'study', amount:1, memo:'공부 완료' },
           { id:'al_l4', date:t, time:'오전 11:00', type:'deposit', amount:10, memo:'아빠가 입금' },
           { id:'al_l5', date:y, time:'오후 6:40', type:'spend', amount:6, memo:'책 사기' },
-          { id:'al_l6', date:y, time:'오후 4:00', type:'study', amount:0.5, memo:'공부 완료' },
-          { id:'al_l7', date:y, time:'오후 3:20', type:'study', amount:0.5, memo:'공부 완료' }
+          { id:'al_l6', date:y, time:'오후 4:00', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_l7', date:y, time:'오후 3:20', type:'study', amount:1, memo:'공부 완료' }
         ]
       }
     },
@@ -1456,7 +1462,8 @@ function normalize(saved){
       kid: l.kid,
       day: Math.round(num(l.day, 0)),
       time: String(l.time),
-      subject: String(l.subject).slice(0, 12)
+      subject: String(l.subject).slice(0, 12),
+      completedDate: l.completedDate ? String(l.completedDate) : ''
     };
   });
   if(!isObject(s.settings)) s.settings = base.settings;
@@ -1818,6 +1825,17 @@ function addLedger(kid, type, amount, memo){
   save();
 }
 
+/* 숙제·수업을 끝내면 그 아이 용돈에 적립해요. 적립한 금액을 돌려줘요. */
+function creditReward(kid, memo, anchor){
+  var a = state.allowance[kid];
+  if(!a) return 0;
+  var reward = roundCents(num(a.reward, 1));
+  if(reward <= 0) return 0;
+  addLedger(kid, 'study', reward, (memo || '공부 완료').slice(0, 30));
+  if(anchor) coinBurst(anchor, 6);
+  return reward;
+}
+
 function renderAllowance(){
   var kid = currentKid();
   var a = state.allowance[kid];
@@ -1850,7 +1868,7 @@ function renderAllowance(){
     rc.value = isPresetReward(reward) ? '' : String(roundCents(reward));
   }
   $('#todayLine').textContent = ts.count > 0
-    ? '오늘 공부 ' + ts.count + '번 · ' + usd(ts.amount) + ' 적립했어요'
+    ? '오늘 적립 ' + ts.count + '번 · ' + usd(ts.amount) + ' 모았어요'
     : '오늘은 아직 공부 기록이 없어요. 첫 적립을 해볼까요?';
 
   renderAllowLog(kid);
@@ -2143,9 +2161,15 @@ function renderSchedule(){
     var mine = all.filter(function(l){ return l.day === today; });
     box.innerHTML = mine.length
       ? mine.map(function(l){
+          var done = l.completedDate === todayKey();
+          var reward = roundCents(num(state.allowance[l.kid] && state.allowance[l.kid].reward, 1));
           return '<div class="st-line">' + mascot(l.kid) +
-            '<span><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) + '</span>' +
-            '<span class="st-time">' + esc(timeLabel(l.time)) + '</span></div>';
+            '<span class="st-who"><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) +
+            '<span class="st-time">' + esc(timeLabel(l.time)) + '</span></span>' +
+            (done
+              ? '<span class="lesson-done done">완료 ✓</span>'
+              : '<button class="lesson-done" type="button" data-lesson-done="' + esc(l.id) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' 수업 완료, ' + usd(reward) + ' 적립') + '">수업 완료 +' + usd(reward) + '</button>') +
+            '</div>';
         }).join('')
       : '<div class="st-empty">오늘은 수업이 없어요. 느긋한 하루 🐣</div>';
   }
@@ -2158,7 +2182,7 @@ function renderSchedule(){
         '<span class="dc-name">' + esc(name) + '</span>' +
         (list.length
           ? list.map(function(l){
-              return '<button class="lc-chip" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' ' + timeLabel(l.time)) + ' 수업 지우기">' +
+              return '<button class="lc-chip' + (l.completedDate === todayKey() ? ' lc-done' : '') + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' ' + timeLabel(l.time)) + ' 수업 지우기">' +
                 '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
                 '<span class="lc-sub">' + esc(l.subject) + '</span>' +
                 '</button>';
@@ -2166,6 +2190,24 @@ function renderSchedule(){
           : '<span class="dc-empty">·</span>') +
         '</div>';
     }).join('');
+  }
+}
+
+function completeLesson(id, anchor){
+  var les = null;
+  state.schedule.lessons.forEach(function(l){ if(l.id === id) les = l; });
+  if(!les) return;
+  if(les.completedDate === todayKey()){ toast('오늘은 이미 완료했어요 ✓'); return; }
+  les.completedDate = todayKey();
+  var reward = creditReward(les.kid, les.subject + ' 수업', anchor);
+  save();
+  renderSchedule();
+  if(reward > 0){
+    renderAllowance();
+    bumpTotal();
+    toast(les.kid + ' ' + les.subject + ' 수업 완료! ' + usdSigned(reward) + ' 적립 🪙');
+  } else {
+    toast(les.kid + ' ' + les.subject + ' 수업 완료로 표시했어요');
   }
 }
 
@@ -2191,9 +2233,10 @@ function renderTodos(){
       '</div>';
   } else {
     box.innerHTML = list.map(function(t){
+      var paid = t.rewardedDate === todayKey();
       return '<div class="todo-item' + (t.done ? ' done' : '') + '" data-toggle="' + esc(t.id) + '">' +
         '<button class="check" type="button" aria-pressed="' + (!!t.done) + '" aria-label="' + esc(t.text) + ' 완료 표시">✓</button>' +
-        '<span class="t-text">' + esc(t.text) + '</span>' +
+        '<span class="t-text">' + esc(t.text) + (paid && KIDS.indexOf(t.owner) >= 0 ? ' <span class="done-tag">' + usdSigned(num(state.allowance[t.owner] && state.allowance[t.owner].reward, 1)) + '</span>' : '') + '</span>' +
         '<span class="t-owner">' + mascot(t.owner) + esc(t.owner) + '</span>' +
         '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="할 일 삭제">×</button>' +
         '</div>';
@@ -2242,15 +2285,26 @@ function showHiFive(){
   if(hands) coinBurst(hands, 4);
 }
 
-function toggleTodo(id){
+function toggleTodo(id, anchor){
   var t = null;
   state.todos.forEach(function(x){ if(x.id === id) t = x; });
   if(!t) return;
   t.done = !t.done;
   t.date = todayKey();
+  var reward = 0;
+  if(t.done && KIDS.indexOf(t.owner) >= 0 && t.rewardedDate !== todayKey()){
+    t.rewardedDate = todayKey();
+    reward = creditReward(t.owner, t.text, anchor);
+  }
   save();
   renderTodos();
-  if(t.done) toast('완료! ' + t.text + ' ✓');
+  if(reward > 0){
+    renderAllowance();
+    bumpTotal();
+    toast(usdSigned(reward) + ' 적립! ' + t.text + ' 완벽해요 🪙');
+  } else if(t.done){
+    toast('완료! ' + t.text + ' ✓');
+  }
 }
 
 function addTodo(){
@@ -2273,11 +2327,14 @@ function resetDailyChecks(){
     if(x.done) cleared++;
     x.done = false;
     x.date = t;
+    x.rewardedDate = '';
   });
+  state.schedule.lessons.forEach(function(l){ l.completedDate = ''; });
   hiFiveShown = false;
   save();
   renderTodos();
-  toast(cleared ? '오늘 체크를 모두 풀었어요. 새로운 하루 시작! 🌤️' : '이미 모두 체크가 풀려 있어요');
+  renderSchedule();
+  toast(cleared ? '오늘 체크를 모두 풀었어요. 새로운 하루 시작! 🌤️' : '체크와 적립 표시를 모두 풀었어요 🌤️');
 }
 
 /* =========================================================
@@ -3238,7 +3295,7 @@ function bindEvents(){
     }
     var row = e.target.closest ? e.target.closest('[data-toggle]') : null;
     if(!row) return;
-    toggleTodo(row.getAttribute('data-toggle'));
+    toggleTodo(row.getAttribute('data-toggle'), row);
   });
   $('#todoForm').addEventListener('submit', function(e){
     e.preventDefault();
@@ -3261,6 +3318,11 @@ function bindEvents(){
     $('#lessonSubject').value = '';
     renderSchedule();
     toast(kid + ' ' + WEEKDAYS[day] + '요일 ' + timeLabel(time) + ' ' + subject + ' 추가했어요 🗓️');
+  });
+  $('#schedToday').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-lesson-done]') : null;
+    if(!b) return;
+    completeLesson(b.getAttribute('data-lesson-done'), b);
   });
   $('#weekGrid').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-lesson]') : null;
