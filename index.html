@@ -1815,8 +1815,9 @@ function applyRemote(remote){
       todos: Array.isArray(remote.todos) ? remote.todos : state.todos,
       stamps: isObject(remote.stamps) ? remote.stamps : state.stamps,
       schedule: isObject(remote.schedule) ? remote.schedule : state.schedule,
-      dailyTodo: isObject(remote.dailyTodo) ? remote.dailyTodo : state.dailyTodo,
-      calendarEvents: isObject(remote.calendarEvents) ? remote.calendarEvents : state.calendarEvents,
+      /* 가족이 함께 보는 표 — 원격에 없으면 '지운 것'으로 보고 이 기기에도 비워요 */
+      dailyTodo: isObject(remote.dailyTodo) ? remote.dailyTodo : {},
+      calendarEvents: isObject(remote.calendarEvents) ? remote.calendarEvents : {},
       /* 이 기기의 프로필/잠금은 절대 덮어쓰지 않아요 */
       chat: { me: state.chat.me, locked: state.chat.locked, messages: msgs },
       timer: isObject(remote.timer) ? remote.timer : state.timer,
