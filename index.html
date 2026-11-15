@@ -1046,17 +1046,6 @@ main{padding-top:2px}
           <button class="btn primary" id="timerStartBtn" type="button">시작</button>
           <button class="btn ghost" id="timerResetBtn" type="button">리셋</button>
         </div>
-
-        <div class="timer-reward">
-          <span class="tr-text">⏰ 끝나면 용돈 적립</span>
-          <span style="display:flex;align-items:center;gap:8px">
-            <select id="timerRewardKid" aria-label="적립할 아이">
-              <option value="">안 함</option>
-              <option value="Stella">Stella</option>
-              <option value="Luna">Luna</option>
-            </select>
-          </span>
-        </div>
       </div>
 
       <div class="card alarm-card">
@@ -1452,7 +1441,7 @@ function seedState(){
         { id:'ls5', kid:'Luna', day:1, time:'20:00', subject:'영어' }
       ]
     },
-    timer: { preset: 25, rewardKid: '' },
+    timer: { preset: 25 },
     alarm: { on:false, mode:'clock', time:'21:00', minutes:30, targetTs:0, lastFired:'' },
     settings: { firebaseUrl: DEFAULT_FIREBASE_URL, localOnly: false },
     meta: { updatedAt: 0 },
@@ -2844,24 +2833,14 @@ function finishTimer(){
   renderTimer();
   playChime();
 
-  var kid = state.timer.rewardKid;
-  var rewardLine = '';
-  if(kid && state.allowance[kid]){
-    var amount = num(state.allowance[kid].reward, 0);
-    if(amount > 0){
-      addLedger(kid, 'study', amount, '공부 타이머 ' + Math.round(timer.total / 60000) + '분');
-      rewardLine = '<br><b style="color:#4E9A6D">' + esc(kid) + '에게 ' + usd(amount) + ' 적립했어요 🪙</b>';
-      coinBurst($('#timerStartBtn'), 6);
-    }
-  }
+  /* 타이머가 끝나면 종소리와 칭찬만 — 용돈은 적립하지 않아요 */
   var minutes = Math.round(timer.total / 60000);
   openModal(
-    '<div class="mascot-big">' + mascotSVG(kid || 'Stella') + '</div>' +
+    '<div class="mascot-big">' + chickSVG() + '</div>' +
     '<h2 style="justify-content:center">공부 끝! 잘했어요 🎉</h2>' +
-    '<p class="modal-sub" style="text-align:center">' + minutes + '분 동안 정말 집중했어요.<br>눈도 쉬어주고, 물 한 컵 마셔요!' + rewardLine + '</p>' +
+    '<p class="modal-sub" style="text-align:center">' + minutes + '분 동안 정말 집중했어요.<br>눈도 쉬어주고, 물 한 컵 마셔요!</p>' +
     '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>좋아요</button></div>'
   );
-  if(kid) renderAllowance();
 }
 
 function renderTimer(){
@@ -2888,8 +2867,6 @@ function renderTimer(){
   });
   var custom = $('#timerCustom');
   if(custom && document.activeElement !== custom) custom.value = '';
-  var sel = $('#timerRewardKid');
-  if(sel) sel.value = state.timer.rewardKid || '';
 }
 
 /* =========================================================
@@ -3683,12 +3660,6 @@ function bindEvents(){
     resetTimer();
     toast('타이머를 처음으로 돌렸어요');
   });
-  $('#timerRewardKid').addEventListener('change', function(){
-    state.timer.rewardKid = this.value;
-    save();
-    toast(this.value ? this.value + '에게 적립할게요' : '타이머 적립을 껐어요');
-  });
-
   /* alarm */
   $('#alarmToggle').addEventListener('change', function(){
     if(this.checked) enableAlarm();
