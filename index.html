@@ -808,14 +808,8 @@ main{padding-top:2px}
 
         <div class="field-row">
           <span>공부 1회 적립</span>
-          <div class="reward-pills" id="rewardPills" role="group" aria-label="한 번에 적립할 금액">
-            <button class="pill" type="button" data-reward="0.25">$0.25</button>
-            <button class="pill" type="button" data-reward="0.5">$0.50</button>
-            <button class="pill" type="button" data-reward="1">$1.00</button>
-            <span class="inline-input sm">
-              <span class="unit">$</span>
-              <input id="rewardCustom" type="number" inputmode="decimal" step="0.01" min="0" placeholder="직접" aria-label="직접 입력(달러)">
-            </span>
+          <div class="reward-pills" id="rewardPills" role="group" aria-label="공부 1회 적립 금액">
+            <button class="pill active" type="button" data-reward="1" aria-label="공부 1회에 $1.00 적립">$1.00</button>
           </div>
         </div>
 
@@ -1485,7 +1479,7 @@ function normalize(saved){
     if(!isObject(s.allowance[k])) s.allowance[k] = base.allowance[k];
     if(!Array.isArray(s.allowance[k].log)) s.allowance[k].log = [];
     s.allowance[k].start = roundCents(Math.max(0, num(s.allowance[k].start, 0)));
-    s.allowance[k].reward = roundCents(Math.max(0, num(s.allowance[k].reward, 1)));
+    s.allowance[k].reward = 1;   /* 공부 1회 적립은 $1.00로 고정 */
     if(Array.isArray(s.allowance[k].log)){
       s.allowance[k].log.forEach(function(e){ e.amount = roundCents(num(e.amount, 0)); });
     }
@@ -1963,10 +1957,6 @@ function renderAllowance(){
   $$('#rewardPills .pill').forEach(function(b){
     b.classList.toggle('active', Math.abs(num(b.getAttribute('data-reward'), -1) - roundCents(reward)) < 0.005);
   });
-  var rc = $('#rewardCustom');
-  if(document.activeElement !== rc){
-    rc.value = isPresetReward(reward) ? '' : String(roundCents(reward));
-  }
   $('#todayLine').textContent = ts.count > 0
     ? '오늘 적립 ' + ts.count + '번 · ' + usd(ts.amount) + ' 모았어요'
     : '오늘은 아직 공부 기록이 없어요. 첫 적립을 해볼까요?';
@@ -3485,11 +3475,6 @@ function bindEvents(){
     if(!b) return;
     setReward(num(b.getAttribute('data-reward'), 1));
     toast('공부 1회에 ' + usd(state.allowance[currentKid()].reward) + ' 적립해요');
-  });
-  $('#rewardCustom').addEventListener('change', function(){
-    var v = roundCents(num(this.value, 0));
-    if(v > 0) setReward(v);
-    else renderAllowance();
   });
   $('#studyBtn').addEventListener('click', doStudy);
   $('#quickDeposit').addEventListener('click', function(){ doQuick('deposit'); });
