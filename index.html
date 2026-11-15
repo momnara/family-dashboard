@@ -1471,8 +1471,17 @@ function normalize(saved){
   if(typeof s.settings.localOnly !== 'boolean') s.settings.localOnly = false;
   if(!s.settings.firebaseUrl) s.settings.firebaseUrl = DEFAULT_FIREBASE_URL;
   if(!isObject(s.meta)) s.meta = { updatedAt: 0 };
-  if(!isObject(s.dailyTodo)) s.dailyTodo = { Stella: {}, Luna: {} };
-  KIDS.forEach(function(k){ if(!isObject(s.dailyTodo[k])) s.dailyTodo[k] = {}; });
+  /* dailyTodo는 날짜 키가 계속 늘어나는 표라서 mergeDefaults로는 살아남지 않아요 */
+  var savedDaily = (isObject(saved) && isObject(saved.dailyTodo)) ? saved.dailyTodo : {};
+  s.dailyTodo = {};
+  KIDS.forEach(function(k){
+    var src = isObject(savedDaily[k]) ? savedDaily[k] : {};
+    var out = {};
+    Object.keys(src).forEach(function(d){
+      if(/^\d{4}-\d{2}-\d{2}$/.test(d) && src[d]) out[d] = true;
+    });
+    s.dailyTodo[k] = out;
+  });
   if(['clock','countdown'].indexOf(s.alarm.mode) < 0) s.alarm.mode = 'clock';
   return s;
 }
