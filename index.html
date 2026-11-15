@@ -868,6 +868,7 @@ main{padding-top:2px}
       </div>
     </div>
     <button class="sync-badge" id="syncBadge" type="button" data-state="connecting" aria-live="polite" title="동기화 상태 · 눌러서 설정">🟡 연결 중</button>
+    <button class="icon-btn" id="refreshBtn" type="button" aria-label="새로고침" title="새로고침">🔄</button>
     <button class="icon-btn" id="settingsBtn" type="button" aria-label="설정 열기">⚙️</button>
   </div>
   <nav class="tabs" id="tabs" aria-label="메뉴">
@@ -4059,6 +4060,10 @@ function bindEvents(){
     renderAllowance();
     renderMemos();   /* 아이 기기에서는 자기 메모만 보여요 */
     toast(this.checked ? '이 기기를 ' + state.chat.me + '로 잠갔어요 🔒' : '잠금을 풀었어요');
+  });
+  $('#refreshBtn').addEventListener('click', function(){
+    save(true);                 /* 지금 화면 상태는 이 기기에 저장해두고 */
+    location.reload();          /* 최신 내용으로 새로고침 */
   });
   $('#chatForm').addEventListener('submit', function(e){
     e.preventDefault();
