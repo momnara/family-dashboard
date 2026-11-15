@@ -1748,6 +1748,12 @@ function onRemoteValue(snap){
   applyRemote(v);
 }
 
+function sharedSignature(st){
+  try{
+    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.chat.messages, st.timer, st.alarm]);
+  }catch(e){ return ''; }
+}
+
 function applyRemote(remote){
   if(!isObject(remote)) return;
   var wasApplying = sync.applying;
@@ -1756,7 +1762,8 @@ function applyRemote(remote){
     var msgs = (isObject(remote.chat) && Array.isArray(remote.chat.messages))
       ? remote.chat.messages
       : state.chat.messages;
-    state = normalize({
+    var before = sharedSignature(state);
+    var next = normalize({
       version: SCHEMA_VERSION,
       allowance: isObject(remote.allowance) ? remote.allowance : state.allowance,
       missions: isObject(remote.missions) ? remote.missions : state.missions,
@@ -1772,7 +1779,11 @@ function applyRemote(remote){
       ui: state.ui,
       meta: { updatedAt: num(remote.updatedAt, 0) || Date.now() }
     });
+    /* 받은 내용이 지금 화면과 같으면 다시 그리지 않아요 (탭이 흔들리거나 스크롤이 튀지 않게) */
+    var same = sharedSignature(next) === before;
+    state = next;
     writeLocal();
+    if(same){ sync.applying = wasApplying; return; }
     renderAll();
     showTab(state.ui.tab || 'allowance', true);
   }catch(e){
