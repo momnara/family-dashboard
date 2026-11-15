@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.4.0">
-<!-- family-dashboard 1.4.0 · 메모 탭(📝) + 아이끼리 메모 비공개 + 알림(ntfy) + 잠금 배지 -->
+<meta name="app-version" content="1.5.0">
+<!-- family-dashboard 1.5.0 · 채팅 메시지 하나씩 지우기(×): 엄마는 모두, 각자는 자기 메시지만 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -628,6 +628,12 @@ main{padding-top:2px}
 .heart-btn.on{color:#E5758E}
 .heart-btn .hb-ico{font-size:12px;transition:transform .18s cubic-bezier(.3,1.6,.5,1)}
 .heart-btn:active .hb-ico{transform:scale(1.4)}
+.msg-del{
+  border:none;background:transparent;color:#C4AE96;font-size:15px;line-height:1;
+  padding:1px 5px;min-height:24px;border-radius:8px;font-weight:700;
+  transition:background .15s ease,color .15s ease;
+}
+.msg-del:active{background:#FBEFE0;color:#A9846A}
 .heart-pop{animation:heartPop .5s cubic-bezier(.3,1.5,.5,1)}
 @keyframes heartPop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
 .voice-bubble{
@@ -2721,6 +2727,7 @@ function renderChat(){
       html += '<div class="day-divider"><span>' + esc(dayLabel(dk)) + '</span></div>';
     }
     var mine = m.who === me;
+    var canDel = isMom() || mine;
     var hearts = Array.isArray(m.hearts) ? m.hearts : [];
     var hearted = hearts.indexOf(me) >= 0;
     var inner = '';
@@ -2748,6 +2755,7 @@ function renderChat(){
             '<span class="hb-ico" aria-hidden="true">' + (hearted ? '❤️' : '🤍') + '</span>' +
             (hearts.length ? '<span>' + hearts.length + '</span>' : '') +
           '</button>' +
+          (canDel ? '<button class="msg-del" type="button" data-cmsgdel="' + esc(m.id) + '" aria-label="이 메시지 지우기" title="이 메시지 지우기">×</button>' : '') +
         '</span>' +
       '</div>' +
     '</div>';
@@ -2979,6 +2987,38 @@ function toggleHeart(id){
   renderChat();
   var btn = $('#chatScroll [data-heart="' + id + '"]');
   if(btn) btn.classList.add('heart-pop');
+}
+
+/* 메시지 하나 지우기 — 엄마는 모두, 다른 사람은 자기가 보낸 메시지만 */
+function canDeleteMessage(m){
+  if(!m) return false;
+  return isMom() || m.who === state.chat.me;
+}
+
+function deleteChatMessage(id){
+  var m = findMessage(id);
+  if(!m) return;
+  if(!canDeleteMessage(m)){
+    toast('내가 보낸 메시지만 지울 수 있어요 🔒');
+    return;
+  }
+  if(m.type === 'sticker'){
+    var sub = '스티커를 지울까요?';
+  } else if(m.type === 'voice'){
+    var sub = '음성 메시지를 지울까요?';
+  } else {
+    var sub = '\"' + String(m.text || '').slice(0, 40) + '\"';
+  }
+  confirmModal('메시지를 지울까요?', m.who + ' · ' + sub, '지우기', function(){
+    if(playingAudio && m.type === 'voice'){
+      try{ playingAudio.pause(); }catch(e){}
+      playingAudio = null;
+    }
+    state.chat.messages = state.chat.messages.filter(function(x){ return x.id !== id; });
+    save();          /* 이 기기에 저장 + 가족 모두에게 동기화 */
+    renderChat();
+    toast('메시지를 지웠어요');
+  }, true);
 }
 
 function playVoice(id){
@@ -4082,6 +4122,8 @@ function bindEvents(){
   });
   $('#voiceBtn').addEventListener('click', toggleRecording);
   $('#chatScroll').addEventListener('click', function(e){
+    var d = e.target.closest ? e.target.closest('[data-cmsgdel]') : null;
+    if(d){ deleteChatMessage(d.getAttribute('data-cmsgdel')); return; }
     var h = e.target.closest ? e.target.closest('[data-heart]') : null;
     if(h){ toggleHeart(h.getAttribute('data-heart')); return; }
     var p = e.target.closest ? e.target.closest('[data-play]') : null;
