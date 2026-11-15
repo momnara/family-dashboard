@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.7.1">
-<!-- family-dashboard 1.7.1 · 달력에 '할 일 모두 완료' 이름 배지(Stella 분홍 · Luna 하늘) 표시, 주간 시간표에 이번 주 날짜(휴강 표시), 수업 완료 다시 눌러 취소 -->
+<meta name="app-version" content="1.8.0">
+<!-- family-dashboard 1.8.0 · 주중(월~금)에만 하는 할 일 지원 — 주말에는 목록에서 숨김(주중 배지 표시), Stella·Luna '간식통, 물병 가져다 놓기' 추가 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -388,6 +388,7 @@ main{padding-top:2px}
 .todo-item.done{background:#F7FBF6;border-color:#DCEEDD;opacity:.78}
 .todo-item.done .check{background:#A8DDB6;border-color:#8FCFA0;color:#fff;transform:rotate(-4deg)}
 .todo-item .t-text{flex:1;min-width:0;font-size:13.5px;line-height:1.4;word-break:keep-all}
+.todo-item .wd-tag{display:inline-block;font-size:10px;font-weight:700;color:#6E60A0;background:#F1EDFA;border:1px solid #DED5F2;padding:1px 6px;border-radius:999px;white-space:nowrap;vertical-align:1.5px;margin-right:3px}
 .todo-item.done .t-text{text-decoration:line-through;color:#98A896;text-decoration-thickness:1.5px}
 .todo-item .t-owner{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--ink-soft);flex:0 0 auto}
 .todo-item .t-owner .av{width:20px;height:20px}
@@ -1289,6 +1290,15 @@ function dateKey(d){
   return x.getFullYear() + '-' + pad2(x.getMonth() + 1) + '-' + pad2(x.getDate());
 }
 function todayKey(){ return dateKey(new Date()); }
+/* 주중(월~금)에만 하는 할 일용 — 오늘이 주중인지 봐요 (일=0, 토=6) */
+function isWeekdayToday(){
+  var d = new Date().getDay();
+  return d >= 1 && d <= 5;
+}
+/* 그 할 일을 오늘 목록에 보여야 하는지. weekdaysOnly인 할 일은 주말에 숨겨요 */
+function isTodoActiveToday(t){
+  return !(t && t.weekdaysOnly && !isWeekdayToday());
+}
 function daysAgo(n){
   var d = new Date();
   d.setHours(12, 0, 0, 0);
@@ -1555,7 +1565,10 @@ function seedState(){
       { id:'td7', owner:'Luna', text:'수학문제 3장', done:false, date:t },
       { id:'td8', owner:'Luna', text:'국어문제 1장', done:false, date:t },
       { id:'td9', owner:'Luna', text:'영어 필사 15분', done:false, date:t },
-      { id:'td11', owner:'Luna', text:'학교숙제', done:false, date:t }
+      { id:'td11', owner:'Luna', text:'학교숙제', done:false, date:t },
+      /* 주중(월~금)에만 하는 할 일 — 주말에는 목록에 안 보여요 */
+      { id:'td12', owner:'Stella', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t },
+      { id:'td13', owner:'Luna', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t }
     ],
     stamps: {
       Stella: { reward: '$5.00 용돈 보너스!', slots: [null, null, null, null, null, null, null, null, null, null] },
@@ -1642,6 +1655,20 @@ function normalize(saved){
   if(!Array.isArray(s.missions.items)) s.missions.items = base.missions.items;
   if(!Array.isArray(s.missions.done)) s.missions.done = [];
   if(!Array.isArray(s.todos)) s.todos = base.todos;
+  /* 할 일은 한 칸씩 직접 맞춰요 — 주중 전용(weekdaysOnly) 표시가
+     이 값을 모르는 예전 기기나 Firebase 왕복에서 지워지지 않게 여기서 살려요 */
+  s.todos = s.todos.filter(function(t){
+    return isObject(t) && String(t.text || '').trim();
+  }).map(function(t){
+    return {
+      id: t.id ? String(t.id) : uid('td'),
+      owner: PEOPLE.indexOf(t.owner) >= 0 ? t.owner : 'Stella',
+      text: String(t.text).trim().slice(0, 40),
+      done: !!t.done,
+      weekdaysOnly: !!t.weekdaysOnly,
+      date: /^\d{4}-\d{2}-\d{2}$/.test(String(t.date)) ? String(t.date) : todayKey()
+    };
+  });
   if(!Array.isArray(s.chat.messages)) s.chat.messages = [];
   if(PEOPLE.indexOf(s.chat.me) < 0) s.chat.me = 'Stella';
   if(KIDS.indexOf(s.ui.kid) < 0) s.ui.kid = 'Stella';
@@ -2074,6 +2101,30 @@ function remoteDailyDoneFor(remote){
   return isObject(remote.dailyDone) ? remote.dailyDone : {};
 }
 
+/* 주중 전용 표시도 같은 방식으로 지켜요 — weekdaysOnly를 모르는 1.7 이하 기기가
+   할 일 전체를 다시 써도 우리가 켜둔 주중 표시가 사라지지 않게요.
+   (지운 항목은 되살리지 않아요: 원격 목록에 그 id가 없으면 그대로 없앱니다) */
+var remoteWeekdayRestored = false;
+function remoteTodosFor(remote){
+  var list = Array.isArray(remote.todos) ? remote.todos : state.todos;
+  if(!Array.isArray(list)) return state.todos;
+  var mine = {};
+  state.todos.forEach(function(t){ if(t && t.id && t.weekdaysOnly) mine[String(t.id)] = true; });
+  if(!Object.keys(mine).length) return list;
+  var restored = false;
+  var out = list.map(function(t){
+    if(!isObject(t) || !t.id) return t;
+    if(!mine[String(t.id)] || t.weekdaysOnly) return t;
+    var copy = {};
+    Object.keys(t).forEach(function(k){ copy[k] = t[k]; });
+    copy.weekdaysOnly = true;
+    restored = true;
+    return copy;
+  });
+  if(restored) remoteWeekdayRestored = true;
+  return out;
+}
+
 function applyRemote(remote){
   if(!isObject(remote)) return;
   var wasApplying = sync.applying;
@@ -2086,11 +2137,12 @@ function applyRemote(remote){
     var before = sharedSignature(state);
     remoteSkipRestored = false;
     remoteDailyRestored = false;
+    remoteWeekdayRestored = false;
     var next = normalize({
       version: SCHEMA_VERSION,
       allowance: isObject(remote.allowance) ? remote.allowance : state.allowance,
       missions: isObject(remote.missions) ? remote.missions : state.missions,
-      todos: Array.isArray(remote.todos) ? remote.todos : state.todos,
+      todos: remoteTodosFor(remote),
       stamps: isObject(remote.stamps) ? remote.stamps : state.stamps,
       schedule: remoteScheduleFor(remote),
       /* 가족이 함께 보는 표 — 원격에 없으면 '지운 것'으로 보고 이 기기에도 비워요 */
@@ -2113,12 +2165,13 @@ function applyRemote(remote){
     });
     /* 받은 내용이 지금 화면과 같으면 다시 그리지 않아요 (탭이 흔들리거나 스크롤이 튀지 않게) */
     var same = sharedSignature(next) === before;
-    var restoredSkip = remoteSkipRestored || remoteDailyRestored;
+    var restoredSkip = remoteSkipRestored || remoteDailyRestored || remoteWeekdayRestored;
     state = next;
     writeLocal();
     /* 예전 버전 기기가 지운 휴강/dailyDone을 되살렸으면 원격에도 한 번 다시 올려요 (반복되지 않게 한 번만) */
     remoteSkipRestored = false;
     remoteDailyRestored = false;
+    remoteWeekdayRestored = false;
     if(restoredSkip) setTimeout(function(){ if(!sync.applying) queuePush(); }, 800);
     if(same){ sync.applying = wasApplying; return; }
     renderAll();
@@ -2396,7 +2449,7 @@ function shownPrepClasses(){
 }
 
 function todoStats(kid){
-  var mine = state.todos.filter(function(x){ return x.owner === kid; });
+  var mine = state.todos.filter(function(x){ return x.owner === kid && isTodoActiveToday(x); });
   var done = mine.filter(function(x){ return !!x.done; }).length;
   var prep = prepClassesFor(kid);
   var prepDone = prep.filter(prepDoneFor).length;
@@ -2533,11 +2586,13 @@ var hiFiveTimer = null;
 
 function filteredTodos(){
   var f = state.ui.todoFilter;
+  /* 주중 전용 할 일은 주말에 목록에서 숨겨요 */
+  var active = state.todos.filter(isTodoActiveToday);
   if(f !== '전체'){
-    return state.todos.filter(function(t){ return t.owner === f; });
+    return active.filter(function(t){ return t.owner === f; });
   }
   /* '전체'에서는 Stella·Luna 할 일이 위로 오게 (각자 순서는 그대로) */
-  return state.todos.slice().sort(function(a, b){
+  return active.sort(function(a, b){
     var ak = KIDS.indexOf(a.owner) >= 0 ? 0 : 1;
     var bk = KIDS.indexOf(b.owner) >= 0 ? 0 : 1;
     return ak - bk;
@@ -2707,8 +2762,8 @@ function renderTodos(){
       var paid = KIDS.indexOf(t.owner) >= 0 && !!(state.dailyTodo[t.owner] && state.dailyTodo[t.owner][todayKey()]);
       var locked = kidLockedFor(t.owner);
       return '<div class="todo-item' + (t.done ? ' done' : '') + (locked ? ' locked' : '') + '" data-toggle="' + esc(t.id) + '"' + (locked ? ' aria-disabled="true"' : '') + '>' +
-        '<button class="check" type="button" aria-pressed="' + (!!t.done) + '" aria-label="' + esc(t.text) + ' 완료 표시">✓</button>' +
-        '<span class="t-text">' + esc(t.text) + (t.done && paid ? ' <span class="done-tag">오늘 몫 완료</span>' : '') + '</span>' +
+        '<button class="check" type="button" aria-pressed="' + (!!t.done) + '" aria-label="' + esc(t.text) + (t.weekdaysOnly ? ' (주중)' : '') + ' 완료 표시">✓</button>' +
+        '<span class="t-text">' + (t.weekdaysOnly ? '<span class="wd-tag" title="월~금에만 하는 할 일">주중</span> ' : '') + esc(t.text) + (t.done && paid ? ' <span class="done-tag">오늘 몫 완료</span>' : '') + '</span>' +
         '<span class="t-owner">' + mascot(t.owner) + esc(t.owner) + (locked ? '<span class="t-lock" aria-hidden="true">🔒</span>' : '') + '</span>' +
         (isMom() ? '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="할 일 삭제">×</button>' : '') +
         '</div>';
@@ -2803,7 +2858,7 @@ function toggleTodo(id, anchor){
   renderAllowance();   /* 용돈 탭 버튼이 바로 열리거나 잠겨요 */
   renderCalendar();    /* 달력의 ⭐·🌙도 바로 맞춰요 */
   if(revoked) return;
-  var left = state.todos.filter(function(x){ return x.owner === t.owner && !x.done; }).length;
+  var left = state.todos.filter(function(x){ return x.owner === t.owner && isTodoActiveToday(x) && !x.done; }).length;
   var justAll = t.done && KIDS.indexOf(t.owner) >= 0 && left === 0;
   if(justAll){
     coinBurst(anchor || $('#todoList'), 7);
