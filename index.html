@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.9.0">
-<!-- family-dashboard 1.9.0 · 할 일 요일별 미리 보기(오늘+6일, 읽기 전용) · 주간 스케줄(가족 일정까지) -->
+<meta name="app-version" content="1.9.1">
+<!-- family-dashboard 1.9.1 · 주간 스케줄 가로형(하루 한 줄) + 시간 표기 AM/PM -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -392,13 +392,13 @@ main{padding-top:2px}
 .todo-item.preview .check[disabled]{cursor:default;opacity:.9}
 .todo-item.preview .t-text{color:#7C8478}
 /* 주간 스케줄 — 그 날 가족 일정(달력 메모) */
-.day-col .dc-events{display:flex;flex-direction:column;gap:3px;margin-top:3px}
+.day-col .dc-events{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .day-col .dc-event{
-  display:flex;align-items:flex-start;gap:2px;font-size:9px;line-height:1.3;
+  display:inline-flex;align-items:center;gap:4px;font-size:11.5px;line-height:1.3;
   background:#F1F8EE;border:1px solid #D2E8CB;color:#4A6E45;
-  border-radius:8px;padding:3px 3px;word-break:break-word;
+  border-radius:9px;padding:4px 8px;max-width:100%;word-break:keep-all;
 }
-.day-col .dc-event .ev-em{font-size:8px;line-height:1.4;flex:0 0 auto}
+.day-col .dc-event .ev-em{font-size:10.5px;line-height:1;flex:0 0 auto}
 .day-col .dc-event .ev-txt{min-width:0}
 .todo-progress{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .progress-track{flex:1;height:9px;border-radius:999px;background:#F4E9D7;overflow:hidden}
@@ -445,22 +445,24 @@ main{padding-top:2px}
 .lesson-done.done{display:inline-flex;align-items:center;min-height:30px;border-color:#DCEEDD;background:#F7FBF6;color:#79B98C;box-shadow:none;font-size:11px}
 .lc-chip.lc-done{background:#F1FAF3;border-left-color:#8FCFA0;color:#3F7352}
 .sched-today .st-empty{font-size:12px;color:var(--ink-faint);text-align:center;padding:11px;border:2px dashed var(--line);border-radius:13px;background:#FFFCF5}
-.week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
-.day-col{border-radius:13px;border:1.5px solid #F1E7F8;background:rgba(255,255,255,.78);padding:6px 3px 7px;min-height:80px;overflow:hidden}
-.day-col .dc-name{display:block;text-align:center;font-family:var(--font-title);font-size:11px;color:var(--ink-soft);margin-bottom:5px}
+/* 하루에 한 줄씩 — 일곱 칸을 세로로 쌓아 글자가 가로로 읽혀요 */
+.week-grid{display:flex;flex-direction:column;gap:7px}
+.day-col{display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 10px;border-radius:13px;border:1.5px solid #F1E7F8;background:rgba(255,255,255,.78);overflow:hidden}
+.day-col .dc-name{flex:0 0 60px;display:block;text-align:center;margin-bottom:0;font-family:var(--font-title);font-size:11px;color:var(--ink-soft)}
 .day-col .dc-date{display:block;margin-top:1px;font-family:var(--font-title);font-size:9px;color:#B49B7C;letter-spacing:-.2px;line-height:1.1}
-.day-col.today{border-color:#F6CF8E;background:linear-gradient(180deg,#FFF7E1,#FFEFE6);box-shadow:0 3px 0 #F3DDB4}
+.day-col.today{border-color:#F6CF8E;background:linear-gradient(90deg,#FFF7E1,#FFEFE6);box-shadow:0 3px 0 #F3DDB4}
 .day-col.today .dc-name{color:#8A6530}
 .day-col.today .dc-date{color:#A2701F}
-.day-col .dc-empty{display:block;text-align:center;font-size:9px;color:#CBBEAC;line-height:1.2;padding-top:8px;letter-spacing:-.2px}
-.lc-chip{display:block;width:100%;min-height:34px;border:none;border-left:3px solid #FFB7C5;border-radius:9px;background:#FFF7FA;padding:3px 2px;margin-bottom:3px;text-align:center;font-size:9.5px;line-height:1.2;color:#7A5A66}
+.day-col .dc-items{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.day-col .dc-empty{display:block;padding-top:0;font-size:11.5px;text-align:left;color:#CBBEAC;line-height:1.2;letter-spacing:-.2px}
+.lc-chip{display:inline-flex;align-items:center;gap:5px;width:auto;max-width:100%;min-height:30px;border:none;border-left:3px solid #FFB7C5;border-radius:9px;background:#FFF7FA;padding:5px 10px;margin-bottom:0;text-align:left;font-size:12px;line-height:1.3;color:#7A5A66}
 .lc-chip[data-kid="Luna"]{border-left-color:#B9A6F0;background:#F7F4FF;color:#5F5780}
-.lc-chip .lc-time{display:block;font-family:var(--font-title);font-size:9.5px;color:#8A6530}
-.lc-chip .lc-sub{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-chip .lc-time{display:inline;font-family:var(--font-title);font-size:11.5px;color:#8A6530;white-space:nowrap}
+.lc-chip .lc-sub{display:inline;min-width:0;white-space:normal;word-break:keep-all}
 .lc-chip:active{transform:scale(.95)}
 /* 이번 주 휴강 — 수업은 그대로 보이되 회색으로 죽이고 '휴강'을 적어요 */
 .lc-chip.lc-off{background:#F5F2F7;border-left-color:#CFC6DA;color:#9C93A6}
-.lc-chip .lc-skip{display:block;margin-top:1px;font-size:8.5px;line-height:1.1;color:#A292AE;letter-spacing:-.3px;white-space:nowrap}
+.lc-chip .lc-skip{display:inline;margin-top:0;font-size:10.5px;line-height:1.1;color:#A292AE;letter-spacing:-.3px;white-space:nowrap}
 .sched-form{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
 .sched-form .input{min-height:40px;font-size:12.5px;padding:0 8px;width:auto}
 .sched-form #lessonKid{flex:0 0 84px}
@@ -1344,7 +1346,7 @@ function hm(d){
   var x = d || new Date();
   var h = x.getHours();
   var m = x.getMinutes();
-  return (h < 12 ? '오전 ' : '오후 ') + ((h % 12 === 0) ? 12 : h % 12) + ':' + pad2(m);
+  return ((h % 12 === 0) ? 12 : h % 12) + ':' + pad2(m) + (h < 12 ? ' AM' : ' PM');
 }
 function shortDate(key){
   var p = String(key).split('-');
@@ -2718,7 +2720,7 @@ function timeLabel(t){
   var h = Number(p[0]);
   var m = Number(p[1]);
   if(!isFinite(h)) return String(t || '');
-  return (h < 12 ? '오전 ' : '오후 ') + ((h % 12 === 0) ? 12 : h % 12) + ':' + pad2(isFinite(m) ? m : 0);
+  return ((h % 12 === 0) ? 12 : h % 12) + ':' + pad2(isFinite(m) ? m : 0) + (h < 12 ? ' AM' : ' PM');
 }
 
 function lessonsSorted(){
@@ -2784,9 +2786,10 @@ function renderSchedule(){
       var head = '<span class="dc-name">' + esc(name) +
           '<span class="dc-date">' + esc(wk.md) + '</span>' +
         '</span>';
+      var dayOpen = '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
+        '<div class="dc-items">';
       if(!list.length && !events.length){
-        return '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
-          '<span class="dc-empty">일정 없음</span></div>';
+        return dayOpen + '<span class="dc-empty">일정 없음</span></div></div>';
       }
       var lessonHtml = list.map(function(l){
         var skipped = isLessonSkippedOn(l.id, wk.key);
@@ -2808,10 +2811,7 @@ function renderSchedule(){
           '<span class="ev-txt">' + esc(text) + '</span>' +
         '</span>';
       }).join('');
-      return '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
-        lessonHtml +
-        (eventHtml ? '<span class="dc-events">' + eventHtml + '</span>' : '') +
-        '</div>';
+      return dayOpen + lessonHtml + eventHtml + '</div></div>';
     }).join('');
   }
 }
