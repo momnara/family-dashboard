@@ -2260,11 +2260,11 @@ function checkHiFive(){
   if(!all) hiFiveShown = false;
 }
 
-function showHiFive(){
+function showHiFive(whoOverride){
   var slot = $('#hiFiveSlot');
   if(!slot) return;
   var f = state.ui.todoFilter;
-  var who = f === '전체' ? '우리 가족' : f;
+  var who = whoOverride || (f === '전체' ? '우리 가족' : f);
   slot.innerHTML = '<div class="hifive" id="hiFiveBanner">' +
     '<span class="confetti" style="left:6%;animation-delay:.1s">✨</span>' +
     '<span class="confetti" style="left:22%;animation-delay:.7s">💛</span>' +
@@ -2317,6 +2317,8 @@ function toggleTodo(id, anchor){
     renderAllowance();
     bumpTotal();
     coinBurst(anchor || $('#todoList'), 9);
+    showHiFive(t.owner);
+    hiFiveShown = true;
     toast('우와! ' + t.owner + ' 오늘 할 일 모두 완료! ' + usdSigned(reward) + ' 적립 🪙');
   } else if(t.done){
     var left = state.todos.filter(function(x){ return x.owner === t.owner && !x.done; }).length;
