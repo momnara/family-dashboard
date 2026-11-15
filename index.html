@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 랜덤 미션, 할 일, 도장판, 가족 채팅, 공부 타이머">
+<meta name="app-version" content="1.1.0">
+<!-- family-dashboard 1.1.0 · 실시간 동기화(Firebase) + USD -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,6 +85,17 @@ header.top{
   box-shadow:0 3px 0 #F1E2CB;transition:transform .12s ease,box-shadow .12s ease;
 }
 .icon-btn:active{transform:translateY(3px);box-shadow:0 0 0 #F1E2CB}
+.sync-badge{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+  min-height:32px;padding:0 10px;border-radius:999px;
+  border:1.5px solid var(--line-strong);background:#FFFCF4;color:#9C8874;
+  font-family:var(--font-body);font-size:11px;font-weight:700;letter-spacing:-.2px;
+  box-shadow:0 2px 0 #F1E2CB;transition:background .25s ease,border-color .25s ease,color .25s ease;
+}
+.sync-badge:active{transform:translateY(2px);box-shadow:none}
+.sync-badge[data-state="live"]{border-color:#BEE4CB;background:#EFF9F2;color:#3F7352}
+.sync-badge[data-state="connecting"]{border-color:#F6DDA7;background:#FFF8E4;color:#8A6530}
+.sync-badge[data-state="local"]{border-color:#EADFCB;background:#FFFCF4;color:#9C8874}
 
 /* ---------- tabs ---------- */
 .tabs{
@@ -217,6 +230,7 @@ main{padding-top:2px}
   letter-spacing:-1px;display:flex;align-items:baseline;gap:3px;transition:transform .2s ease;
 }
 .money-total small{font-size:17px;color:#9C7B4F;font-weight:400}
+.money-total small.cur{font-size:20px;font-weight:700;color:#9C7B4F}
 .money-total.bump{animation:bump .45s cubic-bezier(.3,1.6,.5,1)}
 @keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.09)}100%{transform:scale(1)}}
 .money-sub{font-size:11.5px;color:#A98F6C;margin-top:2px}
@@ -348,6 +362,35 @@ main{padding-top:2px}
 .todo-item .t-owner{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--ink-soft);flex:0 0 auto}
 .todo-item .t-owner .av{width:20px;height:20px}
 .todo-item .t-del{border:none;background:transparent;color:#CDBBA6;font-size:16px;width:28px;height:28px;border-radius:8px;flex:0 0 auto}
+.todo-actions{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.todo-actions .small{flex:1;min-width:0;line-height:1.4}
+
+/* ---------- weekly class schedule ---------- */
+.schedule-card{background:linear-gradient(170deg,#FFFDF6,#F7F2FF 62%,#FFF3F7);border-color:#EBDFF8}
+.sched-today{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.sched-today .st-line{display:flex;align-items:center;gap:7px;font-size:12.5px;background:#fff;border:1.5px solid #F3E4C8;border-radius:13px;padding:8px 10px}
+.sched-today .st-line .av{width:23px;height:23px}
+.sched-today .st-line b{font-weight:700}
+.sched-today .st-line .st-time{margin-left:auto;font-family:var(--font-title);font-size:11.5px;color:#8A6530;white-space:nowrap}
+.sched-today .st-empty{font-size:12px;color:var(--ink-faint);text-align:center;padding:11px;border:2px dashed var(--line);border-radius:13px;background:#FFFCF5}
+.week-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.day-col{border-radius:13px;border:1.5px solid #F1E7F8;background:rgba(255,255,255,.78);padding:6px 3px 7px;min-height:80px;overflow:hidden}
+.day-col .dc-name{display:block;text-align:center;font-family:var(--font-title);font-size:11px;color:var(--ink-soft);margin-bottom:5px}
+.day-col.today{border-color:#F6CF8E;background:linear-gradient(180deg,#FFF7E1,#FFEFE6);box-shadow:0 3px 0 #F3DDB4}
+.day-col.today .dc-name{color:#8A6530}
+.day-col .dc-empty{display:block;text-align:center;font-size:11px;color:#E7D9C6;line-height:1.2}
+.lc-chip{display:block;width:100%;min-height:34px;border:none;border-left:3px solid #FFB7C5;border-radius:9px;background:#FFF7FA;padding:3px 2px;margin-bottom:3px;text-align:center;font-size:9.5px;line-height:1.2;color:#7A5A66}
+.lc-chip[data-kid="Luna"]{border-left-color:#B9A6F0;background:#F7F4FF;color:#5F5780}
+.lc-chip .lc-time{display:block;font-family:var(--font-title);font-size:9.5px;color:#8A6530}
+.lc-chip .lc-sub{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-chip:active{transform:scale(.95)}
+.sched-form{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+.sched-form .input{min-height:40px;font-size:12.5px;padding:0 8px;width:auto}
+.sched-form #lessonKid{flex:0 0 84px}
+.sched-form #lessonDay{flex:0 0 68px}
+.sched-form #lessonTime{flex:0 0 104px}
+.sched-form #lessonSubject{flex:1 1 110px;min-width:0}
+.sched-form .btn{flex:0 0 auto;margin-left:auto}
 .hifive{
   position:relative;overflow:hidden;text-align:center;padding:18px 14px;margin-bottom:12px;
   border-radius:20px;border:2px solid #FBD9A8;
@@ -605,6 +648,7 @@ main{padding-top:2px}
 }
 @media (max-width:380px){
   .brand h1{font-size:18px}
+  .sync-badge{font-size:9.5px;padding:0 7px;min-height:29px;gap:3px}
   .tab{padding:0 10px;font-size:13px}
   .money-total{font-size:32px}
   .stamp-grid{gap:5px}
@@ -625,6 +669,7 @@ main{padding-top:2px}
         <p>오늘도 사이좋게, 조금씩 자라요 🌱</p>
       </div>
     </div>
+    <button class="sync-badge" id="syncBadge" type="button" data-state="connecting" aria-live="polite" title="동기화 상태 · 눌러서 설정">🟡 연결 중</button>
     <button class="icon-btn" id="settingsBtn" type="button" aria-label="설정 열기">⚙️</button>
   </div>
   <nav class="tabs" id="tabs" aria-label="메뉴">
@@ -648,24 +693,24 @@ main{padding-top:2px}
         <div class="money-head">
           <div class="money-left">
             <p class="label">지금 모은 돈</p>
-            <p class="money-total"><span id="allowTotal">0</span><small>원</small></p>
+            <p class="money-total"><small class="cur" id="allowCur">$</small><span id="allowTotal">0.00</span></p>
             <p class="money-sub" id="allowSub">공부할수록 쑥쑥 자라요</p>
           </div>
           <div class="money-mascot" id="allowMascot" aria-hidden="true"></div>
         </div>
 
         <div class="chips" id="allowChips">
-          <span class="chip">시작 금액 <b id="chipStart">0원</b></span>
-          <span class="chip">공부 적립 <b id="chipStudy" class="plus">+0원</b></span>
-          <span class="chip">입금 <b id="chipDep" class="plus">+0원</b></span>
-          <span class="chip">사용 <b id="chipSpend" class="minus">-0원</b></span>
+          <span class="chip">시작 금액 <b id="chipStart">$0.00</b></span>
+          <span class="chip">공부 적립 <b id="chipStudy" class="plus">+$0.00</b></span>
+          <span class="chip">입금 <b id="chipDep" class="plus">+$0.00</b></span>
+          <span class="chip">사용 <b id="chipSpend" class="minus">-$0.00</b></span>
         </div>
 
         <div class="field-row">
-          <label for="allowStart">시작 금액</label>
+          <label for="allowStart">시작 금액 ($)</label>
           <div class="inline-input">
-            <input id="allowStart" type="number" inputmode="numeric" step="100" aria-label="시작 금액">
-            <span class="unit">원</span>
+            <span class="unit">$</span>
+            <input id="allowStart" type="number" inputmode="decimal" step="0.01" min="0" aria-label="시작 금액(달러)">
             <button class="mini-btn" id="allowStartSave" type="button">저장</button>
           </div>
         </div>
@@ -673,25 +718,26 @@ main{padding-top:2px}
         <div class="field-row">
           <span>공부 1회 적립</span>
           <div class="reward-pills" id="rewardPills" role="group" aria-label="한 번에 적립할 금액">
-            <button class="pill" type="button" data-reward="100">100원</button>
-            <button class="pill" type="button" data-reward="50">50원</button>
+            <button class="pill" type="button" data-reward="0.25">$0.25</button>
+            <button class="pill" type="button" data-reward="0.5">$0.50</button>
+            <button class="pill" type="button" data-reward="1">$1.00</button>
             <span class="inline-input sm">
-              <input id="rewardCustom" type="number" inputmode="numeric" placeholder="직접" aria-label="직접 입력">
-              <span class="unit">원</span>
+              <span class="unit">$</span>
+              <input id="rewardCustom" type="number" inputmode="decimal" step="0.01" min="0" placeholder="직접" aria-label="직접 입력(달러)">
             </span>
           </div>
         </div>
 
-        <button class="study-btn" id="studyBtn" type="button"><span class="coin" aria-hidden="true">🪙</span>공부 완료! <b id="studyRewardLabel">+100원</b></button>
-        <p class="today-line" id="todayLine">오늘 공부 0번 · 0원 적립했어요</p>
+        <button class="study-btn" id="studyBtn" type="button"><span class="coin" aria-hidden="true">🪙</span>공부 완료! <b id="studyRewardLabel">+$1.00</b></button>
+        <p class="today-line" id="todayLine">오늘 공부 0번 · $0.00 적립했어요</p>
       </div>
 
       <div class="card">
         <h2><span class="h2-emoji" aria-hidden="true">💸</span>입금 / 사용</h2>
         <div class="quick-form">
           <div class="field wide">
-            <label for="quickAmount">금액</label>
-            <input class="input" id="quickAmount" type="number" inputmode="numeric" placeholder="예: 5000">
+            <label for="quickAmount">금액 ($)</label>
+            <input class="input" id="quickAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="예: 5.00">
           </div>
           <div class="field wide">
             <label for="quickMemo">메모 (선택)</label>
@@ -752,11 +798,33 @@ main{padding-top:2px}
           <span id="todoProgressText">0 / 0</span>
         </div>
         <div class="todo-list" id="todoList"></div>
+        <div class="todo-actions">
+          <button class="btn ghost sm" id="todoDailyReset" type="button">🔄 오늘 체크 초기화</button>
+          <span class="small muted">새로운 하루를 시작할 때 눌러요</span>
+        </div>
         <form class="add-form" id="todoForm">
           <label class="sr-only" for="todoOwner">누구의 할 일</label>
           <select class="input" id="todoOwner" style="max-width:104px;padding:0 8px"></select>
           <label class="sr-only" for="todoInput">할 일 내용</label>
           <input class="input" id="todoInput" type="text" placeholder="할 일을 적어주세요" maxlength="40" autocomplete="off">
+          <button class="btn primary sm" type="submit">추가</button>
+        </form>
+      </div>
+
+      <div class="card schedule-card">
+        <h2><span class="h2-emoji" aria-hidden="true">🗓️</span>주간 수업 시간표</h2>
+        <p class="card-sub">오늘 수업은 위에 모아 보여줘요. 수업을 누르면 지울 수 있어요.</p>
+        <div class="sched-today" id="schedToday"></div>
+        <div class="week-grid" id="weekGrid"></div>
+        <form class="sched-form" id="lessonForm">
+          <label class="sr-only" for="lessonKid">누구 수업</label>
+          <select class="input" id="lessonKid" aria-label="누구 수업"></select>
+          <label class="sr-only" for="lessonDay">무슨 요일</label>
+          <select class="input" id="lessonDay" aria-label="무슨 요일"></select>
+          <label class="sr-only" for="lessonTime">몇 시</label>
+          <input class="input" id="lessonTime" type="time" value="20:00" aria-label="몇 시 수업">
+          <label class="sr-only" for="lessonSubject">과목</label>
+          <input class="input" id="lessonSubject" type="text" placeholder="과목 (예: 영어)" maxlength="12" autocomplete="off">
           <button class="btn primary sm" type="submit">추가</button>
         </form>
       </div>
@@ -823,7 +891,7 @@ main{padding-top:2px}
             <button class="circle-btn send" id="chatSend" type="submit" aria-label="보내기">➤</button>
           </form>
           <div class="rec-status" id="recStatus" hidden><span class="recording-dot"></span><span id="recTime">0:00</span><span>녹음 중… 다시 누르면 보내요</span></div>
-          <p class="chat-note" id="chatNote">이 기기에만 저장돼요 · 마이크는 허락한 순간에만 켜져요</p>
+          <p class="chat-note" id="chatNote">가족이 함께 봐요 · 마이크는 허락한 순간에만 켜져요</p>
         </div>
       </div>
     </section>
@@ -852,6 +920,7 @@ main{padding-top:2px}
 
         <div class="timer-pills" id="timerPresets" role="group" aria-label="시간 고르기">
           <button class="pill" type="button" data-min="15">15분</button>
+          <button class="pill" type="button" data-min="20">20분</button>
           <button class="pill" type="button" data-min="25">25분</button>
           <button class="pill" type="button" data-min="30">30분</button>
           <button class="pill" type="button" data-min="50">50분</button>
@@ -930,6 +999,10 @@ main{padding-top:2px}
    우리 가족 대시보드 — single file app
    ========================================================= */
 var STORE_KEY = 'chiikawa-family-dashboard-v1';
+var DEVICE_KEY = 'chiikawa-family-dashboard-device-v1';
+var SCHEMA_VERSION = 3;                 // 3 = USD + 매일 할 일 + 주간 수업 시간표 버전
+var DEFAULT_FIREBASE_URL = 'https://family-dashboard-ccc9b-default-rtdb.firebaseio.com';
+var DB_PATH = 'familyDashboard/v1';
 var KIDS = ['Stella', 'Luna'];
 var PEOPLE = ['엄마', '아빠', 'Stella', 'Luna'];
 var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -949,13 +1022,33 @@ function esc(s){
   });
 }
 function uid(prefix){ return (prefix || 'id') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function deviceId(){
+  try{
+    var v = localStorage.getItem(DEVICE_KEY);
+    if(!v){
+      v = 'dev_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      localStorage.setItem(DEVICE_KEY, v);
+    }
+    return v;
+  }catch(e){ return 'dev_' + Math.random().toString(36).slice(2, 10); }
+}
+var DEVICE_ID = deviceId();
 function num(v, fallback){
   var n = Number(v);
   if(isFinite(n)) return n;
   return fallback || 0;
 }
-function fmt(n){ return Math.round(num(n, 0)).toLocaleString('ko-KR'); }
-function won(n){ return fmt(n) + '원'; }
+function roundCents(n){ return Math.round(num(n, 0) * 100) / 100; }
+function amountNum(n){
+  var v = Math.abs(roundCents(n));
+  return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+/* $1.00 · -$2.50 */
+function usd(n){ return (roundCents(n) < 0 ? '-$' : '$') + amountNum(n); }
+/* +$1.00 · -$2.50 */
+function usdSigned(n){ return (roundCents(n) < 0 ? '-$' : '+$') + amountNum(n); }
+var REWARD_PRESETS = [0.25, 0.5, 1];
+function isPresetReward(v){ return REWARD_PRESETS.indexOf(roundCents(v)) >= 0; }
 function pad2(n){ return (n < 10 ? '0' : '') + n; }
 function dateKey(d){
   var x = d || new Date();
@@ -1193,35 +1286,35 @@ function seedState(){
   var t = todayKey();
   var y = dateKey(daysAgo(1));
   return {
-    version: 1,
+    version: SCHEMA_VERSION,
     allowance: {
       Stella: {
-        start: 44200,
-        reward: 100,
+        start: 44.2,
+        reward: 1,
         log: [
-          { id:'al_s1', date:t, time:'오후 4:20', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_s2', date:t, time:'오후 4:05', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_s3', date:t, time:'오후 3:40', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_s4', date:t, time:'오후 3:10', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_s5', date:t, time:'오후 2:30', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_s6', date:t, time:'오후 1:50', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_s7', date:t, time:'오전 10:12', type:'deposit', amount:5000, memo:'할머니 용돈' },
-          { id:'al_s8', date:t, time:'오전 9:30', type:'spend', amount:1200, memo:'문구점 연필' },
-          { id:'al_s9', date:y, time:'오후 7:00', type:'deposit', amount:2000, memo:'엄마가 입금' },
-          { id:'al_s10', date:y, time:'오후 5:20', type:'spend', amount:800, memo:'편의점 아이스크림' }
+          { id:'al_s1', date:t, time:'오후 4:20', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_s2', date:t, time:'오후 4:05', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_s3', date:t, time:'오후 3:40', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_s4', date:t, time:'오후 3:10', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_s5', date:t, time:'오후 2:30', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_s6', date:t, time:'오후 1:50', type:'study', amount:1, memo:'공부 완료' },
+          { id:'al_s7', date:t, time:'오전 10:12', type:'deposit', amount:20, memo:'할머니 용돈' },
+          { id:'al_s8', date:t, time:'오전 9:30', type:'spend', amount:4.5, memo:'문구점 연필' },
+          { id:'al_s9', date:y, time:'오후 7:00', type:'deposit', amount:10, memo:'엄마가 입금' },
+          { id:'al_s10', date:y, time:'오후 5:20', type:'spend', amount:3.25, memo:'편의점 아이스크림' }
         ]
       },
       Luna: {
-        start: 18500,
-        reward: 100,
+        start: 18.5,
+        reward: 0.5,
         log: [
-          { id:'al_l1', date:t, time:'오후 4:35', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_l2', date:t, time:'오후 3:55', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_l3', date:t, time:'오후 2:10', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_l4', date:t, time:'오전 11:00', type:'deposit', amount:2000, memo:'아빠가 입금' },
-          { id:'al_l5', date:y, time:'오후 6:40', type:'spend', amount:3000, memo:'책 사기' },
-          { id:'al_l6', date:y, time:'오후 4:00', type:'study', amount:100, memo:'공부 완료' },
-          { id:'al_l7', date:y, time:'오후 3:20', type:'study', amount:100, memo:'공부 완료' }
+          { id:'al_l1', date:t, time:'오후 4:35', type:'study', amount:0.5, memo:'공부 완료' },
+          { id:'al_l2', date:t, time:'오후 3:55', type:'study', amount:0.5, memo:'공부 완료' },
+          { id:'al_l3', date:t, time:'오후 2:10', type:'study', amount:0.5, memo:'공부 완료' },
+          { id:'al_l4', date:t, time:'오전 11:00', type:'deposit', amount:10, memo:'아빠가 입금' },
+          { id:'al_l5', date:y, time:'오후 6:40', type:'spend', amount:6, memo:'책 사기' },
+          { id:'al_l6', date:y, time:'오후 4:00', type:'study', amount:0.5, memo:'공부 완료' },
+          { id:'al_l7', date:y, time:'오후 3:20', type:'study', amount:0.5, memo:'공부 완료' }
         ]
       }
     },
@@ -1244,15 +1337,13 @@ function seedState(){
       done: []
     },
     todos: [
-      { id:'td1', owner:'Stella', text:'수학 숙제 3장 풀기', done:true, date:t },
-      { id:'td2', owner:'Stella', text:'영어 단어 20개 외우기', done:false, date:t },
-      { id:'td3', owner:'Stella', text:'피아노 15분 연습하기', done:false, date:t },
-      { id:'td4', owner:'Luna', text:'받아쓰기 10문제 연습', done:true, date:t },
-      { id:'td5', owner:'Luna', text:'그림일기 쓰기', done:false, date:t },
-      { id:'td6', owner:'엄마', text:'저녁 장보기', done:false, date:t },
-      { id:'td7', owner:'엄마', text:'세탁기 돌리기', done:true, date:t },
-      { id:'td8', owner:'아빠', text:'분리수거 내놓기', done:false, date:t },
-      { id:'td9', owner:'아빠', text:'현관 전등 갈기', done:false, date:t }
+      { id:'td1', owner:'Stella', text:'Bomi 맵테스트', done:false, date:t },
+      { id:'td2', owner:'Stella', text:'수학문제 3장', done:false, date:t },
+      { id:'td3', owner:'Stella', text:'국어문제 1장', done:false, date:t },
+      { id:'td4', owner:'Stella', text:'바이올린 연습 20분', done:false, date:t },
+      { id:'td5', owner:'Luna', text:'Bomi 맵테스트', done:false, date:t },
+      { id:'td6', owner:'Luna', text:'수학문제 3장', done:false, date:t },
+      { id:'td7', owner:'Luna', text:'국어문제 1장', done:false, date:t }
     ],
     stamps: {
       Stella: {
@@ -1287,9 +1378,19 @@ function seedState(){
         { id:'c7', who:'Stella', type:'text', text:'좋아요!! 저 상어 보고 싶어요 🦈', ts: tsAt(0, 18, 9), hearts:['아빠'] }
       ]
     },
+    schedule: {
+      lessons: [
+        { id:'ls1', kid:'Stella', day:0, time:'20:00', subject:'영어' },
+        { id:'ls2', kid:'Stella', day:3, time:'20:00', subject:'영어' },
+        { id:'ls3', kid:'Stella', day:4, time:'17:00', subject:'바이올린' },
+        { id:'ls4', kid:'Stella', day:5, time:'19:00', subject:'중국어' },
+        { id:'ls5', kid:'Luna', day:1, time:'20:00', subject:'영어' }
+      ]
+    },
     timer: { preset: 25, rewardKid: '' },
     alarm: { on:false, mode:'clock', time:'21:00', minutes:30, targetTs:0, lastFired:'' },
-    settings: { firebaseUrl: '' },
+    settings: { firebaseUrl: DEFAULT_FIREBASE_URL, localOnly: false },
+    meta: { updatedAt: 0 },
     ui: { tab:'allowance', kid:'Stella', stampKid:'Stella', todoFilter:'전체' }
   };
 }
@@ -1307,18 +1408,32 @@ function mergeDefaults(defaults, saved){
   return out;
 }
 
+/* Firebase는 중간의 빈 칸(null)을 배열/객체 어느 쪽으로도 돌려줄 수 있어서 도장칸은 항상 10칸으로 맞춰요 */
+function toSlots(v){
+  var out = [];
+  var i;
+  if(Array.isArray(v)){
+    for(i = 0; i < v.length && i < 10; i++) out.push(v[i] || null);
+  } else if(isObject(v)){
+    for(i = 0; i < 10; i++) out.push(v[String(i)] || v[i] || null);
+  }
+  while(out.length < 10) out.push(null);
+  return out.slice(0, 10);
+}
+
 function normalize(saved){
   var base = seedState();
   var s = mergeDefaults(base, saved);
   KIDS.forEach(function(k){
     if(!isObject(s.allowance[k])) s.allowance[k] = base.allowance[k];
     if(!Array.isArray(s.allowance[k].log)) s.allowance[k].log = [];
-    s.allowance[k].start = Math.max(0, num(s.allowance[k].start, 0));
-    s.allowance[k].reward = Math.max(0, num(s.allowance[k].reward, 100));
+    s.allowance[k].start = roundCents(Math.max(0, num(s.allowance[k].start, 0)));
+    s.allowance[k].reward = roundCents(Math.max(0, num(s.allowance[k].reward, 1)));
+    if(Array.isArray(s.allowance[k].log)){
+      s.allowance[k].log.forEach(function(e){ e.amount = roundCents(num(e.amount, 0)); });
+    }
     if(!isObject(s.stamps[k])){ s.stamps[k] = base.stamps[k]; }
-    if(!Array.isArray(s.stamps[k].slots)) s.stamps[k].slots = [];
-    while(s.stamps[k].slots.length < 10) s.stamps[k].slots.push(null);
-    s.stamps[k].slots = s.stamps[k].slots.slice(0, 10);
+    s.stamps[k].slots = toSlots(s.stamps[k].slots);
   });
   if(!Array.isArray(s.missions.items)) s.missions.items = base.missions.items;
   if(!Array.isArray(s.missions.done)) s.missions.done = [];
@@ -1330,11 +1445,108 @@ function normalize(saved){
   if(['전체'].concat(PEOPLE).indexOf(s.ui.todoFilter) < 0) s.ui.todoFilter = '전체';
   if(['allowance','mission','todo','stamp','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'allowance';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
+  if(!isObject(s.schedule) || !Array.isArray(s.schedule.lessons)) s.schedule = base.schedule;
+  s.schedule.lessons = s.schedule.lessons.filter(function(l){
+    return isObject(l) && KIDS.indexOf(l.kid) >= 0 && num(l.day, -1) >= 0 && num(l.day, -1) <= 6 && l.time && l.subject;
+  }).map(function(l){
+    return {
+      id: l.id || uid('ls'),
+      kid: l.kid,
+      day: Math.round(num(l.day, 0)),
+      time: String(l.time),
+      subject: String(l.subject).slice(0, 12)
+    };
+  });
+  if(!isObject(s.settings)) s.settings = base.settings;
+  if(typeof s.settings.localOnly !== 'boolean') s.settings.localOnly = false;
+  if(!s.settings.firebaseUrl) s.settings.firebaseUrl = DEFAULT_FIREBASE_URL;
+  if(!isObject(s.meta)) s.meta = { updatedAt: 0 };
   if(['clock','countdown'].indexOf(s.alarm.mode) < 0) s.alarm.mode = 'clock';
   return s;
 }
 
-function save(){
+/* =========================================================
+   Real-time sync — Firebase Realtime Database
+   - 함께 보는 것 : 용돈/기입장 · 미션 · 할 일 · 도장판 · 채팅 메시지 · 타이머/알람 설정
+   - 이 기기에만 : 채팅 프로필(chat.me) · 이 기기 잠금(chat.locked) · ui · settings
+   ========================================================= */
+var sync = {
+  mode: 'local',        // 'live' | 'connecting' | 'local'
+  url: '',
+  app: null,
+  db: null,
+  ref: null,
+  connRef: null,
+  connected: false,
+  applying: false,
+  listening: false,
+  opening: false,
+  everLive: false,
+  dirty: false,
+  warned: false,
+  pushTimer: null,
+  lastPushed: 0
+};
+
+function syncModeLabel(mode){
+  if(mode === 'live') return '🟢 실시간 동기화';
+  if(mode === 'connecting') return '🟡 연결 중';
+  return '⚪ 이 기기만 저장';
+}
+function syncModeDetail(mode){
+  if(mode === 'live') return '가족 모두 같은 내용을 함께 보고 있어요.';
+  if(mode === 'connecting') return '가족 데이터에 연결하는 중이에요.';
+  return '이 기기에만 저장하고 있어요. 연결되면 자동으로 맞춰요.';
+}
+
+function setSyncMode(mode){
+  sync.mode = mode;
+  if(mode === 'live') sync.everLive = true;
+  var label = syncModeLabel(mode);
+  var detail = syncModeDetail(mode);
+  var badge = $('#syncBadge');
+  if(badge){
+    if(badge.textContent !== label) badge.textContent = label;
+    if(badge.getAttribute('data-state') !== mode) badge.setAttribute('data-state', mode);
+    badge.setAttribute('title', detail + ' · 눌러서 설정');
+  }
+  var line = $('#syncStateLine');
+  if(line) line.textContent = label;
+  var det = $('#syncDetail');
+  if(det) det.textContent = detail;
+}
+
+function loadScriptOnce(src, cb){
+  var el = document.createElement('script');
+  var finished = false;
+  var timer = setTimeout(function(){
+    if(finished) return;
+    finished = true;
+    cb(new Error('timeout'));
+  }, 9000);
+  el.src = src;
+  el.async = true;
+  el.crossOrigin = 'anonymous';
+  el.onload = function(){ if(finished) return; finished = true; clearTimeout(timer); cb(null); };
+  el.onerror = function(){ if(finished) return; finished = true; clearTimeout(timer); cb(new Error('load')); };
+  document.head.appendChild(el);
+}
+
+/* Firebase compat SDK는 그때그때 불러와요. 못 불러오면(localStorage만으로) 그대로 동작해요. */
+function ensureFirebase(cb){
+  if(window.firebase && window.firebase.database) return cb(null);
+  loadScriptOnce('https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js', function(e1){
+    if(e1) return cb(e1);
+    if(window.firebase && window.firebase.database) return cb(null);
+    loadScriptOnce('https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js', function(e2){
+      if(e2) return cb(e2);
+      if(!window.firebase || !window.firebase.database) return cb(new Error('sdk'));
+      cb(null);
+    });
+  });
+}
+
+function writeLocal(){
   try{
     localStorage.setItem(STORE_KEY, JSON.stringify(state));
     return true;
@@ -1347,16 +1559,205 @@ function save(){
   }
 }
 
+/* skipPush=true 이면 이 기기에만 저장해요(원격에 보내지 않음) */
+function save(skipPush){
+  if(!skipPush && !sync.applying && state.meta) state.meta.updatedAt = Date.now();
+  var ok = writeLocal();
+  if(!skipPush && !sync.applying) queuePush();
+  return ok;
+}
+
+function queuePush(){
+  if(!sync.ref || sync.applying) return;
+  sync.dirty = true;
+  if(sync.pushTimer) clearTimeout(sync.pushTimer);
+  sync.pushTimer = setTimeout(flushPush, 300);
+}
+
+function syncPayload(){
+  return {
+    schema: SCHEMA_VERSION,
+    allowance: state.allowance,
+    missions: state.missions,
+    todos: state.todos,
+    stamps: state.stamps,
+    schedule: state.schedule,
+    chat: { messages: state.chat.messages },
+    timer: state.timer,
+    alarm: state.alarm,
+    updatedAt: Math.round(state.meta.updatedAt || Date.now()),
+    lastWriterId: DEVICE_ID
+  };
+}
+
+function flushPush(){
+  if(sync.pushTimer){ clearTimeout(sync.pushTimer); sync.pushTimer = null; }
+  if(!sync.ref || sync.applying) return;
+  var payload = syncPayload();
+  sync.lastPushed = payload.updatedAt;
+  try{
+    sync.ref.set(payload, function(err){
+      if(err){
+        sync.dirty = true;
+        if(!sync.warned){
+          sync.warned = true;
+          toast('실시간 동기화에 연결하지 못했어요. 이 기기에 저장해둘게요');
+        }
+        if(sync.everLive) setSyncMode('local');
+        return;
+      }
+      sync.dirty = false;
+      if(sync.connected) setSyncMode('live');
+    });
+  }catch(e){
+    sync.dirty = true;
+  }
+}
+
 function loadState(){
   var base = seedState();
   try{
     var raw = localStorage.getItem(STORE_KEY);
     if(!raw) return base;
-    return normalize(JSON.parse(raw));
+    var parsed = JSON.parse(raw);
+    /* 옛 버전(₩ 기준) 저장값은 달러 버전과 섞이지 않도록 새 데이터로 시작해요 */
+    if(num(parsed.version, 0) !== SCHEMA_VERSION) return base;
+    return normalize(parsed);
   }catch(e){
     return base;
   }
 }
+
+function stopSync(){
+  if(sync.pushTimer){ clearTimeout(sync.pushTimer); sync.pushTimer = null; }
+  if(sync.ref){ try{ sync.ref.off(); }catch(e){} }
+  if(sync.connRef){ try{ sync.connRef.off(); }catch(e){} }
+  sync.ref = null;
+  sync.connRef = null;
+  sync.db = null;
+  sync.connected = false;
+  sync.listening = false;
+}
+
+function startSync(){
+  var url = String((state.settings && state.settings.firebaseUrl) || '').trim().replace(/\/+$/, '');
+  var off = !!(state.settings && state.settings.localOnly) || !url;
+  if(off){
+    stopSync();
+    sync.url = '';
+    setSyncMode('local');
+    return;
+  }
+  if(sync.ref && sync.url === url) return;
+  if(sync.opening && sync.url === url) return;
+  stopSync();
+  sync.url = url;
+  sync.opening = true;
+  setSyncMode('connecting');
+  ensureFirebase(function(err){
+    sync.opening = false;
+    if(err || !window.firebase){
+      setSyncMode('local');
+      return;
+    }
+    try{
+      var appName = 'fd-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
+      sync.app = firebase.initializeApp({ databaseURL: url }, appName);
+      sync.db = sync.app.database();
+      sync.ref = sync.db.ref(DB_PATH);
+      sync.connRef = sync.db.ref('.info/connected');
+      sync.connRef.on('value', function(snap){
+        var ok = !!(snap && snap.val() === true);
+        sync.connected = ok;
+        if(ok){
+          setSyncMode('live');
+          if(sync.dirty && !sync.pushTimer) flushPush();
+        } else if(sync.everLive || sync.listening){
+          setSyncMode('local');
+        }
+      });
+      seedOrAdopt();
+    }catch(e){
+      setSyncMode('local');
+    }
+  });
+}
+
+/* 처음 연결: 비어 있으면 이 기기 데이터를 올리고, 이미 있으면 그 데이터를 따라가요. */
+function seedOrAdopt(){
+  var ref = sync.ref;
+  if(!ref) return;
+  var finished = false;
+  function done(val, committed){
+    if(finished) return;
+    finished = true;
+    sync.listening = true;
+    if(!committed && isObject(val) && num(val.schema, 0) >= SCHEMA_VERSION) applyRemote(val);
+    ref.on('value', onRemoteValue);
+    setSyncMode(sync.connected ? 'live' : 'connecting');
+  }
+  try{
+    ref.transaction(function(cur){
+      if(cur === null) return syncPayload();                                   /* 비어 있음 → 씨앗 */
+      if(isObject(cur) && num(cur.schema, 0) < SCHEMA_VERSION) return syncPayload(); /* 옛 ₩ 데이터 → 교체 */
+      return undefined;                                                        /* 이미 있음 → 그대로 */
+    }, function(err, committed, snap){
+      if(err){
+        ref.once('value', function(s){
+          done(s.val(), false);
+        }, function(){
+          setSyncMode(sync.connected ? 'connecting' : 'local');
+        });
+        return;
+      }
+      done(snap ? snap.val() : null, !!committed);
+    });
+  }catch(e){
+    setSyncMode('local');
+  }
+}
+
+function onRemoteValue(snap){
+  var v = snap ? snap.val() : null;
+  if(!isObject(v)) return;
+  if(sync.applying) return;
+  /* 내가 방금 보낸 값이 되돌아온 것뿐이면 그리지 않아요 (무한 루프 방지) */
+  if(v.lastWriterId === DEVICE_ID && num(v.updatedAt, 0) <= sync.lastPushed) return;
+  applyRemote(v);
+}
+
+function applyRemote(remote){
+  if(!isObject(remote)) return;
+  var wasApplying = sync.applying;
+  sync.applying = true;
+  try{
+    var msgs = (isObject(remote.chat) && Array.isArray(remote.chat.messages))
+      ? remote.chat.messages
+      : state.chat.messages;
+    state = normalize({
+      version: SCHEMA_VERSION,
+      allowance: isObject(remote.allowance) ? remote.allowance : state.allowance,
+      missions: isObject(remote.missions) ? remote.missions : state.missions,
+      todos: Array.isArray(remote.todos) ? remote.todos : state.todos,
+      stamps: isObject(remote.stamps) ? remote.stamps : state.stamps,
+      schedule: isObject(remote.schedule) ? remote.schedule : state.schedule,
+      /* 이 기기의 프로필/잠금은 절대 덮어쓰지 않아요 */
+      chat: { me: state.chat.me, locked: state.chat.locked, messages: msgs },
+      timer: isObject(remote.timer) ? remote.timer : state.timer,
+      alarm: isObject(remote.alarm) ? remote.alarm : state.alarm,
+      settings: state.settings,
+      ui: state.ui,
+      meta: { updatedAt: num(remote.updatedAt, 0) || Date.now() }
+    });
+    writeLocal();
+    renderAll();
+    showTab(state.ui.tab || 'allowance', true);
+  }catch(e){
+    /* 화면 갱신이 잠깐 실패해도 저장된 값은 살아 있어요 */
+  }
+  sync.applying = wasApplying;
+}
+
 
 /* =========================================================
    Shared: kid switch
@@ -1426,26 +1827,28 @@ function renderAllowance(){
   var am = $('#allowMascot');
   if(am) am.innerHTML = mascotSVG(kid);
 
-  $('#allowTotal').textContent = fmt(tt.total);
-  $('#chipStart').textContent = won(tt.start);
-  $('#chipStudy').textContent = '+' + won(tt.study);
-  $('#chipDep').textContent = '+' + won(tt.deposit);
-  $('#chipSpend').textContent = '-' + won(tt.spend);
+  var curEl = $('#allowCur');
+  if(curEl) curEl.textContent = roundCents(tt.total) < 0 ? '-$' : '$';
+  $('#allowTotal').textContent = amountNum(tt.total);
+  $('#chipStart').textContent = usd(tt.start);
+  $('#chipStudy').textContent = usdSigned(tt.study);
+  $('#chipDep').textContent = usdSigned(tt.deposit);
+  $('#chipSpend').textContent = '-' + usd(tt.spend);
   $('#allowSub').textContent = kid === 'Stella' ? '언니의 저금통이에요 🐷' : '동생의 저금통이에요 🐷';
 
   var startInput = $('#allowStart');
   if(document.activeElement !== startInput) startInput.value = String(a.start);
   var reward = num(a.reward, 100);
-  $('#studyRewardLabel').textContent = '+' + won(reward);
+  $('#studyRewardLabel').textContent = usdSigned(reward);
   $$('#rewardPills .pill').forEach(function(b){
-    b.classList.toggle('active', num(b.getAttribute('data-reward'), -1) === reward);
+    b.classList.toggle('active', Math.abs(num(b.getAttribute('data-reward'), -1) - roundCents(reward)) < 0.005);
   });
   var rc = $('#rewardCustom');
   if(document.activeElement !== rc){
-    rc.value = (reward === 100 || reward === 50) ? '' : String(reward);
+    rc.value = isPresetReward(reward) ? '' : String(roundCents(reward));
   }
   $('#todayLine').textContent = ts.count > 0
-    ? '오늘 공부 ' + ts.count + '번 · ' + won(ts.amount) + ' 적립했어요'
+    ? '오늘 공부 ' + ts.count + '번 · ' + usd(ts.amount) + ' 적립했어요'
     : '오늘은 아직 공부 기록이 없어요. 첫 적립을 해볼까요?';
 
   renderAllowLog(kid);
@@ -1489,8 +1892,8 @@ function renderAllowLog(kid){
       else otherSum -= num(e.amount, 0);
     });
     var sub = studyCount
-      ? '공부 완료 ' + studyCount + '개 · ' + won(studySum)
-      : (otherSum >= 0 ? '+' + won(otherSum) : '-' + won(-otherSum));
+      ? '공부 완료 ' + studyCount + '개 · ' + usd(studySum)
+      : usdSigned(otherSum);
     html += '<div class="log-day">' +
       '<span class="cal">' + Number(String(g.date).split('-')[2]) + '</span>' +
       '<span class="dtext">' + esc(dayLabel(g.date)) + '</span>' +
@@ -1502,7 +1905,7 @@ function renderAllowLog(kid){
         '<span class="li-ico" aria-hidden="true">' + ledgerIcon(e.type) + '</span>' +
         '<span class="li-main"><span class="li-name">' + esc(ledgerName(e)) + '</span>' +
         '<span class="li-time">' + esc(e.time || '') + '</span></span>' +
-        '<span class="li-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? '+' : '-') + won(e.amount) + '</span>' +
+        '<span class="li-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? usdSigned(e.amount) : usd(-num(e.amount, 0))) + '</span>' +
         '<button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="이 기록 지우기">×</button>' +
         '</div>';
     });
@@ -1555,19 +1958,19 @@ function doStudy(){
   renderAllowance();
   bumpTotal();
   coinBurst($('#studyBtn'), 7);
-  toast(kid + ' 공부 완료! ' + won(reward) + ' 적립했어요 🪙');
+  toast(kid + ' 공부 완료! ' + usdSigned(reward) + ' 적립했어요 🪙');
 }
 
 function setReward(value){
   var kid = currentKid();
-  state.allowance[kid].reward = Math.max(0, num(value, 0));
+  state.allowance[kid].reward = roundCents(Math.max(0, num(value, 0)));
   save();
   renderAllowance();
 }
 
 function doQuick(kind){
   var kid = currentKid();
-  var amount = Math.floor(num($('#quickAmount').value, 0));
+  var amount = roundCents(num($('#quickAmount').value, 0));
   if(amount <= 0){ toast('금액을 먼저 적어주세요'); $('#quickAmount').focus(); return; }
   var memo = $('#quickMemo').value.trim();
   if(!memo) memo = kind === 'deposit' ? '입금' : '사용';
@@ -1576,7 +1979,7 @@ function doQuick(kind){
   $('#quickMemo').value = '';
   renderAllowance();
   bumpTotal();
-  toast((kind === 'deposit' ? '입금 ' : '사용 ') + won(amount) + ' 기록했어요');
+  toast((kind === 'deposit' ? '입금 ' : '사용 ') + usd(amount) + ' 기록했어요');
 }
 
 /* =========================================================
@@ -1704,6 +2107,66 @@ function renderTodoFilter(){
   box.innerHTML = html;
 }
 
+function timeLabel(t){
+  var p = String(t || '').split(':');
+  var h = Number(p[0]);
+  var m = Number(p[1]);
+  if(!isFinite(h)) return String(t || '');
+  return (h < 12 ? '오전 ' : '오후 ') + ((h % 12 === 0) ? 12 : h % 12) + ':' + pad2(isFinite(m) ? m : 0);
+}
+
+function lessonsSorted(){
+  return state.schedule.lessons.slice().sort(function(a, b){
+    if(a.day !== b.day) return a.day - b.day;
+    return String(a.time).localeCompare(String(b.time));
+  });
+}
+
+function renderSchedule(){
+  var today = new Date().getDay();
+  var all = lessonsSorted();
+
+  var kidSel = $('#lessonKid');
+  if(kidSel && !kidSel.options.length){
+    kidSel.innerHTML = KIDS.map(function(k){ return '<option value="' + k + '">' + esc(k) + '</option>'; }).join('');
+  }
+  var daySel = $('#lessonDay');
+  if(daySel && !daySel.options.length){
+    daySel.innerHTML = WEEKDAYS.map(function(n, i){ return '<option value="' + i + '">' + n + '요일</option>'; }).join('');
+    daySel.value = String(today);
+  }
+
+  var box = $('#schedToday');
+  if(box){
+    var mine = all.filter(function(l){ return l.day === today; });
+    box.innerHTML = mine.length
+      ? mine.map(function(l){
+          return '<div class="st-line">' + mascot(l.kid) +
+            '<span><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) + '</span>' +
+            '<span class="st-time">' + esc(timeLabel(l.time)) + '</span></div>';
+        }).join('')
+      : '<div class="st-empty">오늘은 수업이 없어요. 느긋한 하루 🐣</div>';
+  }
+
+  var grid = $('#weekGrid');
+  if(grid){
+    grid.innerHTML = WEEKDAYS.map(function(name, i){
+      var list = all.filter(function(l){ return l.day === i; });
+      return '<div class="day-col' + (i === today ? ' today' : '') + '">' +
+        '<span class="dc-name">' + esc(name) + '</span>' +
+        (list.length
+          ? list.map(function(l){
+              return '<button class="lc-chip" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' ' + timeLabel(l.time)) + ' 수업 지우기">' +
+                '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
+                '<span class="lc-sub">' + esc(l.subject) + '</span>' +
+                '</button>';
+            }).join('')
+          : '<span class="dc-empty">·</span>') +
+        '</div>';
+    }).join('');
+  }
+}
+
 function renderTodos(){
   renderTodoFilter();
 
@@ -1801,6 +2264,20 @@ function addTodo(){
   renderTodos();
   toast(owner + ' 할 일을 추가했어요');
 }
+function resetDailyChecks(){
+  var cleared = 0;
+  var t = todayKey();
+  state.todos.forEach(function(x){
+    if(x.done) cleared++;
+    x.done = false;
+    x.date = t;
+  });
+  hiFiveShown = false;
+  save();
+  renderTodos();
+  toast(cleared ? '오늘 체크를 모두 풀었어요. 새로운 하루 시작! 🌤️' : '이미 모두 체크가 풀려 있어요');
+}
+
 /* =========================================================
    4) Mission stamp board
    ========================================================= */
@@ -2270,7 +2747,7 @@ function finishTimer(){
     var amount = num(state.allowance[kid].reward, 0);
     if(amount > 0){
       addLedger(kid, 'study', amount, '공부 타이머 ' + Math.round(timer.total / 60000) + '분');
-      rewardLine = '<br><b style="color:#4E9A6D">' + esc(kid) + '에게 ' + won(amount) + ' 적립했어요 🪙</b>';
+      rewardLine = '<br><b style="color:#4E9A6D">' + esc(kid) + '에게 ' + usd(amount) + ' 적립했어요 🪙</b>';
       coinBurst($('#timerStartBtn'), 6);
     }
   }
@@ -2526,22 +3003,26 @@ function openSettings(){
   var url = state.settings.firebaseUrl || '';
   var msgCount = state.chat.messages.length;
   var logCount = state.allowance.Stella.log.length + state.allowance.Luna.log.length;
+  var where = sync.mode === 'live' ? '가족 모두 + 이 기기' : '이 기기 브라우저';
   var html =
     '<h2>⚙️ 설정</h2>' +
-    '<p class="modal-sub">이 대시보드는 이 기기 안에만 저장돼요. 인터넷 없이도 그대로 열려요.</p>' +
     '<div class="setting-block">' +
-      '<h3>여러 기기에서 같이 쓰기 (준비 중)</h3>' +
-      '<p>Firebase Realtime Database 주소를 적어두면, 나중에 폰과 태블릿이 같은 내용을 함께 보는 기능에 쓸 수 있어요. 지금은 주소만 저장돼요.</p>' +
+      '<h3>실시간 동기화</h3>' +
+      '<p>같은 주소를 쓰는 폰과 태블릿이 용돈·미션·할 일·도장·채팅을 함께 봐요. 인터넷이 잠깐 끊겨도 이 기기에 저장했다가 다시 연결되면 맞춰요.</p>' +
+      '<div class="kv"><span>지금 상태</span><b id="syncStateLine">' + esc(syncModeLabel(sync.mode)) + '</b></div>' +
+      '<p class="small muted" id="syncDetail" style="margin:6px 0 9px">' + esc(syncModeDetail(sync.mode)) + '</p>' +
       '<label class="sr-only" for="firebaseUrl">Firebase Realtime Database URL</label>' +
-      '<input class="input" id="firebaseUrl" type="url" placeholder="https://내-프로젝트.firebaseio.com" value="' + esc(url) + '">' +
+      '<input class="input" id="firebaseUrl" type="url" inputmode="url" placeholder="https://내-프로젝트.firebaseio.com" autocomplete="off">' +
       '<div class="modal-actions" style="margin-top:9px">' +
-        '<button class="btn ghost sm" type="button" id="fbClear">지우기</button>' +
-        '<button class="btn primary sm" type="button" id="fbSave">저장</button>' +
+        '<button class="btn ghost sm" type="button" id="fbDefault">기본 주소</button>' +
+        '<button class="btn ghost sm" type="button" id="fbClear">이 기기만</button>' +
+        '<button class="btn primary sm" type="button" id="fbSave">연결</button>' +
       '</div>' +
+      '<p class="small muted" style="margin-top:9px">🔒 \'이 기기 잠금\'과 내 프로필은 이 기기에만 저장돼요. 다른 기기와 섞이지 않아요.</p>' +
     '</div>' +
     '<div class="setting-block">' +
       '<h3>내 기록</h3>' +
-      '<div class="kv"><span>저장 위치</span><b>이 기기 브라우저</b></div>' +
+      '<div class="kv"><span>저장 위치</span><b>' + esc(where) + '</b></div>' +
       '<div class="kv"><span>용돈 기록</span><b>' + logCount + '개</b></div>' +
       '<div class="kv"><span>채팅 메시지</span><b>' + msgCount + '개</b></div>' +
       '<div class="kv"><span>쓰는 공간</span><b>약 ' + bytesLabel(storageBytes()) + '</b></div>' +
@@ -2550,23 +3031,39 @@ function openSettings(){
         '<button class="btn pink sm" type="button" id="resetBtn">처음으로</button>' +
       '</div>' +
     '</div>' +
-    '<p class="small muted" style="text-align:center;margin-top:4px">우리 가족 대시보드 · 기기 안에 저장되는 1.0 버전</p>' +
+    '<p class="small muted" style="text-align:center;margin-top:4px">우리 가족 대시보드 · 실시간 동기화 1.1 버전</p>' +
     '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>닫기</button></div>';
 
   openModal(html, {
     onReady: function(back, close){
+      $('#firebaseUrl', back).value = url;
+
       $('#fbSave', back).addEventListener('click', function(){
-        var v = $('#firebaseUrl', back).value.trim();
-        if(v && !/^https?:\/\/.+/.test(v)){ toast('주소는 https:// 로 시작해야 해요'); return; }
+        var v = $('#firebaseUrl', back).value.trim().replace(/\/+$/, '');
+        if(!v){ toast('주소를 적어주세요. 이 기기에만 저장하려면 \'이 기기만\'을 눌러요'); return; }
+        if(!/^https?:\/\/.+/.test(v)){ toast('주소는 https:// 로 시작해야 해요'); return; }
         state.settings.firebaseUrl = v;
-        save();
-        toast(v ? '주소를 저장했어요. 나중에 동기화에 쓸게요' : '주소를 비웠어요');
+        state.settings.localOnly = false;
+        save(true);
+        close();
+        startSync();
+        toast('실시간 동기화를 시작할게요');
+      });
+      $('#fbDefault', back).addEventListener('click', function(){
+        state.settings.firebaseUrl = DEFAULT_FIREBASE_URL;
+        state.settings.localOnly = false;
+        save(true);
+        close();
+        startSync();
+        toast('우리 가족 주소로 연결할게요');
       });
       $('#fbClear', back).addEventListener('click', function(){
-        $('#firebaseUrl', back).value = '';
-        state.settings.firebaseUrl = '';
-        save();
-        toast('주소를 지웠어요');
+        state.settings.localOnly = true;
+        save(true);
+        close();
+        stopSync();
+        setSyncMode('local');
+        toast('이제 이 기기에만 저장해요');
       });
       $('#exportBtn', back).addEventListener('click', function(){
         try{
@@ -2582,11 +3079,20 @@ function openSettings(){
       });
       $('#resetBtn', back).addEventListener('click', function(){
         close();
-        confirmModal('처음 데이터로 돌아갈까요?', '용돈 기록, 도장, 채팅이 모두 지워지고 처음 예시 데이터로 돌아가요. 이 기기에서만 지워져요.', '처음으로', function(){
+        confirmModal('처음 데이터로 돌아갈까요?', '용돈 기록, 도장, 채팅이 모두 지워지고 처음 예시 데이터로 돌아가요. 같이 쓰는 기기에서도 똑같이 바뀌어요.', '처음으로', function(){
           try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+          var keepSettings = state.settings;
+          var keepUi = state.ui;
+          var keepChat = { me: state.chat.me, locked: state.chat.locked };
           state = seedState();
+          state.settings = keepSettings;
+          state.ui = keepUi;
+          state.chat.me = keepChat.me;
+          state.chat.locked = keepChat.locked;
+          state.meta.updatedAt = Date.now();
           save();
           renderAll();
+          showTab(state.ui.tab || 'allowance', true);
           toast('처음 데이터로 돌아갔어요');
         }, true);
       });
@@ -2599,7 +3105,7 @@ function openSettings(){
    ========================================================= */
 function showTab(name, silent){
   state.ui.tab = name;
-  if(!silent) save();
+  if(!silent) save(true);
   $$('.tab').forEach(function(b){
     var on = b.getAttribute('data-tab') === name;
     b.classList.toggle('active', on);
@@ -2621,6 +3127,7 @@ function renderAll(){
   renderAllowance();
   renderMission();
   renderTodos();
+  renderSchedule();
   renderStamps();
   renderChatWho();
   renderChat();
@@ -2643,19 +3150,19 @@ function bindEvents(){
     var b = e.target.closest ? e.target.closest('[data-kid]') : null;
     if(!b) return;
     state.ui.kid = b.getAttribute('data-kid');
-    save();
+    save(true);
     renderAllowance();
   });
   $('#allowStartSave').addEventListener('click', function(){
-    var v = Math.max(0, Math.floor(num($('#allowStart').value, 0)));
+    var v = roundCents(Math.max(0, num($('#allowStart').value, 0)));
     state.allowance[currentKid()].start = v;
     save();
     renderAllowance();
     bumpTotal();
-    toast('시작 금액을 ' + won(v) + '로 정했어요');
+    toast('시작 금액을 ' + usd(v) + '로 정했어요');
   });
   $('#allowStart').addEventListener('change', function(){
-    var v = Math.max(0, Math.floor(num(this.value, 0)));
+    var v = roundCents(Math.max(0, num(this.value, 0)));
     state.allowance[currentKid()].start = v;
     save();
     renderAllowance();
@@ -2663,11 +3170,11 @@ function bindEvents(){
   $('#rewardPills').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-reward]') : null;
     if(!b) return;
-    setReward(num(b.getAttribute('data-reward'), 100));
-    toast('공부 1회에 ' + won(state.allowance[currentKid()].reward) + ' 적립해요');
+    setReward(num(b.getAttribute('data-reward'), 1));
+    toast('공부 1회에 ' + usd(state.allowance[currentKid()].reward) + ' 적립해요');
   });
   $('#rewardCustom').addEventListener('change', function(){
-    var v = Math.floor(num(this.value, 0));
+    var v = roundCents(num(this.value, 0));
     if(v > 0) setReward(v);
     else renderAllowance();
   });
@@ -2714,7 +3221,7 @@ function bindEvents(){
     var b = e.target.closest ? e.target.closest('[data-filter]') : null;
     if(!b) return;
     state.ui.todoFilter = b.getAttribute('data-filter');
-    save();
+    save(true);
     renderTodos();
   });
   $('#todoList').addEventListener('click', function(e){
@@ -2735,13 +3242,45 @@ function bindEvents(){
     e.preventDefault();
     addTodo();
   });
+  $('#todoDailyReset').addEventListener('click', resetDailyChecks);
+
+  /* weekly class schedule */
+  $('#lessonForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var kid = $('#lessonKid').value;
+    var day = Number($('#lessonDay').value);
+    var time = $('#lessonTime').value || '20:00';
+    var subject = $('#lessonSubject').value.trim();
+    if(!subject){ toast('무슨 수업인지 적어주세요'); $('#lessonSubject').focus(); return; }
+    if(KIDS.indexOf(kid) < 0) kid = KIDS[0];
+    if(!(day >= 0 && day <= 6)) day = new Date().getDay();
+    state.schedule.lessons.push({ id: uid('ls'), kid: kid, day: day, time: time, subject: subject.slice(0, 12) });
+    save();
+    $('#lessonSubject').value = '';
+    renderSchedule();
+    toast(kid + ' ' + WEEKDAYS[day] + '요일 ' + timeLabel(time) + ' ' + subject + ' 추가했어요 🗓️');
+  });
+  $('#weekGrid').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-lesson]') : null;
+    if(!b) return;
+    var id = b.getAttribute('data-lesson');
+    var les = null;
+    state.schedule.lessons.forEach(function(l){ if(l.id === id) les = l; });
+    if(!les) return;
+    confirmModal('수업을 지울까요?', les.kid + ' ' + WEEKDAYS[les.day] + '요일 ' + timeLabel(les.time) + ' ' + les.subject + ' 수업이에요.', '지우기', function(){
+      state.schedule.lessons = state.schedule.lessons.filter(function(l){ return l.id !== id; });
+      save();
+      renderSchedule();
+      toast('수업을 지웠어요');
+    }, true);
+  });
 
   /* stamp */
   $('#stampKidSwitch').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-kid]') : null;
     if(!b) return;
     state.ui.stampKid = b.getAttribute('data-kid');
-    save();
+    save(true);
     renderStamps();
   });
   $('#stampGrid').addEventListener('click', function(e){
@@ -2769,14 +3308,14 @@ function bindEvents(){
     if(!b) return;
     if(state.chat.locked){ toast('이 기기가 잠겨 있어요. 잠금을 끄면 바꿀 수 있어요 🔒'); return; }
     state.chat.me = b.getAttribute('data-who');
-    save();
+    save(true);
     renderChatWho();
     renderChat();
     toast('이제 ' + state.chat.me + '(으)로 말해요');
   });
   $('#chatLock').addEventListener('change', function(){
     state.chat.locked = this.checked;
-    save();
+    save(true);
     renderChatWho();
     toast(this.checked ? '이 기기를 ' + state.chat.me + '로 잠갔어요 🔒' : '잠금을 풀었어요');
   });
@@ -2870,6 +3409,7 @@ function bindEvents(){
 
   /* settings */
   $('#settingsBtn').addEventListener('click', openSettings);
+  $('#syncBadge').addEventListener('click', openSettings);
 }
 
 /* =========================================================
@@ -2899,7 +3439,8 @@ function init(){
   }
 
   setInterval(tickAlarm, 1000);
-  save();
+  writeLocal();
+  startSync();
 }
 
 if(document.readyState === 'loading'){
