@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.3.0">
-<!-- family-dashboard 1.3.0 · 가족 채팅 푸시 알림(ntfy) + 체크 해제시 적립 취소 + 아이 프로필 잠금 규칙 -->
+<meta name="app-version" content="1.4.0">
+<!-- family-dashboard 1.4.0 · 메모 탭(📝) + 아이끼리 메모 비공개 + 알림(ntfy) + 잠금 배지 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -722,6 +722,39 @@ main{padding-top:2px}
 .alarm-actions{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
 .alarm-actions .btn{flex:1}
 
+/* ---------- memo ---------- */
+.memo-card{border-color:#F2E2C8}
+.memo-locknote{
+  font-size:11.5px;color:#8A6530;background:#FFF6E2;border:1.5px dashed #EFD9AF;
+  border-radius:13px;padding:8px 11px;margin:2px 0 10px;line-height:1.5;
+}
+.memo-form{margin:12px 0 4px}
+.memo-input{min-height:82px;padding:11px 13px;line-height:1.55;resize:vertical;font-size:13.5px}
+.memo-form-row{display:flex;align-items:center;gap:9px;margin-top:8px}
+.memo-form-row .memo-who{flex:1;min-width:0;font-size:11.5px;color:var(--ink-soft);display:flex;align-items:center;gap:5px}
+.memo-form-row .memo-who .av{width:20px;height:20px}
+.memo-form-row .btn{flex:0 0 auto}
+.memo-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.memo-item{
+  position:relative;display:flex;flex-direction:column;gap:6px;
+  padding:11px 12px 12px;border-radius:16px;border:1.5px solid #F5E7D0;
+  background:#FFFCF5;box-shadow:0 3px 8px rgba(199,163,108,.09);
+  transition:transform .15s ease;
+}
+.memo-item[data-who="Stella"]{background:linear-gradient(165deg,#FFF6F9,#FFF0F4);border-color:#FBDCE5}
+.memo-item[data-who="Luna"]{background:linear-gradient(165deg,#F8F5FF,#F1ECFF);border-color:#E5DCF8}
+.memo-item[data-who="엄마"]{background:linear-gradient(165deg,#FFFCF2,#FFF6E2);border-color:#F4E4C9}
+.memo-item[data-who="아빠"]{background:linear-gradient(165deg,#F6FAFF,#EAF2FC);border-color:#DCE8F7}
+.memo-item .memo-time{font-size:10px;color:var(--ink-faint)}
+.memo-item .memo-body{font-size:13px;line-height:1.5;word-break:break-word;white-space:pre-wrap;color:var(--ink)}
+.memo-item .memo-del{
+  position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:7px;border:none;
+  background:rgba(255,255,255,.7);color:#CDBBA6;font-size:14px;line-height:1;
+}
+.memo-item .memo-del:active{transform:scale(.94)}
+.memo-item .t-owner{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--ink-soft);padding-right:20px}
+.memo-item .t-owner .av{width:20px;height:20px}
+
 /* ---------- overlay / modal / toast ---------- */
 .backdrop{
   position:fixed;inset:0;z-index:150;display:grid;place-items:center;padding:18px;
@@ -842,6 +875,7 @@ main{padding-top:2px}
     <button class="tab" type="button" data-tab="todo" aria-selected="false"><span class="ico" aria-hidden="true">✅</span>할 일</button>
     <button class="tab" type="button" data-tab="allowance" aria-selected="false"><span class="ico" aria-hidden="true">💰</span>용돈</button>
     <button class="tab" type="button" data-tab="chat" aria-selected="false"><span class="ico" aria-hidden="true">💬</span>채팅</button>
+    <button class="tab" type="button" data-tab="memo" aria-selected="false"><span class="ico" aria-hidden="true">📝</span>메모</button>
     <button class="tab" type="button" data-tab="timer" aria-selected="false"><span class="ico" aria-hidden="true">⏰</span>타이머</button>
   </nav>
 </header>
@@ -1048,7 +1082,26 @@ main{padding-top:2px}
       </div>
     </section>
 
-    <!-- ============ 6. 타이머 ============ -->
+    <!-- ============ 6. 메모 ============ -->
+    <section class="panel" id="panel-memo" aria-label="가족 메모">
+      <div class="card memo-card">
+        <h2><span class="h2-emoji" aria-hidden="true">📝</span>우리 가족 메모</h2>
+        <p class="card-sub">생각난 거나 하고 싶은 말을 적어두세요. 적은 사람만 지울 수 있어요.</p>
+        <div class="filter-pills" id="memoFilter" role="group" aria-label="메모 보기"></div>
+        <p class="memo-locknote" id="memoLockNote" hidden></p>
+        <form class="memo-form" id="memoForm">
+          <label class="sr-only" for="memoInput">메모 내용</label>
+          <textarea class="input memo-input" id="memoInput" rows="3" maxlength="200" placeholder="오늘 생각난 거나 할 말 적어보기..." autocomplete="off"></textarea>
+          <div class="memo-form-row">
+            <span class="memo-who" id="memoWhoHint"></span>
+            <button class="btn primary sm" type="submit">메모 남기기</button>
+          </div>
+        </form>
+        <div class="memo-list" id="memoList"></div>
+      </div>
+    </section>
+
+    <!-- ============ 7. 타이머 ============ -->
     <section class="panel" id="panel-timer" aria-label="공부 타이머와 태블릿 알람">
       <div class="card timer-card">
         <h2 style="justify-content:center">⏳ 공부 타이머</h2>
@@ -1478,6 +1531,8 @@ function seedState(){
       /* 대화 목록은 비어 있음 — 첫 메시지는 가족이 직접 남겨요 */
       messages: []
     },
+    /* 가족 메모: 각자 자기 메모를 남겨요. 적은 사람만 지울 수 있어요. */
+    memos: [],
     schedule: {
       lessons: [
         { id:'ls1', kid:'Stella', day:0, time:'20:00', subject:'영어' },
@@ -1499,7 +1554,7 @@ function seedState(){
     calendarEvents: {},
     /* 내일 수업 준비 숙제 체크: { '수업id': 'YYYY-MM-DD' } */
     prepTodo: {},
-    ui: { tab:'calendar', kid:'Stella', todoFilter:'전체' }
+    ui: { tab:'calendar', kid:'Stella', todoFilter:'전체', memoFilter:'전체' }
   };
 }
 
@@ -1550,7 +1605,8 @@ function normalize(saved){
   if(PEOPLE.indexOf(s.chat.me) < 0) s.chat.me = 'Stella';
   if(KIDS.indexOf(s.ui.kid) < 0) s.ui.kid = 'Stella';
   if(['전체'].concat(PEOPLE).indexOf(s.ui.todoFilter) < 0) s.ui.todoFilter = '전체';
-  if(['calendar','todo','allowance','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
+  if(['전체'].concat(PEOPLE).indexOf(s.ui.memoFilter) < 0) s.ui.memoFilter = '전체';
+  if(['calendar','todo','allowance','chat','memo','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
   if(!isObject(s.schedule) || !Array.isArray(s.schedule.lessons)) s.schedule = base.schedule;
   s.schedule.lessons = s.schedule.lessons.filter(function(l){
@@ -1614,12 +1670,29 @@ function normalize(saved){
     var d = String(savedPrep[id] || '');
     if(/^\d{4}-\d{2}-\d{2}$/.test(d)) s.prepTodo[id] = d;
   });
+  /* 가족 메모 — Firebase가 배열을 객체로 돌려줄 때도 있어요 */
+  var rawMemos = isObject(saved) ? saved.memos : null;
+  var arrMemos = Array.isArray(rawMemos)
+    ? rawMemos
+    : (isObject(rawMemos) ? Object.keys(rawMemos).map(function(k){ return rawMemos[k]; }) : []);
+  s.memos = [];
+  arrMemos.forEach(function(m){
+    if(!isObject(m)) return;
+    var text = String(m.text || '').trim().slice(0, 200);
+    if(!text) return;
+    s.memos.push({
+      id: m.id ? String(m.id) : uid('mm'),
+      who: PEOPLE.indexOf(m.who) >= 0 ? m.who : '가족',
+      text: text,
+      ts: num(m.ts, 0) || Date.now()
+    });
+  });
   return s;
 }
 
 /* =========================================================
    Real-time sync — Firebase Realtime Database
-   - 함께 보는 것 : 용돈/기입장 · 미션 · 할 일 · 도장판 · 채팅 메시지 · 타이머/알람 설정
+   - 함께 보는 것 : 용돈/기입장 · 미션 · 할 일 · 도장판 · 채팅 메시지 · 가족 메모 · 타이머/알람 설정
    - 이 기기에만 : 채팅 프로필(chat.me) · 이 기기 잠금(chat.locked) · ui · settings
    ========================================================= */
 var sync = {
@@ -1738,6 +1811,7 @@ function syncPayload(){
     calendarEvents: state.calendarEvents,
     prepTodo: state.prepTodo,
     chat: { messages: state.chat.messages },
+    memos: state.memos,
     ntfyTopic: state.ntfyTopic,
     ntfyOn: state.ntfyOn !== false,
     timer: state.timer,
@@ -1885,7 +1959,7 @@ function onRemoteValue(snap){
 
 function sharedSignature(st){
   try{
-    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.calendarEvents, st.prepTodo, st.chat.messages, st.timer, st.alarm]);
+    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.calendarEvents, st.prepTodo, st.chat.messages, st.memos, st.timer, st.alarm]);
   }catch(e){ return ''; }
 }
 
@@ -1912,6 +1986,8 @@ function applyRemote(remote){
       prepTodo: isObject(remote.prepTodo) ? remote.prepTodo : {},
       /* 이 기기의 프로필/잠금은 절대 덮어쓰지 않아요 */
       chat: { me: state.chat.me, locked: state.chat.locked, messages: msgs },
+      /* 원격에 메모가 없으면 '지운 것'으로 보고 이 기기에도 비워요 */
+      memos: Array.isArray(remote.memos) ? remote.memos : [],
       /* 알림 설정도 가족이 함께 써요 (모르는 기기는 지금 값을 그대로 둬요) */
       ntfyTopic: (typeof remote.ntfyTopic === 'string' && remote.ntfyTopic) ? remote.ntfyTopic : state.ntfyTopic,
       ntfyOn: (typeof remote.ntfyOn === 'boolean') ? remote.ntfyOn : state.ntfyOn,
@@ -3680,6 +3756,127 @@ function deleteCalMemo(id){
 }
 
 /* =========================================================
+   7) Memos
+   ========================================================= */
+var MEMO_MAX = 200;
+
+/* 잠긴 기기에서는 잠근 아이 이름으로 남기고, 아니면 지금 프로필로 남겨요 */
+function memoAuthor(){
+  var lk = lockedKidProfile();
+  if(lk) return lk;
+  return (state.chat && state.chat.me) || '가족';
+}
+
+function memoListSorted(){
+  var list = Array.isArray(state.memos) ? state.memos.slice() : [];
+  return list.sort(function(a, b){ return num(b.ts, 0) - num(a.ts, 0); });
+}
+
+/* 잠긴 아이 기기에서는 그 아이 메모만 보여요 (Stella·Luna는 서로 못 봐요) */
+function visibleMemos(){
+  var lk = lockedKidProfile();
+  var list = memoListSorted();
+  if(lk) return list.filter(function(m){ return m.who === lk; });
+  var f = state.ui.memoFilter;
+  if(f && f !== '전체') return list.filter(function(m){ return m.who === f; });
+  return list;
+}
+
+/* 엄마는 모두, 그 외에는 자기 메모만 지울 수 있어요 */
+function canDeleteMemo(m){
+  if(!m) return false;
+  var lk = lockedKidProfile();
+  if(lk) return m.who === lk;
+  var me = (state.chat && state.chat.me) || '';
+  if(me === '엄마') return true;
+  return m.who === me;
+}
+
+function renderMemoFilter(){
+  var box = $('#memoFilter');
+  if(!box) return;
+  var lk = lockedKidProfile();
+  var note = $('#memoLockNote');
+  if(lk){
+    box.hidden = true;
+    box.innerHTML = '';
+    if(note){ note.hidden = false; note.textContent = '🔒 ' + lk + ' 기기에서는 ' + lk + ' 메모만 보여요.'; }
+    return;
+  }
+  box.hidden = false;
+  if(note) note.hidden = true;
+  var f = state.ui.memoFilter;
+  var order = KIDS.concat(PEOPLE.filter(function(p){ return KIDS.indexOf(p) < 0; })).concat(['전체']);
+  box.innerHTML = order.map(function(p){
+    var active = f === p ? ' active' : '';
+    return p === '전체'
+      ? '<button class="pill' + active + '" type="button" data-mfilter="전체" aria-pressed="' + (f === p) + '">전체</button>'
+      : '<button class="pill' + active + '" type="button" data-mfilter="' + p + '" aria-pressed="' + (f === p) + '">' + mascot(p) + esc(p) + '</button>';
+  }).join('');
+}
+
+function memoTimeLabel(ts){
+  var d = new Date(num(ts, Date.now()));
+  return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + hm(d);
+}
+
+function renderMemos(){
+  renderMemoFilter();
+  var who = memoAuthor();
+  var hint = $('#memoWhoHint');
+  if(hint) hint.innerHTML = mascot(who) + esc(who) + '(으)로 남겨요';
+  var box = $('#memoList');
+  if(!box) return;
+  var list = visibleMemos();
+  if(!list.length){
+    var lk = lockedKidProfile();
+    box.innerHTML = '<div class="empty"><span class="em">📝</span>' +
+      (lk ? esc(lk) + ' 메모가 아직 없어요.<br>오늘 생각난 걸 적어보세요!' : '아직 메모가 없어요.<br>오늘 생각난 걸 적어보세요!') +
+      '</div>';
+    return;
+  }
+  box.innerHTML = list.map(function(m){
+    var del = canDeleteMemo(m)
+      ? '<button class="memo-del" type="button" data-memo-del="' + esc(m.id) + '" aria-label="메모 지우기">×</button>'
+      : '';
+    return '<div class="memo-item" data-who="' + esc(m.who) + '">' + del +
+      '<span class="t-owner">' + mascot(m.who) + esc(m.who) + '</span>' +
+      '<span class="memo-time">' + esc(memoTimeLabel(m.ts)) + '</span>' +
+      '<p class="memo-body">' + esc(m.text) + '</p>' +
+      '</div>';
+  }).join('');
+}
+
+function addMemo(){
+  var input = $('#memoInput');
+  if(!input) return;
+  var text = String(input.value || '').trim();
+  if(!text){ toast('메모 내용을 적어주세요 📝'); input.focus(); return; }
+  var who = memoAuthor();
+  if(!Array.isArray(state.memos)) state.memos = [];
+  state.memos.push({ id: uid('mm'), who: who, text: text.slice(0, MEMO_MAX), ts: Date.now() });
+  if(state.memos.length > 200) state.memos = state.memos.slice(-200);
+  if(!lockedKidProfile() && state.ui.memoFilter !== '전체' && state.ui.memoFilter !== who){
+    state.ui.memoFilter = who;   /* 남긴 메모가 바로 보이도록 */
+  }
+  save();
+  input.value = '';
+  renderMemos();
+  toast(who + ' 메모를 남겼어요 📝');
+}
+
+function deleteMemoPost(id){
+  var m = null;
+  (Array.isArray(state.memos) ? state.memos : []).forEach(function(x){ if(x && x.id === id) m = x; });
+  if(!m) return;
+  if(!canDeleteMemo(m)){ toast('남의 메모는 지울 수 없어요 🔒'); return; }
+  state.memos = state.memos.filter(function(x){ return x.id !== id; });
+  save();
+  renderMemos();
+  toast('메모를 지웠어요');
+}
+
+/* =========================================================
    Tabs + rendering all
    ========================================================= */
 function showTab(name, silent){
@@ -3696,6 +3893,7 @@ function showTab(name, silent){
     p.classList.toggle('active', p.id === 'panel-' + name);
   });
   if(name === 'calendar') renderCalendar();
+  if(name === 'memo') renderMemos();
   if(!silent){ window.scrollTo(0, 0); }
   if(name === 'chat') scrollChat();
 }
@@ -3714,6 +3912,7 @@ function renderAll(){
   renderChat();
   syncBell();
   renderLockBadge();
+  renderMemos();
   renderAlarm();
   renderTimer();
 }
@@ -3858,6 +4057,7 @@ function bindEvents(){
     renderLockBadge();
     renderTodos();   /* 잠그면 다른 아이 항목이 바로 잠겨 보여요 */
     renderAllowance();
+    renderMemos();   /* 아이 기기에서는 자기 메모만 보여요 */
     toast(this.checked ? '이 기기를 ' + state.chat.me + '로 잠갔어요 🔒' : '잠금을 풀었어요');
   });
   $('#chatForm').addEventListener('submit', function(e){
@@ -3881,6 +4081,23 @@ function bindEvents(){
     if(h){ toggleHeart(h.getAttribute('data-heart')); return; }
     var p = e.target.closest ? e.target.closest('[data-play]') : null;
     if(p){ playVoice(p.getAttribute('data-play')); }
+  });
+
+  $('#memoFilter').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-mfilter]') : null;
+    if(!b) return;
+    state.ui.memoFilter = b.getAttribute('data-mfilter');
+    save(true);
+    renderMemos();
+  });
+  $('#memoForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    addMemo();
+  });
+  $('#memoList').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-memo-del]') : null;
+    if(!b) return;
+    deleteMemoPost(b.getAttribute('data-memo-del'));
   });
 
   /* timer */
