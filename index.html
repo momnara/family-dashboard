@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.9.8">
-<!-- family-dashboard 1.9.8 · 할 일 완료 적립 메모를 날짜로 표시("M/D 할일완료") -->
+<meta name="app-version" content="1.9.9">
+<!-- family-dashboard 1.9.9 · 달력 날짜 상세 제목 "오늘 수업" · "오늘 용돈기록" -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1078,7 +1078,7 @@ main{padding-top:2px}
         </div>
         <div class="cal-bday-banner" id="calBirthdays" hidden></div>
         <div class="cal-block">
-          <h3><span aria-hidden="true">🎒</span>이날 수업</h3>
+          <h3><span aria-hidden="true">🎒</span>오늘 수업</h3>
           <div id="calClasses"></div>
         </div>
         <div class="cal-block" id="calDoneBlock" hidden>
@@ -1086,7 +1086,7 @@ main{padding-top:2px}
           <div id="calDone"></div>
         </div>
         <div class="cal-block">
-          <h3><span aria-hidden="true">🪙</span>이날 용돈 기록</h3>
+          <h3><span aria-hidden="true">🪙</span>오늘 용돈기록</h3>
           <div id="calMoney"></div>
         </div>
         <div class="cal-block">
