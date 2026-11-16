@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.9.7">
-<!-- family-dashboard 1.9.7 · 매일 할 일 '책상정리' 추가(스텔라·루나), 스텔라 '책 읽기' 삭제 -->
+<meta name="app-version" content="1.9.8">
+<!-- family-dashboard 1.9.8 · 할 일 완료 적립 메모를 날짜로 표시("M/D 할일완료") -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2347,6 +2347,19 @@ function addLedger(kid, type, amount, memo){
   save();
 }
 
+/* 할 일 완료 적립 메모 — 그날 날짜를 넣어요 (예: '11/16 할일완료').
+   예전에 적힌 '오늘 할 일 모두 완료'도 같은 적립으로 알아봐요. */
+function studyDoneMemo(dayKeyStr){
+  var p = String(dayKeyStr || todayKey()).split('-');
+  return Number(p[1]) + '/' + Number(p[2]) + ' 할일완료';
+}
+function isStudyDoneMemo(text){
+  var t = String(text || '').trim();
+  if(!t) return false;
+  if(t === '오늘 할 일 모두 완료') return true;
+  return /^\d{1,2}\/\d{1,2}\s*할일완료$/.test(t);
+}
+
 /* 숙제·수업을 끝내면 그 아이 용돈에 적립해요. 적립한 금액을 돌려줘요. */
 function creditReward(kid, memo, anchor){
   var a = state.allowance[kid];
@@ -2626,16 +2639,22 @@ function cancelTodayClaim(kid){
   if(!(state.dailyTodo && isObject(state.dailyTodo[kid]) && state.dailyTodo[kid][day])) return false;
   delete state.dailyTodo[kid][day];
   var log = (state.allowance[kid] && Array.isArray(state.allowance[kid].log)) ? state.allowance[kid].log : [];
-  var removed = 0;
-  state.allowance[kid].log = log.filter(function(e){
-    if(removed) return true;
-    if(!e || e.date !== day || e.type !== 'study') return true;
-    if(e.memo === '오늘 할 일 모두 완료' || e.reason === '오늘 할 일 모두 완료' || e.note === '오늘 할 일 모두 완료'){
-      removed++;
-      return false;
-    }
-    return true;
+  /* 그날 할 일완료 적립 한 건을 지워요 — 새 메모('11/16 할일완료')와
+     예전 메모('오늘 할 일 모두 완료') 둘 다 알아봐요. */
+  var target = null;
+  log.forEach(function(e){
+    if(target) return;
+    if(!e || e.date !== day || e.type !== 'study') return;
+    if(isStudyDoneMemo(e.memo) || isStudyDoneMemo(e.reason) || isStudyDoneMemo(e.note)) target = e;
   });
+  if(!target){
+    log.forEach(function(e){
+      if(target) return;
+      if(e && e.date === day && e.type === 'study') target = e;
+    });
+  }
+  var removed = target ? 1 : 0;
+  if(target) state.allowance[kid].log = log.filter(function(e){ return e !== target; });
   save();
   toast('할 일 체크가 해제되어 오늘 적립된 ' + usd(1) + '도 취소됐어요.');
   return true;
@@ -2656,7 +2675,7 @@ function doStudy(){
   var reward = roundCents(num(a.reward, 1)) || 1;
   if(!isObject(state.dailyTodo[kid])) state.dailyTodo[kid] = {};
   state.dailyTodo[kid][todayKey()] = true;   /* 오늘 몫은 여기서 끝! */
-  addLedger(kid, 'study', reward, '오늘 할 일 모두 완료');
+  addLedger(kid, 'study', reward, studyDoneMemo(todayKey()));
   renderAllowance();
   renderTodos();
   bumpTotal();
