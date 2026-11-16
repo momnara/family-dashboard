@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.9.6">
-<!-- family-dashboard 1.9.6 · 안옥희 할머니 생신 음력 11/25로 정정 -->
+<meta name="app-version" content="1.9.7">
+<!-- family-dashboard 1.9.7 · 매일 할 일 '책상정리' 추가(스텔라·루나), 스텔라 '책 읽기' 삭제 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1667,7 +1667,10 @@ function seedState(){
       { id:'td11', owner:'Luna', text:'학교숙제', done:false, date:t },
       /* 주중(월~금)에만 하는 할 일 — 주말에는 목록에 안 보여요 */
       { id:'td12', owner:'Stella', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t },
-      { id:'td13', owner:'Luna', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t }
+      { id:'td13', owner:'Luna', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t },
+      /* 매일 하는 할 일 — 평일·주말 모두 보여요 */
+      { id:'td14', owner:'Stella', text:'책상정리', done:false, date:t },
+      { id:'td15', owner:'Luna', text:'책상정리', done:false, date:t }
     ],
     stamps: {
       Stella: { reward: '$5.00 용돈 보너스!', slots: [null, null, null, null, null, null, null, null, null, null] },
