@@ -989,9 +989,9 @@ main{padding-top:2px}
   .timer-buttons .btn{font-size:17px}
 }
 @media (max-width:520px){
-  /* 두 줄로 접힌 탭이 헤더를 너무 많이 차지하지 않게 조금 납작하게 */
+  /* 두 줄로 접힌 탭이 헤더를 너무 많이 차지하지 않게 조금 납작하게. 한 줄에 4개씩 접혀서 4+3으로 예쁘게 놓여요 */
   .tabs{gap:4px;padding:5px;border-radius:18px}
-  .tab{min-height:40px;padding:0 8px;font-size:13px;border-radius:12px;gap:4px}
+  .tab{flex:1 1 calc(25% - 4px);min-height:40px;padding:0 6px;font-size:13px;border-radius:12px;gap:4px}
   .tab .ico{font-size:15px}
 }
 @media (max-width:380px){
