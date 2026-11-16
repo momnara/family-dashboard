@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.9.2">
-<!-- family-dashboard 1.9.2 · 주간 스케줄 수업 칩에 아이 이름(Stella·Luna) 표시 -->
+<meta name="app-version" content="1.9.3">
+<!-- family-dashboard 1.9.3 · 가족 생일 매년 반복 (달력·주간 스케줄) -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -591,6 +591,28 @@ main{padding-top:2px}
 .cal-done-row .cd-mark{flex:0 0 auto;font-size:12px;color:#5E9C73;background:#F1FAF3;border:1.5px solid #D6EEDA;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .cal-legend .cc-badge-key{font-size:9.5px;line-height:1}
 .cal-legend .cc-name-tag{font-size:8.5px;line-height:12px;padding:0 5px}
+/* ---------- 매년 반복 가족 생일 ---------- */
+.cal-legend .cc-cake-key{font-size:10.5px;line-height:1}
+.cal-cell .cc-cake{font-size:10px;line-height:1;flex:0 0 auto}
+.cal-cell.has-bday{border-color:#F8CDD9;background:linear-gradient(180deg,#FFF7FA,#FFF0F5)}
+.cal-cell.has-bday.sel{border-color:#F0A3B6;background:linear-gradient(180deg,#FFEDF4,#FFE0EB)}
+.cal-cell.has-bday.today{border-color:#F6C980;background:linear-gradient(180deg,#FFF6E9,#FFEDF1)}
+.cal-bday-banner{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.cal-bday-banner[hidden]{display:none}
+.cal-bday-row{
+  display:flex;align-items:center;gap:9px;font-size:12.5px;line-height:1.3;
+  background:linear-gradient(120deg,#FFF1F6,#FFF9E9);border:1.5px solid #F8CDD9;
+  border-radius:14px;padding:9px 11px;box-shadow:0 2px 0 #FBE4EB;
+}
+.cal-bday-row .cb-cake{font-size:21px;line-height:1;flex:0 0 auto}
+.cal-bday-row .cb-main{flex:1 1 auto;min-width:0}
+.cal-bday-row .cb-name{display:block;font-family:var(--font-title);font-size:13.5px;color:#A4566A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-bday-row .cb-when{display:block;font-size:10.5px;color:#B08A96;margin-top:1px;white-space:nowrap}
+.cal-bday-row .cb-now{flex:0 0 auto;font-family:var(--font-title);font-size:10.5px;color:#B23F60;background:#FFE3EC;border:1.5px solid #F8CDD9;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.cal-bday-merged{font-size:10.5px;color:#B08A96;padding:3px 2px 0;line-height:1.4}
+.day-col .dc-event.dc-bday{background:#FFF2F7;border-color:#F8CDD9;color:#A4566A}
+.sched-today .st-line.st-bday{border-color:#F8CDD9;background:linear-gradient(120deg,#FFF6F9,#FFFCF3)}
+.sched-today .st-line .st-cake{font-size:19px;line-height:1;flex:0 0 auto}
 /* ---------- stamps ---------- */
 .stamp-card{background:linear-gradient(170deg,#FFFDF6,#FFF8E8 60%,#FFF1F4);border-color:#F6E3C8}
 .stamp-progress{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -1020,7 +1042,7 @@ main{padding-top:2px}
           <button class="cal-nav" id="calPrev" type="button" aria-label="이전 달">◀</button>
           <div class="cal-month">
             <b id="calTitle">오늘</b>
-            <span id="calSub">수업 · 용돈 · 가족 메모를 한눈에</span>
+            <span id="calSub">수업 · 생일 · 용돈 · 가족 메모를 한눈에</span>
           </div>
           <button class="cal-nav" id="calNext" type="button" aria-label="다음 달">▶</button>
           <button class="cal-today" id="calTodayBtn" type="button">오늘</button>
@@ -1032,6 +1054,7 @@ main{padding-top:2px}
         <div class="cal-legend">
           <span><i class="cc-dot s"></i>Stella 수업</span>
           <span><i class="cc-dot l"></i>Luna 수업</span>
+          <span><span class="cc-cake-key" aria-hidden="true">🎂</span>생일</span>
           <span><i class="cc-dot m"></i>용돈 기록</span>
           <span><i class="cc-dot e"></i>가족 메모</span>
           <span><span class="cc-name-tag s">Stella</span> <span class="cc-name-tag l">Luna</span> 할 일 모두 완료</span>
@@ -1043,6 +1066,7 @@ main{padding-top:2px}
           <h2><span class="h2-emoji" aria-hidden="true">🗓️</span><span id="calSelTitle">오늘</span></h2>
           <span class="cal-tag" id="calSelTag" hidden>오늘</span>
         </div>
+        <div class="cal-bday-banner" id="calBirthdays" hidden></div>
         <div class="cal-block">
           <h3><span aria-hidden="true">🎒</span>이날 수업</h3>
           <div id="calClasses"></div>
@@ -1268,6 +1292,14 @@ var DEFAULT_NTFY_TOPIC = 'momnara-family-chat-sj6m4x';
 var KIDS = ['Stella', 'Luna'];
 var PEOPLE = ['엄마', '아빠', 'Stella', 'Luna'];
 var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+/* 매년 반복하는 가족 생일 — 월·일만 정해 두면 해가 바뀌어도(2026, 2027, 2028…) 같은 날에 떠요.
+   aliases: 가족이 예전에 달력 메모로 한 번씩 적어 둔 생일(예: '수아 생일🥳')을 같은 생일로 알아보는 이름 */
+var BIRTHDAYS = [
+  { month: 1,  day: 7,  name: '엄마',   who: '엄마',   aliases: ['엄마', '어머니', 'mom'] },
+  { month: 1,  day: 16, name: '루나',   who: 'Luna',   aliases: ['루나', '수아', 'luna'] },
+  { month: 4,  day: 15, name: '아빠',   who: '아빠',   aliases: ['아빠', '아버지', 'dad'] },
+  { month: 9,  day: 7,  name: '스텔라', who: 'Stella', aliases: ['스텔라', '지아', 'stella'] }
+];
 var state = null;
 var saveWarned = false;
 
@@ -2762,8 +2794,17 @@ function renderSchedule(){
   var box = $('#schedToday');
   if(box){
     var mine = all.filter(function(l){ return l.day === today; });
-    box.innerHTML = mine.length
-      ? mine.map(function(l){
+    /* 오늘이 생일이면 수업보다 먼저 알려줘요 */
+    var todayBdays = birthdaysOn(todayKey());
+    var bdayLine = todayBdays.map(function(b){
+      return '<div class="st-line st-bday">' +
+        '<span class="st-cake" aria-hidden="true">🎂</span>' +
+        '<span class="st-who"><b>' + esc(b.name) + '</b> 생일' +
+        '<span class="st-time">매년 ' + b.month + '월 ' + b.day + '일</span></span>' +
+        '</div>';
+    }).join('');
+    box.innerHTML = (mine.length || todayBdays.length)
+      ? bdayLine + mine.map(function(l){
           var done = l.completedDate === todayKey();
           return '<div class="st-line">' + mascot(l.kid) +
             '<span class="st-who"><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) +
@@ -2783,16 +2824,23 @@ function renderSchedule(){
     grid.innerHTML = WEEKDAYS.map(function(name, i){
       var wk = week[i];
       var list = all.filter(function(l){ return l.day === i; });
-      /* 그 날 가족 일정(달력에 적은 메모)도 같이 보여줘요 */
-      var events = calEventsOn(wk.key).slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
+      /* 그 날 가족 일정(달력에 적은 메모)과 생일도 같이 보여줘요 */
+      var events = calMemosOn(wk.key).slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
+      var bdays = birthdaysOn(wk.key);
       var head = '<span class="dc-name">' + esc(name) +
           '<span class="dc-date">' + esc(wk.md) + '</span>' +
         '</span>';
       var dayOpen = '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
         '<div class="dc-items">';
-      if(!list.length && !events.length){
+      if(!list.length && !events.length && !bdays.length){
         return dayOpen + '<span class="dc-empty">일정 없음</span></div></div>';
       }
+      var bdayHtml = bdays.map(function(b){
+        return '<span class="dc-event dc-bday" title="' + esc(b.name + ' 생일 · 매년 ' + b.month + '월 ' + b.day + '일') + '">' +
+          '<span class="ev-em" aria-hidden="true">🎂</span>' +
+          '<span class="ev-txt">' + esc(b.name + ' 생일') + '</span>' +
+        '</span>';
+      }).join('');
       var lessonHtml = list.map(function(l){
         var skipped = isLessonSkippedOn(l.id, wk.key);
         var chipInner = '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
@@ -2814,7 +2862,7 @@ function renderSchedule(){
           '<span class="ev-txt">' + esc(text) + '</span>' +
         '</span>';
       }).join('');
-      return dayOpen + lessonHtml + eventHtml + '</div></div>';
+      return dayOpen + bdayHtml + lessonHtml + eventHtml + '</div></div>';
     }).join('');
   }
 }
@@ -3936,6 +3984,42 @@ function calEventsOn(key){
   return Array.isArray(list) ? list : [];
 }
 
+/* 매년 반복 생일 — 날짜 키의 월·일만 봐서 어느 해든 같은 날에 떠요 */
+function birthdaysOn(key){
+  var p = String(key || '').split('-');
+  var m = Number(p[1]);
+  var d = Number(p[2]);
+  if(!m || !d) return [];
+  return BIRTHDAYS.filter(function(b){ return b.month === m && b.day === d; });
+}
+
+/* 메모 비교용 글자 — 이모지·공백·기호를 걷어내요 ('엄마 생일🥳' → '엄마생일') */
+function memoCompareText(t){
+  return String(t || '')
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}]/gu, '')
+    .replace(/[\s~!.,·…\-_()（）]/g, '')
+    .toLowerCase();
+}
+
+/* 생일이 매년 자동으로 뜨니, 가족이 예전에 한 줄로 적어 둔 똑같은 생일 메모는
+   같은 생일이 두 줄로 보이지 않게 걸러요. ('엄마 생일 선물 사기'처럼 덧붙인 메모는 그대로 보여요) */
+function isDuplicateBirthdayMemo(memo, key){
+  var text = memoCompareText(memo && memo.text);
+  if(!text) return false;
+  return birthdaysOn(key).some(function(b){
+    return b.aliases.some(function(a){
+      var al = memoCompareText(a);
+      if(!al) return false;
+      return text === al + '생일' || text === al + 'birthday' || text === al + '생일이에요';
+    });
+  });
+}
+
+/* 달력·주간 스케줄에 보여줄 메모 — 생일과 겹치는 옛 한 줄 메모만 빼요 (저장된 메모는 그대로 둬요) */
+function calMemosOn(key){
+  return calEventsOn(key).filter(function(m){ return !isDuplicateBirthdayMemo(m, key); });
+}
+
 function calWeekdayOf(key){
   var p = String(key).split('-');
   return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).getDay();
@@ -3995,7 +4079,8 @@ function renderCalendar(){
     var wd = (startWd + i - 1) % 7;
     var lessons = calLessonsOn(key);
     var money = calMoneyOn(key);
-    var memos = calEventsOn(key);
+    var memos = calMemosOn(key);
+    var bdays = birthdaysOn(key);
     var dailyDone = calDailyDoneOn(key);
     var cls = 'cal-cell';
     if(wd === 0) cls += ' sun';
@@ -4004,8 +4089,10 @@ function renderCalendar(){
     if(key === todayK) cls += ' today';
     if(key === calView.sel) cls += ' sel';
     if(dailyDone.length) cls += ' has-done';
+    if(bdays.length) cls += ' has-bday';
 
-    var dots = '';
+    /* 생일은 점 대신 작은 🎂로 표시해요 */
+    var dots = bdays.length ? '<span class="cc-cake" aria-hidden="true">🎂</span>' : '';
     var shown = 0;
     var maxDots = 5;
     lessons.forEach(function(l){
@@ -4018,6 +4105,7 @@ function renderCalendar(){
 
     var label = (calView.m + 1) + '월 ' + i + '일 (' + WEEKDAYS[wd] + ') ';
     var extra = [];
+    bdays.forEach(function(b){ extra.push(b.name + ' 생일'); });
     if(lessons.length) extra.push('수업 ' + lessons.length + '개');
     if(money.length) extra.push('용돈 기록 ' + money.length + '개');
     if(memos.length) extra.push('메모 ' + memos.length + '개');
@@ -4056,6 +4144,22 @@ function renderCalendarDetail(){
     else if(key === dateKey(daysAgo(-1))) rel = '내일';
     tag.hidden = !rel;
     tag.textContent = rel;
+  }
+
+  var bdayBox = $('#calBirthdays');
+  if(bdayBox){
+    var bdays = birthdaysOn(key);
+    bdayBox.hidden = !bdays.length;
+    bdayBox.innerHTML = bdays.length
+      ? bdays.map(function(b){
+          return '<div class="cal-bday-row">' +
+            '<span class="cb-cake" aria-hidden="true">🎂</span>' +
+            '<span class="cb-main"><span class="cb-name">' + esc(b.name) + ' 생일</span>' +
+            '<span class="cb-when">매년 ' + b.month + '월 ' + b.day + '일 · 해마다 반복</span></span>' +
+            (key === todayKey() ? '<span class="cb-now">오늘 🎉</span>' : '') +
+            '</div>';
+        }).join('')
+      : '';
   }
 
   var lessonBox = $('#calClasses');
@@ -4107,8 +4211,9 @@ function renderCalendarDetail(){
 
   var memoBox = $('#calMemos');
   if(memoBox){
-    var memos = calEventsOn(key).slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
-    memoBox.innerHTML = memos.length
+    var memos = calMemosOn(key).slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
+    var mergedBday = calEventsOn(key).length - memos.length;   /* 생일로 합친 메모 수 */
+    var memosHtml = memos.length
       ? memos.map(function(m){
           var when = '';
           if(num(m.ts, 0) > 0){
@@ -4121,7 +4226,10 @@ function renderCalendarDetail(){
             (isMom() ? '<button class="del" type="button" data-memo-del="' + esc(m.id) + '" aria-label="이 메모 지우기">×</button>' : '') +
             '</div>';
         }).join('')
-      : '<div class="cal-empty">아직 메모가 없어요. 이 날에 가족 메모를 남겨보세요 ✏️</div>';
+      : (mergedBday > 0 ? '' : '<div class="cal-empty">아직 메모가 없어요. 이 날에 가족 메모를 남겨보세요 ✏️</div>');
+    /* 생일이 매년 따로 뜨니, 예전에 적어 둔 한 줄 생일 메모는 위 생일로 합쳐 보여줘요 */
+    if(mergedBday > 0) memosHtml += '<div class="cal-bday-merged">🎂 이날 생일 메모는 위 생일로 합쳐 보여요</div>';
+    memoBox.innerHTML = memosHtml;
   }
 }
 
