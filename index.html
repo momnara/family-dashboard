@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.10.0">
-<!-- family-dashboard 1.10.0 · 📸 사진첩 탭(월별 사진) 추가 · '간식통, 물병 가져다 놓기' 맨 위로 -->
+<meta name="app-version" content="1.10.1">
+<!-- family-dashboard 1.10.1 · 시작 금액 입력칸은 저장 뒤 0으로 표시(실수로 0 덮어쓰기 방지) · 용돈·적립 내역 리스트 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -257,6 +257,9 @@ main{padding-top:2px}
 .field-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
 .field-row > span,.field-row > label{font-size:13px;color:var(--ink-soft);font-weight:500}
 .reward-pills{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+/* 시작 금액 입력칸 아래 안내 — 지금 저장된 시작 금액을 알려줘요 */
+.field-row .field-hint{flex:1 0 100%;font-size:11.5px;color:var(--ink-soft);line-height:1.5;margin:1px 2px 0;text-align:right}
+.field-row .field-hint b{color:#7A5726;font-weight:700}
 .inline-input.sm{min-height:40px;padding:0 4px 0 10px;border-radius:12px}
 .inline-input.sm input{width:56px;font-size:14px;font-weight:700}
 .study-btn{
@@ -304,17 +307,31 @@ main{padding-top:2px}
   display:grid;place-items:center;font-family:var(--font-title);font-size:15px;color:#8A6530;flex:0 0 auto;
 }
 .log-day .dtext{font-size:13px;font-weight:700}
-.log-day .dsub{font-size:11px;color:var(--ink-soft);margin-left:auto;text-align:right}
-.log-item{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px dashed #F1E3CC}
+.log-day .dsub{font-size:11px;color:var(--ink-soft);margin-left:auto;text-align:right;white-space:nowrap}
+.log-day .dsub .plus{color:#4E9A6D;font-weight:700}
+.log-day .dsub .minus{color:#C9737F;font-weight:700}
+.log-items{
+  background:#FFFCF4;border:1.5px solid #F6E7CB;border-radius:16px;
+  padding:2px 12px;margin-bottom:2px;
+}
+.log-item{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px dashed #F1E3CC}
 .log-item:first-of-type{border-top:none}
 .log-item .li-ico{
-  width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:14px;flex:0 0 auto;
+  width:32px;height:32px;border-radius:11px;display:grid;place-items:center;font-size:14px;flex:0 0 auto;
   background:#FFF7E6;border:1px solid #F6E7CB;
 }
-.log-item .li-main{flex:1;min-width:0}
+.log-item .li-ico.deposit{background:#EAF6EE;border-color:#CFE9D8}
+.log-item .li-ico.spend{background:#FDEDEF;border-color:#F6D3D8}
+.log-item .li-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .log-item .li-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.log-item .li-time{font-size:10.5px;color:var(--ink-faint)}
-.log-item .li-amt{font-family:var(--font-title);font-size:14px;white-space:nowrap}
+.log-item .li-meta{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ink-faint)}
+.log-item .li-tag{
+  font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:7px;line-height:1.5;
+  background:#FFF1D2;color:#8A6530;
+}
+.log-item .li-tag.deposit{background:#E4F4E9;color:#3F8158}
+.log-item .li-tag.spend{background:#FBE5E9;color:#B3626F}
+.log-item .li-amt{font-family:var(--font-title);font-size:14.5px;white-space:nowrap}
 .log-item .li-amt.plus{color:#4E9A6D}
 .log-item .li-amt.minus{color:#C9737F}
 .log-item .del{
@@ -1063,9 +1080,10 @@ main{padding-top:2px}
           <label for="allowStart">시작 금액 ($)</label>
           <div class="inline-input">
             <span class="unit">$</span>
-            <input id="allowStart" type="number" inputmode="decimal" step="0.01" min="0" aria-label="시작 금액(달러)">
+            <input id="allowStart" type="number" inputmode="decimal" step="0.01" min="0" value="0" placeholder="0" aria-label="시작 금액(달러)" aria-describedby="allowStartHint">
             <button class="mini-btn" id="allowStartSave" type="button">저장</button>
           </div>
+          <p class="field-hint" id="allowStartHint">지금 시작 금액은 <b>$0.00</b>이에요. 새 금액을 넣고 저장을 눌러 주세요.</p>
         </div>
 
         <div class="field-row">
@@ -1098,8 +1116,8 @@ main{padding-top:2px}
       </div>
 
       <div class="card">
-        <h2><span class="h2-emoji" aria-hidden="true">📒</span>매일 공부 적립</h2>
-        <p class="card-sub">하루에 한 줄로 그날 총액만 보여요. 공부 기록도 같이 남아요.</p>
+        <h2><span class="h2-emoji" aria-hidden="true">📒</span>용돈·적립 내역</h2>
+        <p class="card-sub">할 일 완료 적립, 입금, 사용 내역이 날짜별로 최신순으로 보여요.</p>
         <div class="log-list" id="allowLog"></div>
       </div>
     </section>
@@ -2473,8 +2491,15 @@ function renderAllowance(){
   $('#chipDep').textContent = usdSigned(tt.deposit);
   $('#chipSpend').textContent = '-' + usd(tt.spend);
 
+  /* 시작 금액 입력칸은 저장된 뒤에 항상 '0'으로 비워 보여줘요.
+     저장된 진짜 시작 금액은 위 배지(시작 금액 $1,200.00)와 아래 안내줄에 보여요. */
   var startInput = $('#allowStart');
-  if(document.activeElement !== startInput) startInput.value = String(a.start);
+  if(startInput && document.activeElement !== startInput){
+    startInput.value = '0';
+    startInput.setAttribute('data-dirty', '0');
+  }
+  var startHint = $('#allowStartHint');
+  if(startHint) startHint.innerHTML = '지금 시작 금액은 <b>' + esc(usd(tt.start)) + '</b>이에요. 새 금액을 넣고 저장을 눌러 주세요.';
   var reward = roundCents(num(a.reward, 1)) || 1;
   var st = todoStats(kid);
   var claimed = claimedToday(kid);
@@ -2520,18 +2545,44 @@ function ledgerName(e){
   return '사용';
 }
 
+/* 예전에 적힌 시간('오후 12:27')도 지금 앱 표기('12:27 PM')로 맞춰 보여줘요 — 저장값은 그대로 둬요 */
+function logTimeLabel(t){
+  var s = String(t || '').trim();
+  if(!s) return '';
+  var m = s.match(/^(오전|오후)\s*(\d{1,2}):(\d{2})$/);
+  if(m){
+    var hh = Number(m[2]);
+    if(m[1] === '오후' && hh < 12) hh += 12;
+    if(m[1] === '오전' && hh === 12) hh = 0;
+    s = ((hh % 12 === 0) ? 12 : hh % 12) + ':' + m[3] + (hh < 12 ? ' AM' : ' PM');
+  }
+  return s;
+}
+function ledgerKind(type){
+  if(type === 'deposit') return 'deposit';
+  if(type === 'spend') return 'spend';
+  return 'study';
+}
+function ledgerTag(type){
+  var k = ledgerKind(type);
+  return k === 'deposit' ? '입금' : (k === 'spend' ? '사용' : '적립');
+}
+
+/* 용돈·적립 내역 — 할 일 완료 적립·입금·사용을 날짜별(최신순)로 묶어 보여줘요 */
 function renderAllowLog(kid){
   var box = $('#allowLog');
+  if(!box) return;
   var log = state.allowance[kid].log;
   if(!log.length){
-    box.innerHTML = '<div class="empty"><span class="em">🐣</span>아직 기록이 없어요.<br>공부를 완료하면 여기에 차곡차곡 쌓여요.</div>';
+    box.innerHTML = '<div class="empty"><span class="em">🐣</span>아직 내역이 없어요.<br>할 일을 마치고 적립하거나 입금·사용을 기록하면<br>여기에 날짜별로 차곡차곡 쌓여요.</div>';
     return;
   }
   var groups = [];
   log.forEach(function(e){
+    var key = e.date || '';
     var g = groups[groups.length - 1];
-    if(!g || g.date !== e.date){
-      g = { date: e.date, items: [] };
+    if(!g || g.date !== key){
+      g = { date: key, items: [] };
       groups.push(g);
     }
     g.items.push(e);
@@ -2539,26 +2590,32 @@ function renderAllowLog(kid){
 
   var html = '';
   groups.forEach(function(g){
-    var studyCount = 0, studySum = 0, otherSum = 0;
+    var inSum = 0, outSum = 0;
     g.items.forEach(function(e){
-      if(e.type === 'study'){ studyCount++; studySum += num(e.amount, 0); }
-      else if(e.type === 'deposit') otherSum += num(e.amount, 0);
-      else otherSum -= num(e.amount, 0);
+      var amt = num(e.amount, 0);
+      if(e.type === 'spend') outSum += amt;
+      else inSum += amt;
     });
-    var sub = studyCount
-      ? '공부 완료 ' + studyCount + '개 · ' + usd(studySum)
-      : usdSigned(otherSum);
+    var parts = [];
+    if(inSum > 0) parts.push('<span class="plus">' + usdSigned(inSum) + '</span>');
+    if(outSum > 0) parts.push('<span class="minus">' + usd(-outSum) + '</span>');
+    var dayNo = g.date ? Number(String(g.date).split('-')[2]) : '';
     html += '<div class="log-day">' +
-      '<span class="cal">' + Number(String(g.date).split('-')[2]) + '</span>' +
-      '<span class="dtext">' + esc(dayLabel(g.date)) + '</span>' +
-      '<span class="dsub">' + esc(sub) + '</span></div>';
+      '<span class="cal">' + (dayNo === '' ? '·' : dayNo) + '</span>' +
+      '<span class="dtext">' + esc(g.date ? dayLabel(g.date) : '날짜 없음') + '</span>' +
+      '<span class="dsub">' + parts.join(' · ') + '</span></div>';
     html += '<div class="log-items">';
     g.items.forEach(function(e){
-      var plus = (e.type === 'study' || e.type === 'deposit');
+      var kind = ledgerKind(e.type);
+      var plus = (kind !== 'spend');
+      var t = logTimeLabel(e.time);
       html += '<div class="log-item">' +
-        '<span class="li-ico" aria-hidden="true">' + ledgerIcon(e.type) + '</span>' +
-        '<span class="li-main"><span class="li-name">' + esc(ledgerName(e)) + '</span>' +
-        '<span class="li-time">' + esc(e.time || '') + '</span></span>' +
+        '<span class="li-ico ' + kind + '" aria-hidden="true">' + ledgerIcon(e.type) + '</span>' +
+        '<span class="li-main">' +
+          '<span class="li-name">' + esc(ledgerName(e)) + '</span>' +
+          '<span class="li-meta"><span class="li-tag ' + kind + '">' + ledgerTag(e.type) + '</span>' +
+            (t ? '<span class="li-time">' + esc(t) + '</span>' : '') + '</span>' +
+        '</span>' +
         '<span class="li-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? usdSigned(e.amount) : usd(-num(e.amount, 0))) + '</span>' +
         (isMom() ? '<button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="이 기록 지우기">×</button>' : '') +
         '</div>';
@@ -2771,6 +2828,59 @@ function setReward(value){
   state.allowance[kid].reward = roundCents(Math.max(0, num(value, 0)));
   save();
   renderAllowance();
+}
+
+/* ---------- 시작 금액 ----------
+   입력칸은 저장된 뒤 항상 0으로 비워 보여요(지금 값은 위 배지·아래 안내줄에 보임).
+   그래서 보이는 0을 그대로 '저장'해 기존 시작 금액을 날리는 일이 없도록,
+   이 칸에 직접 입력했을 때(data-dirty=1)만 바뀌고, 0으로 바꿀 때는 한 번 더 물어봐요. */
+function setAllowanceStart(v){
+  var kid = currentKid();
+  var val = roundCents(Math.max(0, num(v, 0)));
+  state.allowance[kid].start = val;
+  save();
+  renderAllowance();
+  bumpTotal();
+  toast('시작 금액을 ' + usd(val) + '로 정했어요');
+}
+
+function saveStartInput(fromEnter){
+  var kid = currentKid();
+  var inp = $('#allowStart');
+  if(!inp) return;
+  var cur = roundCents(num(state.allowance[kid].start, 0));
+  var raw = String(inp.value == null ? '' : inp.value).trim();
+  var typed = inp.getAttribute('data-dirty') === '1';
+  var v = roundCents(Math.max(0, num(raw === '' ? cur : raw, 0)));
+  /* 아직 아무것도 입력하지 않았어요 — 칸에 보이는 0은 빈칸 표시일 뿐이라 아무것도 바꾸지 않아요 */
+  if(!typed || raw === ''){
+    inp.value = '0';
+    inp.setAttribute('data-dirty', '0');
+    toast(cur > 0
+      ? '지금 시작 금액은 ' + usd(cur) + '이에요. 바꿀 금액을 입력해 주세요'
+      : '바꿀 시작 금액을 입력해 주세요');
+    return;
+  }
+  /* 저장된 시작 금액이 있는데 0으로 바꾸려 할 때만 한 번 더 확인해요 */
+  if(v <= 0 && cur > 0){
+    inp.value = '0';
+    inp.setAttribute('data-dirty', '0');
+    confirmModal(
+      '시작 금액을 $0.00으로 바꿀까요?',
+      '지금은 ' + usd(cur) + '으로 저장돼 있어요. $0.00으로 바꾸면 모은 돈이 그만큼 줄어들어요.',
+      '$0.00으로 바꾸기',
+      function(){ setAllowanceStart(0); },
+      true
+    );
+    return;
+  }
+  if(v === cur){
+    inp.value = '0';
+    inp.setAttribute('data-dirty', '0');
+    toast('시작 금액은 이미 ' + usd(cur) + '이에요');
+    return;
+  }
+  setAllowanceStart(v);
 }
 
 function doQuick(kind){
@@ -5073,19 +5183,20 @@ function bindEvents(){
     save(true);
     renderAllowance();
   });
-  $('#allowStartSave').addEventListener('click', function(){
-    var v = roundCents(Math.max(0, num($('#allowStart').value, 0)));
-    state.allowance[currentKid()].start = v;
-    save();
-    renderAllowance();
-    bumpTotal();
-    toast('시작 금액을 ' + usd(v) + '로 정했어요');
+  $('#allowStartSave').addEventListener('click', function(){ saveStartInput(false); });
+  $('#allowStart').addEventListener('input', function(){
+    this.setAttribute('data-dirty', '1');
   });
-  $('#allowStart').addEventListener('change', function(){
-    var v = roundCents(Math.max(0, num(this.value, 0)));
-    state.allowance[currentKid()].start = v;
-    save();
-    renderAllowance();
+  /* 칸을 누르면 보이는 0은 '비어 있음' 표시라서, 입력할 때는 지워줘요 */
+  $('#allowStart').addEventListener('focus', function(){
+    if(this.value === '0' && this.getAttribute('data-dirty') !== '1') this.value = '';
+    if(this.select) { try{ this.select(); }catch(e){} }
+  });
+  $('#allowStart').addEventListener('blur', function(){
+    if(String(this.value).trim() === '') this.value = '0';
+  });
+  $('#allowStart').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); saveStartInput(true); }
   });
   $('#rewardPills').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-reward]') : null;
