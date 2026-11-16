@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.9.3">
-<!-- family-dashboard 1.9.3 · 가족 생일 매년 반복 (달력·주간 스케줄) -->
+<meta name="app-version" content="1.9.4">
+<!-- family-dashboard 1.9.4 · 가족 생일·생신·기일 매년 반복 (음력 포함) -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -597,6 +597,15 @@ main{padding-top:2px}
 .cal-cell.has-bday{border-color:#F8CDD9;background:linear-gradient(180deg,#FFF7FA,#FFF0F5)}
 .cal-cell.has-bday.sel{border-color:#F0A3B6;background:linear-gradient(180deg,#FFEDF4,#FFE0EB)}
 .cal-cell.has-bday.today{border-color:#F6C980;background:linear-gradient(180deg,#FFF6E9,#FFEDF1)}
+.cal-cell.has-memorial{border-color:#DBD5EC;background:linear-gradient(180deg,#FCFBFE,#F5F3FB)}
+.cal-cell.has-memorial.sel{border-color:#BFB4E0;background:linear-gradient(180deg,#F4F1FD,#ECE7F9)}
+.cal-cell.has-memorial.today{border-color:#F6C980;background:linear-gradient(180deg,#FFF8EC,#F5F1FB)}
+.cal-bday-row.is-memorial{background:linear-gradient(120deg,#F7F5FD,#FBFAF6);border-color:#DDD6EE;box-shadow:0 2px 0 #EAE5F6}
+.cal-bday-row.is-memorial .cb-name{color:#6A5F8E}
+.cal-bday-row.is-memorial .cb-when{color:#9A94AE}
+.cal-bday-row.is-memorial .cb-now{border-color:#DDD6EE;background:#F1EEFB;color:#6A5F8E}
+.day-col .dc-event.dc-memorial{background:#F7F5FD;border-color:#DDD6EE;color:#6A5F8E}
+.sched-today .st-line.st-memorial{border-color:#DDD6EE;background:linear-gradient(120deg,#F8F6FD,#FCFCF8)}
 .cal-bday-banner{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .cal-bday-banner[hidden]{display:none}
 .cal-bday-row{
@@ -607,7 +616,7 @@ main{padding-top:2px}
 .cal-bday-row .cb-cake{font-size:21px;line-height:1;flex:0 0 auto}
 .cal-bday-row .cb-main{flex:1 1 auto;min-width:0}
 .cal-bday-row .cb-name{display:block;font-family:var(--font-title);font-size:13.5px;color:#A4566A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cal-bday-row .cb-when{display:block;font-size:10.5px;color:#B08A96;margin-top:1px;white-space:nowrap}
+.cal-bday-row .cb-when{display:block;font-size:10.5px;color:#B08A96;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cal-bday-row .cb-now{flex:0 0 auto;font-family:var(--font-title);font-size:10.5px;color:#B23F60;background:#FFE3EC;border:1.5px solid #F8CDD9;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .cal-bday-merged{font-size:10.5px;color:#B08A96;padding:3px 2px 0;line-height:1.4}
 .day-col .dc-event.dc-bday{background:#FFF2F7;border-color:#F8CDD9;color:#A4566A}
@@ -1054,7 +1063,8 @@ main{padding-top:2px}
         <div class="cal-legend">
           <span><i class="cc-dot s"></i>Stella 수업</span>
           <span><i class="cc-dot l"></i>Luna 수업</span>
-          <span><span class="cc-cake-key" aria-hidden="true">🎂</span>생일</span>
+          <span><span class="cc-cake-key" aria-hidden="true">🎂</span>생일·생신</span>
+          <span><span class="cc-cake-key" aria-hidden="true">🕊️</span><span class="cc-cake-key" aria-hidden="true">🕯️</span>기일·제사</span>
           <span><i class="cc-dot m"></i>용돈 기록</span>
           <span><i class="cc-dot e"></i>가족 메모</span>
           <span><span class="cc-name-tag s">Stella</span> <span class="cc-name-tag l">Luna</span> 할 일 모두 완료</span>
@@ -1292,14 +1302,30 @@ var DEFAULT_NTFY_TOPIC = 'momnara-family-chat-sj6m4x';
 var KIDS = ['Stella', 'Luna'];
 var PEOPLE = ['엄마', '아빠', 'Stella', 'Luna'];
 var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
-/* 매년 반복하는 가족 생일 — 월·일만 정해 두면 해가 바뀌어도(2026, 2027, 2028…) 같은 날에 떠요.
+/* 매년 반복하는 가족 일정 — 해가 바뀌어도(2026, 2027, 2028…) 같은 날에 떠요.
+   solar: 양력 [월, 일] / lunar: 음력 [월, 일] — 음력은 아래 LUNAR_SOLAR 표로 그 해의 양력 날짜를 찾아요.
    aliases: 가족이 예전에 달력 메모로 한 번씩 적어 둔 생일(예: '수아 생일🥳')을 같은 생일로 알아보는 이름 */
-var BIRTHDAYS = [
-  { month: 1,  day: 7,  name: '엄마',   who: '엄마',   aliases: ['엄마', '어머니', 'mom'] },
-  { month: 1,  day: 16, name: '루나',   who: 'Luna',   aliases: ['루나', '수아', 'luna'] },
-  { month: 4,  day: 15, name: '아빠',   who: '아빠',   aliases: ['아빠', '아버지', 'dad'] },
-  { month: 9,  day: 7,  name: '스텔라', who: 'Stella', aliases: ['스텔라', '지아', 'stella'] }
+var FAMILY_EVENTS = [
+  { id:'mom',    name:'엄마',   kind:'birthday', solar:[1, 7],   aliases:['엄마', '어머니', 'mom'] },
+  { id:'luna',   name:'루나',   kind:'birthday', solar:[1, 16],  aliases:['루나', '수아', 'luna'] },
+  { id:'dad',    name:'아빠',   kind:'birthday', solar:[4, 15],  aliases:['아빠', '아버지', 'dad'] },
+  { id:'stella', name:'스텔라', kind:'birthday', solar:[9, 7],   aliases:['스텔라', '지아', 'stella'] },
+  { id:'lee-rite', name:'이문복 할아버지', kind:'memorial', label:'제사', mark:'🕯️', solar:[10, 10] },
+  { id:'lee',    name:'이문복 할아버지', kind:'memorial', solar:[10, 11] },
+  { id:'kim',    name:'김광인 할아버지', kind:'birthday', label:'생신', lunar:[4, 26] },
+  { id:'park',   name:'박순자 할머니',   kind:'birthday', label:'생신', lunar:[4, 13] },
+  { id:'ahn',    name:'안옥희 할머니',   kind:'birthday', label:'생신', lunar:[11, 20] }
 ];
+/* 음력 월·일 → 그 해의 양력 날짜 (한국천문연구원 음력 기준, 2025~2036년).
+   표에 없는 먼 해는 브라우저의 중국력(Intl)으로 계산해요. */
+var LUNAR_SOLAR = {
+  '4-13': { 2025:'2025-05-10', 2026:'2026-05-29', 2027:'2027-05-18', 2028:'2028-05-07', 2029:'2029-05-25', 2030:'2030-05-14', 2031:'2031-06-02', 2032:'2032-05-21', 2033:'2033-05-11', 2034:'2034-05-30', 2035:'2035-05-20', 2036:'2036-05-08' },
+  '4-26': { 2025:'2025-05-23', 2026:'2026-06-11', 2027:'2027-05-31', 2028:'2028-05-20', 2029:'2029-06-07', 2030:'2030-05-27', 2031:'2031-06-15', 2032:'2032-06-03', 2033:'2033-05-24', 2034:'2034-06-12', 2035:'2035-06-02', 2036:'2036-05-21' },
+  '11-20': { 2025:'2026-01-08', 2026:'2026-12-28', 2027:'2027-12-17', 2028:'2029-01-04', 2029:'2029-12-24', 2030:'2030-12-14', 2031:'2032-01-02', 2032:'2032-12-22', 2033:'2033-12-11', 2034:'2034-12-30', 2035:'2035-12-19', 2036:'2037-01-06' }
+};
+var LUNAR_SOLAR_BY_DATE = null;
+var LUNAR_SOLAR_MIN = '';
+var LUNAR_SOLAR_MAX = '';
 var state = null;
 var saveWarned = false;
 
@@ -2794,17 +2820,17 @@ function renderSchedule(){
   var box = $('#schedToday');
   if(box){
     var mine = all.filter(function(l){ return l.day === today; });
-    /* 오늘이 생일이면 수업보다 먼저 알려줘요 */
-    var todayBdays = birthdaysOn(todayKey());
-    var bdayLine = todayBdays.map(function(b){
-      return '<div class="st-line st-bday">' +
-        '<span class="st-cake" aria-hidden="true">🎂</span>' +
-        '<span class="st-who"><b>' + esc(b.name) + '</b> 생일' +
-        '<span class="st-time">매년 ' + b.month + '월 ' + b.day + '일</span></span>' +
+    /* 오늘 생일·생신·기일이 있으면 수업보다 먼저 알려줘요 */
+    var todayEvents = familyEventsOn(todayKey());
+    var evLine = todayEvents.map(function(ev){
+      return '<div class="st-line st-bday' + (ev.kind === 'memorial' ? ' st-memorial' : '') + '">' +
+        '<span class="st-cake" aria-hidden="true">' + eventMark(ev) + '</span>' +
+        '<span class="st-who"><b>' + esc(ev.name) + '</b> ' + esc(eventLabel(ev)) +
+        '<span class="st-time">' + esc(ev.lunar ? '음력 ' + ev.lunar[0] + '월 ' + ev.lunar[1] + '일' : '매년 ' + ev.solar[0] + '월 ' + ev.solar[1] + '일') + '</span></span>' +
         '</div>';
     }).join('');
-    box.innerHTML = (mine.length || todayBdays.length)
-      ? bdayLine + mine.map(function(l){
+    box.innerHTML = (mine.length || todayEvents.length)
+      ? evLine + mine.map(function(l){
           var done = l.completedDate === todayKey();
           return '<div class="st-line">' + mascot(l.kid) +
             '<span class="st-who"><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) +
@@ -2826,19 +2852,19 @@ function renderSchedule(){
       var list = all.filter(function(l){ return l.day === i; });
       /* 그 날 가족 일정(달력에 적은 메모)과 생일도 같이 보여줘요 */
       var events = calMemosOn(wk.key).slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
-      var bdays = birthdaysOn(wk.key);
+      var fevents = familyEventsOn(wk.key);
       var head = '<span class="dc-name">' + esc(name) +
           '<span class="dc-date">' + esc(wk.md) + '</span>' +
         '</span>';
       var dayOpen = '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
         '<div class="dc-items">';
-      if(!list.length && !events.length && !bdays.length){
+      if(!list.length && !events.length && !fevents.length){
         return dayOpen + '<span class="dc-empty">일정 없음</span></div></div>';
       }
-      var bdayHtml = bdays.map(function(b){
-        return '<span class="dc-event dc-bday" title="' + esc(b.name + ' 생일 · 매년 ' + b.month + '월 ' + b.day + '일') + '">' +
-          '<span class="ev-em" aria-hidden="true">🎂</span>' +
-          '<span class="ev-txt">' + esc(b.name + ' 생일') + '</span>' +
+      var bdayHtml = fevents.map(function(ev){
+        return '<span class="dc-event dc-bday' + (ev.kind === 'memorial' ? ' dc-memorial' : '') + '" title="' + esc(eventTitle(ev) + ' · ' + eventWhen(ev)) + '">' +
+          '<span class="ev-em" aria-hidden="true">' + eventMark(ev) + '</span>' +
+          '<span class="ev-txt">' + esc(eventTitle(ev)) + '</span>' +
         '</span>';
       }).join('');
       var lessonHtml = list.map(function(l){
@@ -3984,13 +4010,78 @@ function calEventsOn(key){
   return Array.isArray(list) ? list : [];
 }
 
-/* 매년 반복 생일 — 날짜 키의 월·일만 봐서 어느 해든 같은 날에 떠요 */
-function birthdaysOn(key){
+/* 음력 표를 '양력 날짜 → 음력 월-일' 로 뒤집어 두면 그 날짜가 음력 일정인지 바로 알 수 있어요 */
+function lunarTable(){
+  if(LUNAR_SOLAR_BY_DATE) return LUNAR_SOLAR_BY_DATE;
+  var map = {};
+  Object.keys(LUNAR_SOLAR).forEach(function(md){
+    var row = LUNAR_SOLAR[md];
+    Object.keys(row).forEach(function(y){
+      var key = String(row[y]);
+      if(!map[key]) map[key] = [];
+      if(map[key].indexOf(md) < 0) map[key].push(md);
+    });
+  });
+  var dates = Object.keys(map).sort();
+  LUNAR_SOLAR_MIN = dates.length ? dates[0] : '';
+  LUNAR_SOLAR_MAX = dates.length ? dates[dates.length - 1] : '';
+  LUNAR_SOLAR_BY_DATE = map;
+  return map;
+}
+
+/* 양력 날짜 → 중국력(음력) 월·일. 음력 표에 없는 먼 해에만 써요 (iOS Safari 포함 Intl 지원) */
+function lunarMonthDayOf(key){
+  try{
+    var p = String(key).split('-');
+    var utc = new Date(Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12));
+    var parts = new Intl.DateTimeFormat('en-u-ca-chinese', { month:'numeric', day:'numeric', timeZone:'UTC' }).formatToParts(utc);
+    var out = { month:0, day:0, leap:false };
+    parts.forEach(function(part){
+      var raw = String(part.value);
+      if(part.type === 'month'){
+        if(/bis/i.test(raw)) out.leap = true;
+        var m = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+        if(isFinite(m)) out.month = m;
+      } else if(part.type === 'day'){
+        var d = parseInt(raw.replace(/[^0-9]/g, ''), 10);
+        if(isFinite(d)) out.day = d;
+      }
+    });
+    return (out.month && out.day) ? out : null;
+  }catch(e){ return null; }
+}
+
+/* 음력 일정이 그 양력 날짜에 오는지 — 표가 있는 해는 표로 정확히, 먼 해는 Intl로 계산해요 */
+function lunarFallsOn(ev, key){
+  lunarTable();
+  var md = ev.lunar[0] + '-' + ev.lunar[1];
+  var known = LUNAR_SOLAR_BY_DATE[key];
+  if(known) return known.indexOf(md) >= 0;
+  if(key >= LUNAR_SOLAR_MIN && key <= LUNAR_SOLAR_MAX) return false;   /* 표가 정확한 기간 */
+  var lm = lunarMonthDayOf(key);
+  return !!lm && !lm.leap && lm.month === ev.lunar[0] && lm.day === ev.lunar[1];
+}
+
+/* 그 날의 가족 일정(생일·생신·기일) — 양력은 월·일, 음력은 그 해의 양력 날짜로 찾아요 */
+function familyEventsOn(key){
   var p = String(key || '').split('-');
   var m = Number(p[1]);
   var d = Number(p[2]);
   if(!m || !d) return [];
-  return BIRTHDAYS.filter(function(b){ return b.month === m && b.day === d; });
+  return FAMILY_EVENTS.filter(function(ev){
+    if(ev.lunar) return lunarFallsOn(ev, key);
+    return ev.solar[0] === m && ev.solar[1] === d;
+  });
+}
+
+/* 아이콘·표기는 일정마다 정한 값이 먼저예요 (🎂 생일·생신 / 🕊️ 기일 / 🕯️ 제사) */
+function eventMark(ev){ return ev.mark || (ev.kind === 'memorial' ? '🕊️' : '🎂'); }
+function eventLabel(ev){ return ev.label || (ev.kind === 'memorial' ? '기일' : '생일'); }
+function eventTitle(ev){ return ev.name + ' ' + eventLabel(ev); }
+function eventWhen(ev){
+  var md = ev.lunar || ev.solar;
+  if(ev.lunar) return '음력 ' + md[0] + '월 ' + md[1] + '일 · 해마다 양력 날짜가 달라져요';
+  return '매년 ' + md[0] + '월 ' + md[1] + '일';
 }
 
 /* 메모 비교용 글자 — 이모지·공백·기호를 걷어내요 ('엄마 생일🥳' → '엄마생일') */
@@ -4006,7 +4097,8 @@ function memoCompareText(t){
 function isDuplicateBirthdayMemo(memo, key){
   var text = memoCompareText(memo && memo.text);
   if(!text) return false;
-  return birthdaysOn(key).some(function(b){
+  return familyEventsOn(key).some(function(b){
+    if(!b.aliases) return false;
     return b.aliases.some(function(a){
       var al = memoCompareText(a);
       if(!al) return false;
@@ -4080,7 +4172,7 @@ function renderCalendar(){
     var lessons = calLessonsOn(key);
     var money = calMoneyOn(key);
     var memos = calMemosOn(key);
-    var bdays = birthdaysOn(key);
+    var fevents = familyEventsOn(key);
     var dailyDone = calDailyDoneOn(key);
     var cls = 'cal-cell';
     if(wd === 0) cls += ' sun';
@@ -4089,10 +4181,13 @@ function renderCalendar(){
     if(key === todayK) cls += ' today';
     if(key === calView.sel) cls += ' sel';
     if(dailyDone.length) cls += ' has-done';
-    if(bdays.length) cls += ' has-bday';
+    if(fevents.some(function(ev){ return ev.kind !== 'memorial'; })) cls += ' has-bday';
+    if(fevents.some(function(ev){ return ev.kind === 'memorial'; })) cls += ' has-memorial';
 
-    /* 생일은 점 대신 작은 🎂로 표시해요 */
-    var dots = bdays.length ? '<span class="cc-cake" aria-hidden="true">🎂</span>' : '';
+    /* 생일·생신·기일은 점 대신 작은 아이콘(🎂·🕊️)으로 표시해요 */
+    var dots = fevents.map(function(ev){
+      return '<span class="cc-cake' + (ev.kind === 'memorial' ? ' cc-dove' : '') + '" aria-hidden="true">' + eventMark(ev) + '</span>';
+    }).join('');
     var shown = 0;
     var maxDots = 5;
     lessons.forEach(function(l){
@@ -4105,7 +4200,7 @@ function renderCalendar(){
 
     var label = (calView.m + 1) + '월 ' + i + '일 (' + WEEKDAYS[wd] + ') ';
     var extra = [];
-    bdays.forEach(function(b){ extra.push(b.name + ' 생일'); });
+    fevents.forEach(function(ev){ extra.push(eventTitle(ev)); });
     if(lessons.length) extra.push('수업 ' + lessons.length + '개');
     if(money.length) extra.push('용돈 기록 ' + money.length + '개');
     if(memos.length) extra.push('메모 ' + memos.length + '개');
@@ -4148,18 +4243,16 @@ function renderCalendarDetail(){
 
   var bdayBox = $('#calBirthdays');
   if(bdayBox){
-    var bdays = birthdaysOn(key);
-    bdayBox.hidden = !bdays.length;
-    bdayBox.innerHTML = bdays.length
-      ? bdays.map(function(b){
-          return '<div class="cal-bday-row">' +
-            '<span class="cb-cake" aria-hidden="true">🎂</span>' +
-            '<span class="cb-main"><span class="cb-name">' + esc(b.name) + ' 생일</span>' +
-            '<span class="cb-when">매년 ' + b.month + '월 ' + b.day + '일 · 해마다 반복</span></span>' +
-            (key === todayKey() ? '<span class="cb-now">오늘 🎉</span>' : '') +
-            '</div>';
-        }).join('')
-      : '';
+    var fevents = familyEventsOn(key);
+    bdayBox.hidden = !fevents.length;
+    bdayBox.innerHTML = fevents.map(function(ev){
+      return '<div class="cal-bday-row' + (ev.kind === 'memorial' ? ' is-memorial' : '') + '">' +
+        '<span class="cb-cake" aria-hidden="true">' + eventMark(ev) + '</span>' +
+        '<span class="cb-main"><span class="cb-name">' + esc(eventTitle(ev)) + '</span>' +
+        '<span class="cb-when">' + esc(eventWhen(ev)) + '</span></span>' +
+        (key === todayKey() ? '<span class="cb-now">' + (ev.kind === 'memorial' ? '오늘' : '오늘 🎉') + '</span>' : '') +
+        '</div>';
+    }).join('');
   }
 
   var lessonBox = $('#calClasses');
