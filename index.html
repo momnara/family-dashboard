@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="우리 가족">
 <meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.9.9">
-<!-- family-dashboard 1.9.9 · 달력 날짜 상세 제목 "오늘 수업" · "오늘 용돈기록" -->
+<meta name="app-version" content="1.10.0">
+<!-- family-dashboard 1.10.0 · 📸 사진첩 탭(월별 사진) 추가 · '간식통, 물병 가져다 놓기' 맨 위로 -->
 <title>우리 가족 대시보드 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,8 +106,9 @@ header.top{
 .sync-badge[data-state="local"]{border-color:#EADFCB;background:#FFFCF4;color:#9C8874}
 
 /* ---------- tabs ---------- */
+/* 탭이 일곱 개라 아이폰처럼 좁은 화면에서는 두 줄로 예쁘게 접혀요 (가로 스크롤 없이 한눈에) */
 .tabs{
-  display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;
+  display:flex;flex-wrap:wrap;gap:5px;justify-content:center;
   margin:9px auto 0;padding:6px;
   background:rgba(255,255,255,.82);
   border:2px solid var(--line);
@@ -115,11 +116,11 @@ header.top{
   box-shadow:0 4px 0 rgba(243,228,206,.85);
   max-width:820px;width:calc(100% - 28px);
 }
-.tabs::-webkit-scrollbar{display:none}
 .tab{
-  flex:0 0 auto;display:flex;align-items:center;gap:5px;
-  padding:0 12px;min-height:44px;border-radius:14px;border:2px solid transparent;
+  flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;gap:5px;
+  padding:0 11px;min-height:44px;border-radius:14px;border:2px solid transparent;
   background:transparent;font-family:var(--font-title);font-size:14px;color:var(--ink-soft);
+  white-space:nowrap;
   transition:background .15s ease,color .15s ease,transform .1s ease;
 }
 .tab .ico{font-size:16px;line-height:1}
@@ -922,6 +923,58 @@ main{padding-top:2px}
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* ---------- 📸 가족 사진첩 ---------- */
+.photo-card{background:linear-gradient(170deg,#FFFDF6,#F2F8FF 62%,#FFF3F8);border-color:#E5E9F7}
+.photo-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 12px}
+.photo-add{display:flex;align-items:center;justify-content:center;gap:6px;min-height:50px;padding:0 8px;font-size:14.5px}
+.photo-file{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.photo-month{display:flex;align-items:center;gap:6px;margin:4px 0 11px}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.photo-cell{
+  display:flex;flex-direction:column;padding:0;overflow:hidden;text-align:left;
+  border-radius:18px;border:2px solid #F3E7D2;background:#fff;
+  box-shadow:0 4px 10px rgba(199,163,108,.12);transition:transform .12s ease,box-shadow .12s ease;
+}
+.photo-cell:active{transform:scale(.97)}
+.photo-cell .ph-img{display:block;aspect-ratio:1/1;background:#F7F1E6;overflow:hidden}
+.photo-cell .ph-img img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-cell .ph-meta{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:7px 9px 6px}
+.photo-cell .ph-date{font-family:var(--font-title);font-size:11px;color:#8A6530;white-space:nowrap}
+.photo-cell .ph-who{font-size:10.5px;font-weight:700;color:#A4566A;background:#FFEDF2;border:1px solid #FBD3DF;border-radius:999px;padding:1px 7px;white-space:nowrap}
+.photo-cell .ph-who[data-who="Luna"]{color:#5F5780;background:#F1ECFF;border-color:#DED5F2}
+.photo-cell .ph-who[data-who="아빠"]{color:#3D6390;background:#EAF2FC;border-color:#D5E4F6}
+.photo-cell .ph-who[data-who="엄마"]{color:#8A6530;background:#FFF4D9;border-color:#F0D9AE}
+.photo-cell .ph-who[data-who="가족"]{color:#4E7A5F;background:#EFF9F2;border-color:#CDE8D5}
+.photo-cell .ph-comment{display:block;padding:0 9px 9px;font-size:11.5px;line-height:1.4;color:#7E6C5C;word-break:break-word}
+.photo-empty{margin-top:2px}
+.photo-retry{margin-top:8px}
+.ph-preview{margin:2px 0 12px;border-radius:16px;overflow:hidden;border:2px solid #F3E7D2;background:#F7F1E6}
+.ph-preview img{display:block;width:100%;max-height:210px;object-fit:cover}
+.ph-form{display:flex;flex-direction:column;gap:9px}
+/* 사진 크게 보기 */
+.photo-lightbox{
+  position:fixed;inset:0;z-index:210;display:flex;align-items:center;justify-content:center;padding:14px;
+  background:rgba(46,34,24,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  animation:fadeIn .18s ease;
+}
+.photo-lightbox .pl-inner{
+  width:100%;max-width:560px;max-height:94dvh;display:flex;flex-direction:column;overflow:hidden;
+  background:#FFFDF7;border:2px solid #F6E6CC;border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,.35);
+}
+.pl-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1.5px solid #F4E7D2}
+.pl-title{font-family:var(--font-title);font-size:13.5px;color:#6B5A48}
+.pl-btn{flex:0 0 auto;width:34px;height:34px;border-radius:11px;border:1.5px solid var(--line);background:#fff;color:#9C7B4F;font-size:14px}
+.pl-photo{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;background:#2E241C;overflow:hidden}
+.pl-photo img{max-width:100%;max-height:70dvh;display:block;object-fit:contain}
+.pl-foot{padding:10px 12px 12px;border-top:1.5px solid #F4E7D2;background:#FFFCF4}
+.pl-comment{font-size:13px;line-height:1.5;color:var(--ink);margin-bottom:6px;word-break:break-word}
+.pl-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pl-meta{font-size:10.5px;color:var(--ink-faint);line-height:1.4}
+.pl-del{flex:0 0 auto;min-height:38px;padding:0 12px;border-radius:12px;border:1.5px solid #FBD3DF;background:#FFF1F5;color:#A4566A;font-size:12px;font-weight:700}
+.pl-confirm p{font-size:12.5px;line-height:1.5;margin-bottom:9px;color:var(--ink)}
+.pl-confirm-actions{display:flex;gap:8px}
+.pl-confirm-actions .btn{flex:1}
+
 /* ---------- responsive ---------- */
 @media (min-width:720px){
   .wrap{padding:0 22px}
@@ -934,6 +987,12 @@ main{padding-top:2px}
   .speed-grid .card{margin-top:14px}
   .chat-scroll{height:min(56vh,500px)}
   .timer-buttons .btn{font-size:17px}
+}
+@media (max-width:520px){
+  /* 두 줄로 접힌 탭이 헤더를 너무 많이 차지하지 않게 조금 납작하게 */
+  .tabs{gap:4px;padding:5px;border-radius:18px}
+  .tab{min-height:40px;padding:0 8px;font-size:13px;border-radius:12px;gap:4px}
+  .tab .ico{font-size:15px}
 }
 @media (max-width:380px){
   .brand h1{font-size:18px}
@@ -970,6 +1029,7 @@ main{padding-top:2px}
     <button class="tab active" type="button" data-tab="calendar" aria-selected="true"><span class="ico" aria-hidden="true">📅</span>달력</button>
     <button class="tab" type="button" data-tab="todo" aria-selected="false"><span class="ico" aria-hidden="true">✅</span>할 일</button>
     <button class="tab" type="button" data-tab="allowance" aria-selected="false"><span class="ico" aria-hidden="true">💰</span>용돈</button>
+    <button class="tab" type="button" data-tab="photos" aria-selected="false"><span class="ico" aria-hidden="true">📸</span>사진첩</button>
     <button class="tab" type="button" data-tab="chat" aria-selected="false"><span class="ico" aria-hidden="true">💬</span>채팅</button>
     <button class="tab" type="button" data-tab="memo" aria-selected="false"><span class="ico" aria-hidden="true">📝</span>메모</button>
     <button class="tab" type="button" data-tab="timer" aria-selected="false"><span class="ico" aria-hidden="true">⏰</span>타이머</button>
@@ -1041,6 +1101,29 @@ main{padding-top:2px}
         <h2><span class="h2-emoji" aria-hidden="true">📒</span>매일 공부 적립</h2>
         <p class="card-sub">하루에 한 줄로 그날 총액만 보여요. 공부 기록도 같이 남아요.</p>
         <div class="log-list" id="allowLog"></div>
+      </div>
+    </section>
+
+    <!-- ============ 📸 사진첩 ============ -->
+    <section class="panel" id="panel-photos" aria-label="가족 사진첩">
+      <div class="card photo-card">
+        <h2><span class="h2-emoji" aria-hidden="true">📸</span>우리 가족 사진첩</h2>
+        <p class="card-sub">사진은 자동으로 작게 줄여서 달마다 따로 보관해요. 찍은 날짜와 대상, 한 줄 코멘트를 남겨보세요.</p>
+        <div class="photo-actions">
+          <button class="btn primary photo-add" id="photoCameraBtn" type="button"><span aria-hidden="true">📸</span> 사진 찍기</button>
+          <button class="btn mint photo-add" id="photoAlbumBtn" type="button"><span aria-hidden="true">🖼️</span> 앨범에서 고르기</button>
+        </div>
+        <input class="photo-file" id="photoCameraInput" type="file" accept="image/*" capture="environment" aria-label="카메라로 사진 찍기">
+        <input class="photo-file" id="photoAlbumInput" type="file" accept="image/*" aria-label="앨범에서 사진 고르기">
+        <div class="photo-month">
+          <button class="cal-nav" id="photoPrev" type="button" aria-label="이전 달 보기">◀</button>
+          <div class="cal-month">
+            <b id="photoMonthTitle">오늘</b>
+            <span id="photoMonthSub">사진을 불러오는 중…</span>
+          </div>
+          <button class="cal-nav" id="photoNext" type="button" aria-label="다음 달 보기">▶</button>
+        </div>
+        <div class="photo-grid" id="photoGrid"></div>
       </div>
     </section>
 
@@ -1654,22 +1737,22 @@ function seedState(){
       done: []
     },
     todos: [
+      /* 주중(월~금)에만 하는 할 일 — 주말에는 목록에 안 보여요.
+         두 아이 모두 이 항목이 할 일 목록의 맨 처음에 와요 */
+      { id:'td12', owner:'Stella', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t },
       { id:'td1', owner:'Stella', text:'Bomi 맵테스트', done:false, date:t },
       { id:'td2', owner:'Stella', text:'수학문제 3장', done:false, date:t },
       { id:'td3', owner:'Stella', text:'국어문제 1장', done:false, date:t },
       { id:'td4', owner:'Stella', text:'영어 필사 15분', done:false, date:t },
       { id:'td5', owner:'Stella', text:'바이올린 연습 20분', done:false, date:t },
       { id:'td10', owner:'Stella', text:'학교숙제', done:false, date:t },
+      { id:'td14', owner:'Stella', text:'책상정리', done:false, date:t },
+      { id:'td13', owner:'Luna', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t },
       { id:'td6', owner:'Luna', text:'Bomi 맵테스트', done:false, date:t },
       { id:'td7', owner:'Luna', text:'수학문제 3장', done:false, date:t },
       { id:'td8', owner:'Luna', text:'국어문제 1장', done:false, date:t },
       { id:'td9', owner:'Luna', text:'영어 필사 15분', done:false, date:t },
       { id:'td11', owner:'Luna', text:'학교숙제', done:false, date:t },
-      /* 주중(월~금)에만 하는 할 일 — 주말에는 목록에 안 보여요 */
-      { id:'td12', owner:'Stella', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t },
-      { id:'td13', owner:'Luna', text:'간식통, 물병 가져다 놓기', done:false, weekdaysOnly:true, date:t },
-      /* 매일 하는 할 일 — 평일·주말 모두 보여요 */
-      { id:'td14', owner:'Stella', text:'책상정리', done:false, date:t },
       { id:'td15', owner:'Luna', text:'책상정리', done:false, date:t }
     ],
     stamps: {
@@ -1779,7 +1862,7 @@ function normalize(saved){
   /* 요일별 미리 보기(0=오늘 ~ 6) — 이 기기 화면에서만 쓰는 값이에요 */
   var dayOff = Math.round(num(s.ui.todoDayOffset, 0));
   s.ui.todoDayOffset = (dayOff >= 0 && dayOff <= 6) ? dayOff : 0;
-  if(['calendar','todo','allowance','chat','memo','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
+  if(['calendar','todo','allowance','photos','chat','memo','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
   /* 휴강 표도 날짜 키가 계속 늘어나는 표라서 mergeDefaults로는 살아남지 않아요 — 직접 살려요 */
   var savedSkip = (isObject(saved) && isObject(saved.schedule) && isObject(saved.schedule.skipDates))
@@ -2709,6 +2792,9 @@ function doQuick(kind){
    ========================================================= */
 var hiFiveShown = false;
 var hiFiveTimer = null;
+/* 두 아이 할 일 목록의 맨 위에 오는 항목 */
+var PINNED_TODO_TEXT = '간식통, 물병 가져다 놓기';
+function isPinnedTodo(t){ return !!t && String(t.text || '').trim() === PINNED_TODO_TEXT; }
 
 function filteredTodos(){
   var f = state.ui.todoFilter;
@@ -2716,13 +2802,18 @@ function filteredTodos(){
   var viewDate = daysFromToday(todoDayOffset());
   var active = state.todos.filter(function(t){ return isTodoActiveOn(t, viewDate); });
   if(f !== '전체'){
-    return active.filter(function(t){ return t.owner === f; });
+    active = active.filter(function(t){ return t.owner === f; });
   }
-  /* '전체'에서는 Stella·Luna 할 일이 위로 오게 (각자 순서는 그대로) */
+  /* '전체'에서는 Stella·Luna 할 일이 위로 오게 하고,
+     두 아이 모두 '간식통, 물병 가져다 놓기'를 맨 첫 번째로 보여줘요.
+     (나머지 순서는 Firebase에 적힌 순서 그대로 — 정렬은 안정적이라 서로 바뀌지 않아요) */
   return active.sort(function(a, b){
     var ak = KIDS.indexOf(a.owner) >= 0 ? 0 : 1;
     var bk = KIDS.indexOf(b.owner) >= 0 ? 0 : 1;
-    return ak - bk;
+    if(ak !== bk) return ak - bk;
+    var ap = isPinnedTodo(a) ? 0 : 1;
+    var bp = isPinnedTodo(b) ? 0 : 1;
+    return ap - bp;
   });
 }
 
@@ -4534,6 +4625,391 @@ function deleteMemoPost(id){
 }
 
 /* =========================================================
+   📸 가족 사진첩 — 사진만 따로 저장해요
+   familyDashboard/photos/{YYYY-MM}/{photoId}.json
+   ※ v1.json(할 일·채팅·용돈 …)에는 사진을 넣지 않아요.
+     사진첩 탭을 열거나 달을 바꿀 때 그 달 사진만 불러와요.
+   ========================================================= */
+var PHOTO_MAX_EDGE = 1080;          /* 긴 변 최대 1080px */
+var PHOTO_QUALITY = 0.72;           /* JPEG 품질 — 1장 100KB 안팎 */
+var PHOTO_MAX_INPUT = 25 * 1024 * 1024;
+var PHOTO_WHO = ['Stella', 'Luna', '가족', '엄마', '아빠'];
+var photos = {
+  month: '',            /* 지금 보고 있는 달 'YYYY-MM' */
+  cache: {},            /* 'YYYY-MM' → [사진…] (불러온 달만) */
+  loading: {},
+  error: {},
+  lightbox: null,
+  lightboxKeys: null
+};
+function photosBaseUrl(){
+  var url = String((state && state.settings && state.settings.firebaseUrl) || DEFAULT_FIREBASE_URL)
+    .trim().replace(/\/+$/, '');
+  return url + '/familyDashboard/photos';
+}
+function photoMonth(){ return photos.month || todayKey().slice(0, 7); }
+function monthLabel(key){
+  var p = String(key || '').split('-');
+  return Number(p[0]) + '년 ' + Number(p[1]) + '월';
+}
+function monthShift(key, delta){
+  var p = String(key).split('-');
+  var d = new Date(Number(p[0]), Number(p[1]) - 1 + delta, 1, 12, 0, 0, 0);
+  return dateKey(d).slice(0, 7);
+}
+function photoDateLabel(d){
+  var p = String(d || '').split('-');
+  if(p.length !== 3) return String(d || '');
+  return Number(p[1]) + '/' + Number(p[2]) + ' (' + weekdayOf(d) + ')';
+}
+function photoSort(a, b){
+  if(a.date !== b.date) return String(b.date).localeCompare(String(a.date));
+  return num(b.ts, 0) - num(a.ts, 0);
+}
+function normalizePhoto(p, key){
+  var src = isObject(p) ? p : {};
+  var dateStr = String(src.date || '');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) dateStr = todayKey();
+  return {
+    id: String(src.id || key || uid('ph')),
+    date: dateStr,
+    who: PHOTO_WHO.indexOf(src.who) >= 0 ? src.who : '가족',
+    by: String(src.by || ''),
+    comment: String(src.comment || '').slice(0, 60),
+    ts: num(src.ts, 0),
+    data: String(src.data || '')
+  };
+}
+
+/* 그 달 사진만 불러와요 (이미 불러온 달은 다시 안 부름) */
+function photosLoad(month, opts){
+  var m = month || photoMonth();
+  var force = !!(opts && opts.force);
+  if(!force && (photos.cache[m] || photos.loading[m])) return;
+  photos.loading[m] = true;
+  photos.error[m] = '';
+  renderPhotos();
+  var finish = function(err, list){
+    photos.loading[m] = false;
+    if(err) photos.error[m] = '불러오지 못했어요';
+    else photos.cache[m] = list;
+    if(photoMonth() === m) renderPhotos();
+    if(err) toast('사진첩을 불러오지 못했어요. 잠시 뒤 다시 해볼게요');
+  };
+  if(typeof fetch !== 'function'){ finish(new Error('no-fetch')); return; }
+  fetch(photosBaseUrl() + '/' + m + '.json', { cache: 'no-store' }).then(function(res){
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }).then(function(v){
+    var list = [];
+    if(isObject(v)){
+      Object.keys(v).forEach(function(k){
+        var p = v[k];
+        if(isObject(p) && p.data) list.push(normalizePhoto(p, k));
+      });
+    }
+    list.sort(photoSort);
+    finish(null, list);
+  }).catch(function(){ finish(new Error('load')); });
+}
+
+function renderPhotos(){
+  var grid = $('#photoGrid');
+  var m = photoMonth();
+  var title = $('#photoMonthTitle');
+  if(title) title.textContent = monthLabel(m);
+  var list = photos.cache[m];
+  var sub = $('#photoMonthSub');
+  if(sub){
+    sub.textContent = photos.loading[m]
+      ? '불러오는 중…'
+      : (photos.error[m]
+        ? '불러오지 못했어요'
+        : (list ? (list.length ? list.length + '장' : '아직 사진이 없어요') : ''));
+  }
+  if(!grid) return;
+  if(!list || !list.length){
+    if(photos.loading[m]){
+      grid.innerHTML = '<div class="empty photo-empty"><span class="em">📷</span>사진을 불러오는 중이에요…</div>';
+    } else if(photos.error[m]){
+      grid.innerHTML = '<div class="empty photo-empty"><span class="em">😢</span>사진을 불러오지 못했어요.<br>' +
+        '<button class="btn ghost sm photo-retry" type="button">다시 불러오기</button></div>';
+    } else {
+      grid.innerHTML = '<div class="empty photo-empty"><span class="em">📸</span>이 달에는 아직 사진이 없어요.<br>위에서 사진을 찍거나 앨범에서 골라보세요!</div>';
+    }
+    return;
+  }
+  grid.innerHTML = list.map(function(p){
+    var alt = p.who + ' 사진 ' + photoDateLabel(p.date) + (p.comment ? ' · ' + p.comment : '');
+    return '<button class="photo-cell" type="button" data-photo="' + esc(p.id) + '" aria-label="' + esc(alt + ' 크게 보기') + '">' +
+      '<span class="ph-img"><img src="' + p.data + '" alt="' + esc(alt) + '" loading="lazy"></span>' +
+      '<span class="ph-meta">' +
+        '<span class="ph-date">' + esc(photoDateLabel(p.date)) + '</span>' +
+        '<span class="ph-who" data-who="' + esc(p.who) + '">' + esc(p.who) + '</span>' +
+      '</span>' +
+      (p.comment ? '<span class="ph-comment">' + esc(p.comment) + '</span>' : '') +
+    '</button>';
+  }).join('');
+}
+
+function photosMove(delta){
+  var cur = photoMonth();
+  var next = monthShift(cur, delta);
+  if(delta > 0 && cur >= todayKey().slice(0, 7)){
+    toast('이번 달이 마지막이에요');
+    return;
+  }
+  photos.month = next;
+  renderPhotos();
+  photosLoad(next);
+}
+
+/* 고른 사진을 캔버스로 줄여요 (긴 변 1080px · JPEG 0.72) */
+function compressPhoto(file, cb){
+  var finished = false;
+  function done(err, dataUrl){
+    if(finished) return;
+    finished = true;
+    cb(err || null, dataUrl || '');
+  }
+  function encode(img, w, h){
+    try{
+      var maxSide = Math.max(num(w, 1), num(h, 1), 1);
+      var scale = Math.min(1, PHOTO_MAX_EDGE / maxSide);
+      var cw = Math.max(1, Math.round(num(w, 1) * scale));
+      var ch = Math.max(1, Math.round(num(h, 1) * scale));
+      var c = document.createElement('canvas');
+      c.width = cw;
+      c.height = ch;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, cw, ch);
+      ctx.drawImage(img, 0, 0, cw, ch);
+      var out = c.toDataURL('image/jpeg', PHOTO_QUALITY);
+      if(out.indexOf('data:image/jpeg') !== 0){ done(new Error('encode')); return; }
+      done(null, out);
+    }catch(e){ done(e); }
+  }
+  function viaImg(){
+    var url = '';
+    try{ url = URL.createObjectURL(file); }catch(e){ done(e); return; }
+    var img = new Image();
+    img.onload = function(){
+      try{ URL.revokeObjectURL(url); }catch(e){}
+      encode(img, img.naturalWidth || img.width, img.naturalHeight || img.height);
+    };
+    img.onerror = function(){
+      try{ URL.revokeObjectURL(url); }catch(e){}
+      done(new Error('decode'));
+    };
+    img.src = url;
+  }
+  /* 최신 브라우저는 createImageBitmap이 EXIF 회전까지 맞춰서 그려줘요 */
+  if(window.createImageBitmap){
+    try{
+      createImageBitmap(file, { imageOrientation: 'from-image' }).then(function(bmp){
+        encode(bmp, bmp.width, bmp.height);
+        if(bmp.close) bmp.close();
+      }).catch(function(){ viaImg(); });
+    }catch(e){ viaImg(); }
+  } else {
+    viaImg();
+  }
+}
+
+function startPhotoPick(input){
+  var file = input && input.files && input.files[0];
+  try{ input.value = ''; }catch(e){}
+  if(!file) return;
+  if(!/^image\//i.test(String(file.type || ''))){ toast('사진 파일(이미지)만 올릴 수 있어요'); return; }
+  if(file.size > PHOTO_MAX_INPUT){ toast('사진이 너무 커요. 25MB 이하 사진으로 해주세요'); return; }
+  toast('사진을 작게 줄이는 중이에요…');
+  compressPhoto(file, function(err, dataUrl){
+    if(err || !dataUrl){ toast('사진을 읽지 못했어요. 다른 사진으로 해보세요'); return; }
+    openPhotoForm(dataUrl);
+  });
+}
+
+function openPhotoForm(dataUrl){
+  var t = todayKey();
+  var whoOpts = PHOTO_WHO.map(function(w){
+    return '<option value="' + esc(w) + '"' + (w === '가족' ? ' selected' : '') + '>' + esc(w) + '</option>';
+  }).join('');
+  openModal(
+    '<h2>📸 사진 올리기</h2>' +
+    '<p class="modal-sub">사진은 긴 변 ' + PHOTO_MAX_EDGE + 'px로 줄여서 그 달 사진첩에만 따로 올라가요. (할 일·채팅 데이터는 그대로예요)</p>' +
+    '<div class="ph-preview"><img src="' + dataUrl + '" alt="올릴 사진 미리보기"></div>' +
+    '<div class="ph-form">' +
+      '<div class="field"><label for="photoDate">날짜</label>' +
+        '<input class="input" id="photoDate" type="date" value="' + t + '" max="' + t + '"></div>' +
+      '<div class="field"><label for="photoWho">대상</label>' +
+        '<select class="input" id="photoWho">' + whoOpts + '</select></div>' +
+      '<div class="field"><label for="photoComment">한 줄 코멘트 (선택)</label>' +
+        '<input class="input" id="photoComment" type="text" maxlength="60" placeholder="예: 첫눈 온 날" autocomplete="off"></div>' +
+    '</div>' +
+    '<div class="modal-actions">' +
+      '<button class="btn ghost" type="button" data-modal-close>취소</button>' +
+      '<button class="btn primary" type="button" data-photo-save>올리기</button>' +
+    '</div>',
+    { onReady: function(back, close){
+        var saveBtn = $('[data-photo-save]', back);
+        if(!saveBtn) return;
+        saveBtn.addEventListener('click', function(){
+          var dateEl = $('#photoDate', back);
+          var whoEl = $('#photoWho', back);
+          var cEl = $('#photoComment', back);
+          var dateStr = String((dateEl && dateEl.value) || '').trim();
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){ toast('사진 날짜를 골라주세요'); return; }
+          if(dateStr > todayKey()){ toast('아직 오지 않은 날짜는 고를 수 없어요'); return; }
+          var who = (whoEl && PHOTO_WHO.indexOf(whoEl.value) >= 0) ? whoEl.value : '가족';
+          var comment = String((cEl && cEl.value) || '').trim().slice(0, 60);
+          if(saveBtn.disabled) return;
+          saveBtn.disabled = true;
+          saveBtn.textContent = '올리는 중…';
+          uploadPhoto({ date: dateStr, who: who, comment: comment, data: dataUrl }, function(err){
+            if(err){
+              saveBtn.disabled = false;
+              saveBtn.textContent = '올리기';
+              toast('사진을 올리지 못했어요. 인터넷 연결을 확인해 주세요');
+              return;
+            }
+            close();
+            toast('사진을 사진첩에 올렸어요 📸');
+          });
+        });
+      } }
+  );
+}
+
+function uploadPhoto(info, cb){
+  var month = String(info.date || todayKey()).slice(0, 7);
+  var rec = {
+    id: uid('ph'),
+    date: info.date,
+    who: info.who,
+    by: String((state.chat && state.chat.me) || ''),
+    comment: String(info.comment || '').slice(0, 60),
+    ts: Date.now(),
+    data: info.data
+  };
+  if(typeof fetch !== 'function'){ cb(new Error('no-fetch')); return; }
+  fetch(photosBaseUrl() + '/' + month + '/' + rec.id + '.json', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(rec)
+  }).then(function(res){
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    var list = (photos.cache[month] || []).concat([normalizePhoto(rec, rec.id)]);
+    list.sort(photoSort);
+    photos.cache[month] = list;
+    photos.error[month] = '';
+    /* 올린 날짜의 달로 사진첩을 옮겨서 바로 보여줘요 */
+    photos.month = month;
+    renderPhotos();
+    if(!photos.loading[month]) photosLoad(month);
+    cb(null);
+  }).catch(function(err){ cb(err); });
+}
+
+function photoById(id){
+  var list = photos.cache[photoMonth()] || [];
+  var found = null;
+  list.forEach(function(p){ if(p.id === id) found = p; });
+  return found;
+}
+/* 지우기는 엄마 또는 올린 사람만 — 다른 탭의 삭제 권한과 똑같이 맞췄어요 */
+function canDeletePhoto(p){
+  if(!p) return false;
+  if(isMom()) return true;
+  var me = (state && state.chat) ? String(state.chat.me || '') : '';
+  return !!me && String(p.by || '') === me;
+}
+function closePhotoView(){
+  if(photos.lightbox && photos.lightbox.parentNode) photos.lightbox.parentNode.removeChild(photos.lightbox);
+  photos.lightbox = null;
+  if(photos.lightboxKeys){
+    document.removeEventListener('keydown', photos.lightboxKeys);
+    photos.lightboxKeys = null;
+  }
+}
+function openPhotoView(id){
+  var p = photoById(id);
+  if(!p) return;
+  closePhotoView();
+  var wrap = document.createElement('div');
+  wrap.className = 'photo-lightbox';
+  var canDel = canDeletePhoto(p);
+  var comment = p.comment ? esc(p.comment) : '';
+  wrap.innerHTML =
+    '<div class="pl-inner" role="dialog" aria-modal="true" aria-label="사진 크게 보기">' +
+      '<div class="pl-bar">' +
+        '<span class="pl-title">' + esc(photoDateLabel(p.date)) + ' · ' + esc(p.who) + '</span>' +
+        '<button class="pl-btn" type="button" data-pl-close aria-label="닫기">✕</button>' +
+      '</div>' +
+      '<div class="pl-photo"><img src="' + p.data + '" alt="' + esc(p.who + ' 사진 ' + photoDateLabel(p.date)) + '"></div>' +
+      '<div class="pl-foot" data-pl-foot>' +
+        (comment ? '<p class="pl-comment">' + comment + '</p>' : '') +
+        '<div class="pl-row">' +
+          '<span class="pl-meta">' + esc(p.who) + ' · 올린 사람 ' + esc(p.by || '가족') + ' · ' + esc(photoDateLabel(p.date)) + '</span>' +
+          (canDel ? '<button class="pl-del" type="button" data-pl-del>🗑️ 지우기</button>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(wrap);
+  photos.lightbox = wrap;
+  wrap.addEventListener('click', function(e){ if(e.target === wrap) closePhotoView(); });
+  var closeBtn = $('[data-pl-close]', wrap);
+  if(closeBtn) closeBtn.addEventListener('click', closePhotoView);
+  var delBtn = $('[data-pl-del]', wrap);
+  if(delBtn) delBtn.addEventListener('click', function(){ askDeletePhoto(p, wrap); });
+  photos.lightboxKeys = function(e){ if(e.key === 'Escape') closePhotoView(); };
+  document.addEventListener('keydown', photos.lightboxKeys);
+}
+function askDeletePhoto(p, wrap){
+  var foot = $('[data-pl-foot]', wrap);
+  if(!foot) return;
+  foot.innerHTML =
+    '<div class="pl-confirm">' +
+      '<p>이 사진을 지울까요?<br><span class="small muted">지우면 가족 모두의 사진첩에서 사라져요.</span></p>' +
+      '<div class="pl-confirm-actions">' +
+        '<button class="btn ghost sm" type="button" data-pl-cancel>취소</button>' +
+        '<button class="btn pink sm" type="button" data-pl-ok>지우기</button>' +
+      '</div>' +
+    '</div>';
+  var cancel = $('[data-pl-cancel]', foot);
+  if(cancel) cancel.addEventListener('click', function(){ openPhotoView(p.id); });
+  var ok = $('[data-pl-ok]', foot);
+  if(!ok) return;
+  ok.addEventListener('click', function(){
+    if(ok.disabled) return;
+    ok.disabled = true;
+    ok.textContent = '지우는 중…';
+    deletePhoto(p, function(err){
+      if(err){
+        ok.disabled = false;
+        ok.textContent = '지우기';
+        toast('사진을 지우지 못했어요. 잠시 뒤 다시 해주세요');
+        return;
+      }
+      closePhotoView();
+      toast('사진을 지웠어요');
+    });
+  });
+}
+function deletePhoto(p, cb){
+  if(!canDeletePhoto(p)){ toast('지우는 건 엄마나 올린 사람만 할 수 있어요 🔒'); cb(new Error('denied')); return; }
+  var month = String(p.date || '').slice(0, 7) || photoMonth();
+  if(typeof fetch !== 'function'){ cb(new Error('no-fetch')); return; }
+  fetch(photosBaseUrl() + '/' + month + '/' + encodeURIComponent(p.id) + '.json', { method: 'DELETE' })
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      photos.cache[month] = (photos.cache[month] || []).filter(function(x){ return x.id !== p.id; });
+      renderPhotos();
+      cb(null);
+    }).catch(function(err){ cb(err); });
+}
+
+/* =========================================================
    Tabs + rendering all
    ========================================================= */
 function showTab(name, silent){
@@ -4551,6 +5027,11 @@ function showTab(name, silent){
   });
   if(name === 'calendar') renderCalendar();
   if(name === 'memo') renderMemos();
+  if(name === 'photos'){
+    /* 사진첩 탭을 열 때만 그 달 사진을 불러와요 */
+    renderPhotos();
+    photosLoad(photoMonth());
+  }
   if(!silent){ window.scrollTo(0, 0); }
   if(name === 'chat') scrollChat();
 }
@@ -4842,6 +5323,21 @@ function bindEvents(){
   $('#calMemoForm').addEventListener('submit', function(e){
     e.preventDefault();
     addCalMemo();
+  });
+
+  /* 📸 사진첩 */
+  $('#photoCameraBtn').addEventListener('click', function(){ $('#photoCameraInput').click(); });
+  $('#photoAlbumBtn').addEventListener('click', function(){ $('#photoAlbumInput').click(); });
+  $('#photoCameraInput').addEventListener('change', function(){ startPhotoPick(this); });
+  $('#photoAlbumInput').addEventListener('change', function(){ startPhotoPick(this); });
+  $('#photoPrev').addEventListener('click', function(){ photosMove(-1); });
+  $('#photoNext').addEventListener('click', function(){ photosMove(1); });
+  $('#photoGrid').addEventListener('click', function(e){
+    var retry = e.target.closest ? e.target.closest('.photo-retry') : null;
+    if(retry){ photosLoad(photoMonth(), { force: true }); return; }
+    var b = e.target.closest ? e.target.closest('[data-photo]') : null;
+    if(!b) return;
+    openPhotoView(b.getAttribute('data-photo'));
   });
 
   /* settings */
