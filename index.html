@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF7E6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="우리 가족">
-<meta name="description" content="우리 가족 대시보드 - 공부 용돈, 할 일, 가족 달력, 도장판, 가족 채팅, 공부 타이머">
-<meta name="app-version" content="1.10.5">
-<!-- family-dashboard 1.10.5 · 아이들 할 일을 모두 영어로 (Stella·Luna) -->
-<title>우리 가족 대시보드 🐥</title>
+<meta name="apple-mobile-web-app-title" content="Our Family">
+<meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, photos, family chat and study timer">
+<meta name="app-version" content="1.10.6">
+<!-- family-dashboard 1.10.6 · English UI everywhere + photos visible to the whole family -->
+<title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
@@ -999,183 +999,183 @@ main{padding-top:2px}
       <span class="brand-mascot" id="headerMascot" aria-hidden="true"></span>
       <div>
         <div class="brand-line">
-          <h1>우리 가족 대시보드</h1>
+          <h1>Our Family Dashboard</h1>
           <span class="lock-badge" id="lockBadge" hidden></span>
         </div>
-        <p>오늘도 사이좋게, 조금씩 자라요 🌱</p>
+        <p>Growing together, a little every day 🌱</p>
       </div>
     </div>
-    <button class="sync-badge" id="syncBadge" type="button" data-state="connecting" aria-live="polite" title="동기화 상태 · 눌러서 설정">🟡 연결 중</button>
-    <button class="icon-btn" id="refreshBtn" type="button" aria-label="새로고침" title="새로고침">🔄</button>
-    <button class="icon-btn" id="settingsBtn" type="button" aria-label="설정 열기">⚙️</button>
+    <button class="sync-badge" id="syncBadge" type="button" data-state="connecting" aria-live="polite" title="Sync status · tap for settings">🟡 Connecting</button>
+    <button class="icon-btn" id="refreshBtn" type="button" aria-label="Refresh" title="Refresh">🔄</button>
+    <button class="icon-btn" id="settingsBtn" type="button" aria-label="Open settings">⚙️</button>
   </div>
-  <nav class="tabs" id="tabs" aria-label="메뉴">
-    <button class="tab active" type="button" data-tab="calendar" aria-selected="true"><span class="ico" aria-hidden="true">📅</span>달력</button>
-    <button class="tab" type="button" data-tab="todo" aria-selected="false"><span class="ico" aria-hidden="true">✅</span>할 일</button>
-    <button class="tab" type="button" data-tab="allowance" aria-selected="false"><span class="ico" aria-hidden="true">💰</span>용돈</button>
-    <button class="tab" type="button" data-tab="photos" aria-selected="false"><span class="ico" aria-hidden="true">📸</span>사진첩</button>
-    <button class="tab" type="button" data-tab="chat" aria-selected="false"><span class="ico" aria-hidden="true">💬</span>채팅</button>
-    <button class="tab" type="button" data-tab="timer" aria-selected="false"><span class="ico" aria-hidden="true">⏰</span>타이머</button>
+  <nav class="tabs" id="tabs" aria-label="Menu">
+    <button class="tab active" type="button" data-tab="calendar" aria-selected="true"><span class="ico" aria-hidden="true">📅</span>Calendar</button>
+    <button class="tab" type="button" data-tab="todo" aria-selected="false"><span class="ico" aria-hidden="true">✅</span>To-Do</button>
+    <button class="tab" type="button" data-tab="allowance" aria-selected="false"><span class="ico" aria-hidden="true">💰</span>Allowance</button>
+    <button class="tab" type="button" data-tab="photos" aria-selected="false"><span class="ico" aria-hidden="true">📸</span>Photos</button>
+    <button class="tab" type="button" data-tab="chat" aria-selected="false"><span class="ico" aria-hidden="true">💬</span>Chat</button>
+    <button class="tab" type="button" data-tab="timer" aria-selected="false"><span class="ico" aria-hidden="true">⏰</span>Timer</button>
   </nav>
 </header>
 
 <div class="wrap">
   <main>
 
-    <!-- ============ 1. 용돈 ============ -->
-    <section class="panel" id="panel-allowance" aria-label="공부 용돈 적립과 용돈기입장">
-      <div class="kid-switch" id="kidSwitch" role="group" aria-label="아이 선택"></div>
+    <!-- ============ 1. Allowance ============ -->
+    <section class="panel" id="panel-allowance" aria-label="Allowance, rewards and spending log">
+      <div class="kid-switch" id="kidSwitch" role="group" aria-label="Choose a kid"></div>
 
       <div class="card money-card">
         <div class="money-head">
           <div class="money-left">
-            <p class="label">지금 모은 돈</p>
+            <p class="label">Saved so far</p>
             <p class="money-total"><small class="cur" id="allowCur">$</small><span id="allowTotal">0.00</span></p>
           </div>
           <div class="money-mascot" id="allowMascot" aria-hidden="true"></div>
         </div>
 
         <div class="chips" id="allowChips">
-          <span class="chip">시작 금액 <b id="chipStart">$0.00</b></span>
-          <span class="chip">공부·숙제 적립 <b id="chipStudy" class="plus">+$0.00</b></span>
-          <span class="chip">입금 <b id="chipDep" class="plus">+$0.00</b></span>
-          <span class="chip">사용 <b id="chipSpend" class="minus">-$0.00</b></span>
+          <span class="chip">Starting balance <b id="chipStart">$0.00</b></span>
+          <span class="chip">Task rewards <b id="chipStudy" class="plus">+$0.00</b></span>
+          <span class="chip">Added <b id="chipDep" class="plus">+$0.00</b></span>
+          <span class="chip">Spent <b id="chipSpend" class="minus">-$0.00</b></span>
         </div>
 
         <div class="field-row">
-          <label for="allowStart">시작 금액 ($)</label>
+          <label for="allowStart">Starting balance ($)</label>
           <div class="inline-input">
             <span class="unit">$</span>
-            <input id="allowStart" type="number" inputmode="decimal" step="0.01" min="0" value="0" placeholder="0" aria-label="시작 금액(달러)" aria-describedby="allowStartHint">
-            <button class="mini-btn" id="allowStartSave" type="button">저장</button>
+            <input id="allowStart" type="number" inputmode="decimal" step="0.01" min="0" value="0" placeholder="0" aria-label="Starting balance in dollars" aria-describedby="allowStartHint">
+            <button class="mini-btn" id="allowStartSave" type="button">Save</button>
           </div>
-          <p class="field-hint" id="allowStartHint">지금 시작 금액은 <b>$0.00</b>이에요. 새 금액을 넣고 저장을 눌러 주세요.</p>
+          <p class="field-hint" id="allowStartHint">Starting balance is <b>$0.00</b>. Type a new amount and tap Save.</p>
         </div>
 
         <div class="field-row">
-          <span>공부 1회 적립</span>
-          <div class="reward-pills" id="rewardPills" role="group" aria-label="공부 1회 적립 금액">
-            <button class="pill active" type="button" data-reward="1" aria-label="공부 1회에 $1.00 적립">$1.00</button>
+          <span>Reward per task day</span>
+          <div class="reward-pills" id="rewardPills" role="group" aria-label="Reward per task day amount">
+            <button class="pill active" type="button" data-reward="1" aria-label="Earn $1.00 per task day">$1.00</button>
           </div>
         </div>
 
-        <button class="study-btn" id="studyBtn" type="button"><span class="coin" aria-hidden="true">🪙</span>공부 완료! <b id="studyRewardLabel">+$1.00</b></button>
-        <p class="today-line" id="todayLine">오늘 공부 0번 · $0.00 적립했어요</p>
+        <button class="study-btn" id="studyBtn" type="button"><span class="coin" aria-hidden="true">🪙</span>All done today? <b id="studyRewardLabel">+$1.00</b></button>
+        <p class="today-line" id="todayLine">Today: 0 rewards · $0.00</p>
       </div>
 
       <div class="card">
-        <h2><span class="h2-emoji" aria-hidden="true">💸</span>입금 / 사용</h2>
+        <h2><span class="h2-emoji" aria-hidden="true">💸</span>Add / Spend</h2>
         <div class="quick-form">
           <div class="field wide">
-            <label for="quickAmount">금액 ($)</label>
-            <input class="input" id="quickAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="예: 5.00">
+            <label for="quickAmount">Amount ($)</label>
+            <input class="input" id="quickAmount" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 5.00">
           </div>
           <div class="field wide">
-            <label for="quickMemo">메모 (선택)</label>
-            <input class="input" id="quickMemo" type="text" placeholder="예: 할머니 용돈, 문구점" maxlength="30">
+            <label for="quickMemo">Note (optional)</label>
+            <input class="input" id="quickMemo" type="text" placeholder="e.g. gift from Grandma, stationery" maxlength="30">
           </div>
           <div class="quick-actions">
-            <button class="btn mint" id="quickDeposit" type="button">＋ 입금</button>
-            <button class="btn pink" id="quickSpend" type="button">－ 사용</button>
+            <button class="btn mint" id="quickDeposit" type="button">+ Add</button>
+            <button class="btn pink" id="quickSpend" type="button">− Spend</button>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <h2><span class="h2-emoji" aria-hidden="true">📒</span>용돈·적립 내역</h2>
-        <p class="card-sub">할 일 완료 적립, 입금, 사용 내역이 날짜별로 최신순으로 보여요.</p>
+        <h2><span class="h2-emoji" aria-hidden="true">📒</span>Allowance History</h2>
+        <p class="card-sub">Task rewards, money added and money spent — newest first, grouped by day.</p>
         <div class="log-list" id="allowLog"></div>
       </div>
     </section>
 
-    <!-- ============ 📸 사진첩 ============ -->
-    <section class="panel" id="panel-photos" aria-label="가족 사진첩">
+    <!-- ============ 📸 Photos ============ -->
+    <section class="panel" id="panel-photos" aria-label="Family photos">
       <div class="card photo-card">
-        <h2><span class="h2-emoji" aria-hidden="true">📸</span>우리 가족 사진첩</h2>
-        <p class="card-sub">사진은 자동으로 작게 줄여서 달마다 따로 보관해요. 찍은 날짜와 대상, 한 줄 코멘트를 남겨보세요.</p>
+        <h2><span class="h2-emoji" aria-hidden="true">📸</span>Our Family Photos</h2>
+        <p class="card-sub">Photos are shrunk automatically and kept month by month. Add the date, who it is for, and a short note. Everyone in the family sees all photos.</p>
         <div class="photo-actions">
-          <button class="btn primary photo-add" id="photoCameraBtn" type="button"><span aria-hidden="true">📸</span> 사진 찍기</button>
-          <button class="btn mint photo-add" id="photoAlbumBtn" type="button"><span aria-hidden="true">🖼️</span> 앨범에서 고르기</button>
+          <button class="btn primary photo-add" id="photoCameraBtn" type="button"><span aria-hidden="true">📸</span> Take a photo</button>
+          <button class="btn mint photo-add" id="photoAlbumBtn" type="button"><span aria-hidden="true">🖼️</span> Choose from album</button>
         </div>
-        <input class="photo-file" id="photoCameraInput" type="file" accept="image/*" capture="environment" aria-label="카메라로 사진 찍기">
-        <input class="photo-file" id="photoAlbumInput" type="file" accept="image/*" aria-label="앨범에서 사진 고르기">
+        <input class="photo-file" id="photoCameraInput" type="file" accept="image/*" capture="environment" aria-label="Take a photo with the camera">
+        <input class="photo-file" id="photoAlbumInput" type="file" accept="image/*" aria-label="Choose a photo from the album">
         <div class="photo-month">
-          <button class="cal-nav" id="photoPrev" type="button" aria-label="이전 달 보기">◀</button>
+          <button class="cal-nav" id="photoPrev" type="button" aria-label="Previous month">◀</button>
           <div class="cal-month">
-            <b id="photoMonthTitle">오늘</b>
-            <span id="photoMonthSub">사진을 불러오는 중…</span>
+            <b id="photoMonthTitle">Today</b>
+            <span id="photoMonthSub">Loading photos…</span>
           </div>
-          <button class="cal-nav" id="photoNext" type="button" aria-label="다음 달 보기">▶</button>
+          <button class="cal-nav" id="photoNext" type="button" aria-label="Next month">▶</button>
         </div>
         <div class="photo-grid" id="photoGrid"></div>
       </div>
     </section>
 
-    <!-- ============ 2. 가족 달력 ============ -->
-    <section class="panel active" id="panel-calendar" aria-label="가족 달력">
+    <!-- ============ 2. Family calendar ============ -->
+    <section class="panel active" id="panel-calendar" aria-label="Family calendar">
       <div class="card cal-card">
         <div class="cal-head">
-          <button class="cal-nav" id="calPrev" type="button" aria-label="이전 달">◀</button>
+          <button class="cal-nav" id="calPrev" type="button" aria-label="Previous month">◀</button>
           <div class="cal-month">
-            <b id="calTitle">오늘</b>
-            <span id="calSub">수업 · 생일 · 용돈 · 가족 메모를 한눈에</span>
+            <b id="calTitle">Today</b>
+            <span id="calSub">Classes, birthdays, allowance and memos at a glance</span>
           </div>
-          <button class="cal-nav" id="calNext" type="button" aria-label="다음 달">▶</button>
-          <button class="cal-today" id="calTodayBtn" type="button">오늘</button>
+          <button class="cal-nav" id="calNext" type="button" aria-label="Next month">▶</button>
+          <button class="cal-today" id="calTodayBtn" type="button">Today</button>
         </div>
         <div class="cal-week" aria-hidden="true">
-          <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
         </div>
-        <div class="cal-grid" id="calGrid" role="grid" aria-label="월간 달력"></div>
+        <div class="cal-grid" id="calGrid" role="grid" aria-label="Monthly calendar"></div>
         <div class="cal-legend">
-          <span><i class="cc-dot s"></i>Stella 수업</span>
-          <span><i class="cc-dot l"></i>Luna 수업</span>
-          <span><span class="cc-cake-key" aria-hidden="true">🎂</span>생일·생신</span>
-          <span><span class="cc-cake-key" aria-hidden="true">🕊️</span><span class="cc-cake-key" aria-hidden="true">🕯️</span>기일·제사</span>
-          <span><i class="cc-dot m"></i>용돈 기록</span>
-          <span><i class="cc-dot e"></i>가족 메모</span>
-          <span><span class="cc-name-tag s">Stella</span> <span class="cc-name-tag l">Luna</span> 할 일 모두 완료</span>
+          <span><i class="cc-dot s"></i>Stella's class</span>
+          <span><i class="cc-dot l"></i>Luna's class</span>
+          <span><span class="cc-cake-key" aria-hidden="true">🎂</span>Birthday</span>
+          <span><span class="cc-cake-key" aria-hidden="true">🕊️</span><span class="cc-cake-key" aria-hidden="true">🕯️</span>Memorial</span>
+          <span><i class="cc-dot m"></i>Allowance</span>
+          <span><i class="cc-dot e"></i>Family memo</span>
+          <span><span class="cc-name-tag s">Stella</span> <span class="cc-name-tag l">Luna</span> All tasks done</span>
         </div>
       </div>
 
       <div class="card cal-detail-card">
         <div class="cal-detail-head">
-          <h2><span class="h2-emoji" aria-hidden="true">🗓️</span><span id="calSelTitle">오늘</span></h2>
-          <span class="cal-tag" id="calSelTag" hidden>오늘</span>
+          <h2><span class="h2-emoji" aria-hidden="true">🗓️</span><span id="calSelTitle">Today</span></h2>
+          <span class="cal-tag" id="calSelTag" hidden>Today</span>
         </div>
         <div class="cal-bday-banner" id="calBirthdays" hidden></div>
         <div class="cal-block">
-          <h3><span aria-hidden="true">🎒</span>오늘 수업</h3>
+          <h3><span aria-hidden="true">🎒</span>Classes</h3>
           <div id="calClasses"></div>
         </div>
         <div class="cal-block" id="calDoneBlock" hidden>
-          <h3><span aria-hidden="true">✅</span>이날 할 일 모두 완료</h3>
+          <h3><span aria-hidden="true">✅</span>All Tasks Done</h3>
           <div id="calDone"></div>
         </div>
         <div class="cal-block">
-          <h3><span aria-hidden="true">🪙</span>오늘 용돈기록</h3>
+          <h3><span aria-hidden="true">🪙</span>Allowance</h3>
           <div id="calMoney"></div>
         </div>
         <div class="cal-block">
-          <h3><span aria-hidden="true">📝</span>가족 메모</h3>
+          <h3><span aria-hidden="true">📝</span>Family Memo</h3>
           <div id="calMemos"></div>
           <form class="add-form" id="calMemoForm">
-            <label class="sr-only" for="calMemoInput">가족 메모</label>
-            <input class="input" id="calMemoInput" type="text" maxlength="60" placeholder="가족 메모를 적어주세요" autocomplete="off">
-            <button class="btn primary sm" type="submit">추가</button>
+            <label class="sr-only" for="calMemoInput">Family memo</label>
+            <input class="input" id="calMemoInput" type="text" maxlength="60" placeholder="Write a family memo" autocomplete="off">
+            <button class="btn primary sm" type="submit">Add</button>
           </form>
         </div>
       </div>
     </section>
 
-    <!-- ============ 3. 할 일 ============ -->
-    <section class="panel" id="panel-todo" aria-label="할 일 체크">
+    <!-- ============ 3. To-do ============ -->
+    <section class="panel" id="panel-todo" aria-label="To-do list">
       <div class="card">
-        <h2><span class="h2-emoji" aria-hidden="true">✅</span>할 일 체크</h2>
-        <p class="card-sub">한 아이의 오늘 할 일을 <b>모두</b> 끝내면 용돈 +$1.00 (하루 한 번) · 다 끝내면 하이파이브 🙌</p>
-        <div class="day-bar" id="todoDayBar" role="group" aria-label="요일별 할 일 미리 보기"></div>
+        <h2><span class="h2-emoji" aria-hidden="true">✅</span>To-Do</h2>
+        <p class="card-sub">Finish <b>all</b> of a kid's tasks today for +$1.00 (once a day) · finish everything for a high five 🙌</p>
+        <div class="day-bar" id="todoDayBar" role="group" aria-label="Preview tasks by day"></div>
         <p class="preview-note" id="todoPreviewNote" hidden></p>
-        <div class="filter-pills" id="todoFilter" role="group" aria-label="사람별로 보기"></div>
+        <div class="filter-pills" id="todoFilter" role="group" aria-label="Filter by person"></div>
         <div id="hiFiveSlot"></div>
         <div class="todo-progress">
           <div class="progress-track"><div class="progress-fill" id="todoProgressBar"></div></div>
@@ -1183,46 +1183,46 @@ main{padding-top:2px}
         </div>
         <div class="todo-list" id="todoList"></div>
         <div class="todo-actions">
-          <button class="btn ghost sm" id="todoDailyReset" type="button">🔄 오늘 체크 초기화</button>
-          <span class="small muted">새로운 하루를 시작할 때 눌러요</span>
+          <button class="btn ghost sm" id="todoDailyReset" type="button">🔄 Reset today's checks</button>
+          <span class="small muted">Tap when a new day begins</span>
         </div>
       </div>
 
       <div class="card schedule-card">
-        <h2><span class="h2-emoji" aria-hidden="true">🗓️</span>주간 스케줄</h2>
-        <p class="card-sub">이번 주 수업과 가족 일정을 한눈에 봐요. 오늘 수업은 위에 모아 보여주고, 수업을 누르면 지울 수 있어요. 휴강한 수업은 회색 <b>휴강</b>으로 표시돼요.</p>
+        <h2><span class="h2-emoji" aria-hidden="true">🗓️</span>Weekly Schedule</h2>
+        <p class="card-sub">This week's classes and family plans at a glance. Today's classes are gathered at the top — tap one to remove it. A skipped class shows as a grey <b>Skipped</b>.</p>
         <div class="sched-today" id="schedToday"></div>
         <div class="week-grid" id="weekGrid"></div>
         <form class="sched-form" id="lessonForm">
-          <label class="sr-only" for="lessonKid">누구 수업</label>
-          <select class="input" id="lessonKid" aria-label="누구 수업"></select>
-          <label class="sr-only" for="lessonDay">무슨 요일</label>
-          <select class="input" id="lessonDay" aria-label="무슨 요일"></select>
-          <label class="sr-only" for="lessonTime">몇 시</label>
-          <input class="input" id="lessonTime" type="time" value="20:00" aria-label="몇 시 수업">
-          <label class="sr-only" for="lessonSubject">과목</label>
-          <input class="input" id="lessonSubject" type="text" placeholder="과목 (예: 영어)" maxlength="12" autocomplete="off">
-          <button class="btn primary sm" type="submit">추가</button>
+          <label class="sr-only" for="lessonKid">Whose class</label>
+          <select class="input" id="lessonKid" aria-label="Whose class"></select>
+          <label class="sr-only" for="lessonDay">Which day</label>
+          <select class="input" id="lessonDay" aria-label="Which day"></select>
+          <label class="sr-only" for="lessonTime">What time</label>
+          <input class="input" id="lessonTime" type="time" value="20:00" aria-label="What time the class starts">
+          <label class="sr-only" for="lessonSubject">Subject</label>
+          <input class="input" id="lessonSubject" type="text" placeholder="Subject (e.g. English)" maxlength="12" autocomplete="off">
+          <button class="btn primary sm" type="submit">Add</button>
         </form>
       </div>
     </section>
 
     <!-- ============ 5. 채팅 ============ -->
-    <section class="panel" id="panel-chat" aria-label="가족 채팅방">
+    <section class="panel" id="panel-chat" aria-label="Family chat">
       <div class="card chat-card">
         <div class="chat-head">
           <div class="chat-title">
-            <h2>🐣 우리 가족 채팅</h2>
-            <span class="online">다 같이</span>
-            <button class="chat-bell" id="chatBellBtn" type="button" aria-haspopup="dialog" title="가족 채팅 알림 설정">🔔 알림 받기</button>
+            <h2>🐣 Family Chat</h2>
+            <span class="online">Everyone</span>
+            <button class="chat-bell" id="chatBellBtn" type="button" aria-haspopup="dialog" title="Family chat notification settings">🔔 Notifications</button>
           </div>
-          <div class="who-pills" id="chatWho" role="group" aria-label="지금 사용하는 사람"></div>
+          <div class="who-pills" id="chatWho" role="group" aria-label="Who is using this device"></div>
           <div class="lock-row">
-            <span class="small muted" id="chatLockState">프로필을 골라주세요</span>
+            <span class="small muted" id="chatLockState">Choose a profile</span>
             <label class="switch">
               <input type="checkbox" id="chatLock">
               <span class="track" aria-hidden="true"></span>
-              이 기기 잠금
+              Lock this device
             </label>
           </div>
         </div>
@@ -1236,22 +1236,22 @@ main{padding-top:2px}
             <div class="sticker-grid" id="stickerGrid"></div>
           </div>
           <form class="composer-row" id="chatForm">
-            <button class="circle-btn" id="stickerBtn" type="button" aria-label="스티커 고르기">😊</button>
-            <label class="sr-only" for="chatInput">메시지</label>
-            <input class="input" id="chatInput" type="text" placeholder="메시지를 입력해요" maxlength="200" autocomplete="off">
-            <button class="circle-btn rec" id="voiceBtn" type="button" aria-label="음성 메시지 녹음">🎙️</button>
-            <button class="circle-btn send" id="chatSend" type="submit" aria-label="보내기">➤</button>
+            <button class="circle-btn" id="stickerBtn" type="button" aria-label="Choose a sticker">😊</button>
+            <label class="sr-only" for="chatInput">Message</label>
+            <input class="input" id="chatInput" type="text" placeholder="Type a message" maxlength="200" autocomplete="off">
+            <button class="circle-btn rec" id="voiceBtn" type="button" aria-label="Record a voice message">🎙️</button>
+            <button class="circle-btn send" id="chatSend" type="submit" aria-label="Send">➤</button>
           </form>
-          <div class="rec-status" id="recStatus" hidden><span class="recording-dot"></span><span id="recTime">0:00</span><span>녹음 중… 다시 누르면 보내요</span></div>
-          <p class="chat-note" id="chatNote">가족이 함께 봐요 · 마이크는 허락한 순간에만 켜져요</p>
+          <div class="rec-status" id="recStatus" hidden><span class="recording-dot"></span><span id="recTime">0:00</span><span>Recording… tap again to send</span></div>
+          <p class="chat-note" id="chatNote">Everyone in the family sees this · the mic only turns on when you allow it</p>
         </div>
       </div>
     </section>
 
-    <!-- ============ 6. 타이머 ============ -->
-    <section class="panel" id="panel-timer" aria-label="공부 타이머와 태블릿 알람">
+    <!-- ============ 6. Timer ============ -->
+    <section class="panel" id="panel-timer" aria-label="Study timer and tablet alarm">
       <div class="card timer-card">
-        <h2 style="justify-content:center">⏳ 공부 타이머</h2>
+        <h2 style="justify-content:center">⏳ Study Timer</h2>
         <div class="timer-ring-wrap">
           <svg class="timer-ring" viewBox="0 0 200 200" aria-hidden="true">
             <defs>
@@ -1266,64 +1266,64 @@ main{padding-top:2px}
           </svg>
           <div class="timer-center">
             <div class="timer-time" id="timerText">25:00</div>
-            <div class="timer-state" id="timerState">준비됐어요</div>
+            <div class="timer-state" id="timerState">Ready</div>
           </div>
         </div>
 
-        <div class="timer-pills" id="timerPresets" role="group" aria-label="시간 고르기">
-          <button class="pill" type="button" data-min="15">15분</button>
-          <button class="pill" type="button" data-min="20">20분</button>
-          <button class="pill" type="button" data-min="25">25분</button>
-          <button class="pill" type="button" data-min="30">30분</button>
-          <button class="pill" type="button" data-min="50">50분</button>
+        <div class="timer-pills" id="timerPresets" role="group" aria-label="Pick a time">
+          <button class="pill" type="button" data-min="15">15 min</button>
+          <button class="pill" type="button" data-min="20">20 min</button>
+          <button class="pill" type="button" data-min="25">25 min</button>
+          <button class="pill" type="button" data-min="30">30 min</button>
+          <button class="pill" type="button" data-min="50">50 min</button>
         </div>
         <div class="timer-custom">
-          <span>직접</span>
-          <span class="inline-input sm"><input id="timerCustom" type="number" inputmode="numeric" min="1" max="180" placeholder="분"><span class="unit">분</span></span>
-          <button class="btn sm ghost" id="timerCustomApply" type="button">적용</button>
+          <span>Custom</span>
+          <span class="inline-input sm"><input id="timerCustom" type="number" inputmode="numeric" min="1" max="180" placeholder="min"><span class="unit">min</span></span>
+          <button class="btn sm ghost" id="timerCustomApply" type="button">Set</button>
         </div>
 
         <div class="timer-buttons">
-          <button class="btn primary" id="timerStartBtn" type="button">시작</button>
-          <button class="btn ghost" id="timerResetBtn" type="button">리셋</button>
+          <button class="btn primary" id="timerStartBtn" type="button">Start</button>
+          <button class="btn ghost" id="timerResetBtn" type="button">Reset</button>
         </div>
       </div>
 
       <div class="card alarm-card">
         <div class="alarm-row">
-          <h2 style="margin:0"><span class="h2-emoji" aria-hidden="true">🌙</span>태블릿 끄는 알람</h2>
+          <h2 style="margin:0"><span class="h2-emoji" aria-hidden="true">🌙</span>Tablet Wind-Down Alarm</h2>
           <label class="switch">
             <input type="checkbox" id="alarmToggle">
             <span class="track" aria-hidden="true"></span>
-            <span id="alarmToggleLabel">꺼짐</span>
+            <span id="alarmToggleLabel">Off</span>
           </label>
         </div>
-        <p class="card-sub" style="margin-top:6px">정한 시간에 다 같이 쓰는 태블릿을 잠깐 쉬게 해요. 화면을 켜두면 종이 울려요.</p>
+        <p class="card-sub" style="margin-top:6px">At the time you set, the family tablet takes a short break. Keep this screen open to hear the chime.</p>
 
-        <div class="alarm-mode" id="alarmMode" role="group" aria-label="알람 방식">
-          <button type="button" data-mode="clock" class="active">시각 맞추기</button>
-          <button type="button" data-mode="countdown">몇 분 뒤</button>
+        <div class="alarm-mode" id="alarmMode" role="group" aria-label="Alarm mode">
+          <button type="button" data-mode="clock" class="active">Set a time</button>
+          <button type="button" data-mode="countdown">In a few minutes</button>
         </div>
 
         <div class="alarm-fields">
           <div class="alarm-field" id="alarmClockField">
-            <span>울리는 시각</span>
-            <input type="time" id="alarmTime" value="21:00" aria-label="알람 시각">
+            <span>Ring at</span>
+            <input type="time" id="alarmTime" value="21:00" aria-label="Alarm time">
           </div>
           <div class="alarm-field" id="alarmCountField" hidden>
-            <span>지금부터 몇 분 뒤</span>
-            <input type="number" id="alarmMinutes" value="30" min="1" max="600" inputmode="numeric" aria-label="몇 분 뒤">
+            <span>Minutes from now</span>
+            <input type="number" id="alarmMinutes" value="30" min="1" max="600" inputmode="numeric" aria-label="Minutes from now">
           </div>
         </div>
 
-        <div class="alarm-status" id="alarmStatus">🌙 알람이 꺼져 있어요</div>
+        <div class="alarm-status" id="alarmStatus">🌙 Alarm is off</div>
         <div class="alarm-actions">
-          <button class="btn ghost sm" id="alarmTestBtn" type="button">🔔 소리 미리 듣기</button>
-          <button class="btn ghost sm" id="alarmPreviewBtn" type="button">🌛 화면 미리 보기</button>
+          <button class="btn ghost sm" id="alarmTestBtn" type="button">🔔 Preview the sound</button>
+          <button class="btn ghost sm" id="alarmPreviewBtn" type="button">🌛 Preview the screen</button>
         </div>
       </div>
 
-      <p class="small muted" style="text-align:center;margin-top:14px">만든 날: 2026년 11월 · 우리 집 전용 💛</p>
+      <p class="small muted" style="text-align:center;margin-top:14px">Made in November 2026 · just for our family 💛</p>
     </section>
 
   </main>
@@ -1337,7 +1337,7 @@ main{padding-top:2px}
 'use strict';
 
 /* =========================================================
-   우리 가족 대시보드 — single file app
+   Our Family Dashboard — single file app
    ========================================================= */
 var STORE_KEY = 'chiikawa-family-dashboard-v1';
 var DEVICE_KEY = 'chiikawa-family-dashboard-device-v1';
@@ -1349,22 +1349,58 @@ var NTFY_PUBLISH_URL = 'https://ntfy.sh';
 var DEFAULT_NTFY_TOPIC = 'momnara-family-chat-sj6m4x';
 var KIDS = ['Stella', 'Luna'];
 var PEOPLE = ['엄마', '아빠', 'Stella', 'Luna'];
-var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+var WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var WEEKDAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/* The saved data still uses the Korean names ('엄마', '아빠', '가족') and Korean subjects
+   ('영어', '중국어', '바이올린'), so anything that reaches the screen goes through these
+   helpers. Only the labels change — the stored values stay exactly as they are. */
+var PERSON_LABELS = { '엄마': 'Mom', '아빠': 'Dad', '가족': 'Family', '루나': 'Luna', '스텔라': 'Stella' };
+var SUBJECT_LABELS = {
+  '영어': 'English', '중국어': 'Chinese', '바이올린': 'Violin', '피아노': 'Piano',
+  '수학': 'Math', '국어': 'Korean', '과학': 'Science', '사회': 'Social Studies',
+  '미술': 'Art', '음악': 'Music', '체육': 'PE', '태권도': 'Taekwondo', '코딩': 'Coding'
+};
+function personLabel(who){
+  var s = String(who == null ? '' : who);
+  return PERSON_LABELS[s] || s;
+}
+function subjectLabel(sub){
+  var s = String(sub == null ? '' : sub).trim();
+  return SUBJECT_LABELS[s] || s;
+}
+/* 준비 숙제는 영어·중국어 수업에만 떠요 — 저장된 한국어 이름과 새로 적은 영어 이름 둘 다 알아봐요 */
+function isPrepSubject(sub){
+  var s = String(sub == null ? '' : sub);
+  return s.indexOf('영어') >= 0 || s.indexOf('중국어') >= 0 || /english|chinese/i.test(s);
+}
+function monthName(m, short){
+  var i = Math.round(num(m, 0));
+  if(i < 0 || i > 11) return '';
+  return short ? MONTHS_SHORT[i] : MONTHS[i];
+}
+/* '2026-11-18' → 'Nov 18' */
+function dateShortLabel(key){
+  var p = String(key || '').split('-');
+  if(p.length !== 3) return String(key || '');
+  return monthName(Number(p[1]) - 1, true) + ' ' + Number(p[2]);
+}
 /* 매년 반복하는 가족 일정 — 해가 바뀌어도(2026, 2027, 2028…) 같은 날에 떠요.
    solar: 양력 [월, 일] / lunar: 음력 [월, 일] — 음력은 아래 LUNAR_SOLAR 표로 그 해의 양력 날짜를 찾아요.
    aliases: 가족이 예전에 달력 메모로 한 번씩 적어 둔 생일(예: '수아 생일🥳')을 같은 생일로 알아보는 이름 */
 var FAMILY_EVENTS = [
-  { id:'mom',    name:'엄마',   kind:'birthday', solar:[1, 7],   aliases:['엄마', '어머니', 'mom'] },
-  { id:'luna',   name:'루나',   kind:'birthday', solar:[1, 16],  aliases:['루나', '수아', 'luna'] },
-  { id:'dad',    name:'아빠',   kind:'birthday', solar:[4, 15],  aliases:['아빠', '아버지', 'dad'] },
-  { id:'stella', name:'스텔라', kind:'birthday', solar:[9, 7],   aliases:['스텔라', '지아', 'stella'] },
-  { id:'wonil',  name:'이원일', kind:'birthday', solar:[2, 18] },
-  { id:'mingi',  name:'김민기', kind:'birthday', solar:[4, 26] },
-  { id:'lee-rite', name:'이문복 할아버지', kind:'memorial', label:'제사', mark:'🕯️', solar:[10, 10] },
-  { id:'lee',    name:'이문복 할아버지', kind:'memorial', solar:[10, 11] },
-  { id:'kim',    name:'김광인 할아버지', kind:'birthday', label:'생신', lunar:[4, 26] },
-  { id:'park',   name:'박순자 할머니',   kind:'birthday', label:'생신', lunar:[4, 13] },
-  { id:'ahn',    name:'안옥희 할머니',   kind:'birthday', label:'생신', lunar:[11, 25] }
+  { id:'mom',    name:'Mom',   kind:'birthday', solar:[1, 7],   aliases:['엄마', '어머니', 'mom', 'mother'] },
+  { id:'luna',   name:'Luna',  kind:'birthday', solar:[1, 16],  aliases:['루나', '수아', 'luna'] },
+  { id:'dad',    name:'Dad',   kind:'birthday', solar:[4, 15],  aliases:['아빠', '아버지', 'dad', 'father'] },
+  { id:'stella', name:'Stella', kind:'birthday', solar:[9, 7],  aliases:['스텔라', '지아', 'stella'] },
+  { id:'wonil',  name:'Wonil Lee', kind:'birthday', solar:[2, 18], aliases:['이원일'] },
+  { id:'mingi',  name:'Mingi Kim', kind:'birthday', solar:[4, 26], aliases:['김민기'] },
+  { id:'lee-rite', name:'Grandpa Munbok Lee', kind:'memorial', label:'Memorial rite', mark:'🕯️', solar:[10, 10], aliases:['이문복 할아버지'] },
+  { id:'lee',    name:'Grandpa Munbok Lee', kind:'memorial', solar:[10, 11], aliases:['이문복 할아버지'] },
+  { id:'kim',    name:'Grandpa Gwangin Kim', kind:'birthday', label:'Birthday', lunar:[4, 26], aliases:['김광인 할아버지'] },
+  { id:'park',   name:'Grandma Sunja Park',   kind:'birthday', label:'Birthday', lunar:[4, 13], aliases:['박순자 할머니'] },
+  { id:'ahn',    name:'Grandma Okhee Ahn',   kind:'birthday', label:'Birthday', lunar:[11, 25], aliases:['안옥희 할머니'] }
 ];
 /* 음력 월·일 → 그 해의 양력 날짜 (한국천문연구원 음력 기준, 2025~2036년).
    표에 없는 먼 해는 브라우저의 중국력(Intl)으로 계산해요. */
@@ -1458,17 +1494,14 @@ function hm(d){
   var m = x.getMinutes();
   return ((h % 12 === 0) ? 12 : h % 12) + ':' + pad2(m) + (h < 12 ? ' AM' : ' PM');
 }
-function shortDate(key){
-  var p = String(key).split('-');
-  return Number(p[1]) + '월 ' + Number(p[2]) + '일';
-}
+function shortDate(key){ return dateShortLabel(key); }
 function weekdayOf(key){
   var p = String(key).split('-');
   return WEEKDAYS[new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).getDay()];
 }
 function dayLabel(key){
-  if(key === todayKey()) return '오늘';
-  if(key === dateKey(daysAgo(1))) return '어제';
+  if(key === todayKey()) return 'Today';
+  if(key === dateKey(daysAgo(1))) return 'Yesterday';
   return shortDate(key) + ' (' + weekdayOf(key) + ')';
 }
 function isObject(v){ return !!v && typeof v === 'object' && !Array.isArray(v); }
@@ -1507,7 +1540,7 @@ function openModal(html, opts){
 function confirmModal(title, message, okLabel, onOk, danger){
   openModal(
     '<h2>' + esc(title) + '</h2><p class="modal-sub">' + esc(message) + '</p>' +
-    '<div class="modal-actions"><button class="btn ghost" type="button" data-modal-close>취소</button>' +
+    '<div class="modal-actions"><button class="btn ghost" type="button" data-modal-close>Cancel</button>' +
     '<button class="btn ' + (danger ? 'pink' : 'primary') + '" type="button" data-ok>' + esc(okLabel) + '</button></div>',
     { onReady: function(back, close){
         $('[data-ok]', back).addEventListener('click', function(){ close(); onOk(); });
@@ -1548,7 +1581,7 @@ function mascotSVG(who){
       '<path d="M88 12 l1 2.4 2.4 1 -2.4 1 -1 2.4 -1-2.4 -2.4-1 2.4-1 Z" fill="#FFE29A" stroke="#E5BF63" stroke-width="1.2"/>';
     extra = '<path d="M49 22 q1 -7 8 -9" stroke="' + L.line + '" stroke-width="2.2" stroke-linecap="round" fill="none"/>';
   }
-  return '<svg viewBox="0 0 100 100" role="img" aria-label="' + who + ' 캐릭터">' +
+  return '<svg viewBox="0 0 100 100" role="img" aria-label="' + esc(personLabel(who)) + ' character">' +
     '<g stroke="' + L.line + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
       '<ellipse cx="27" cy="31" rx="10" ry="12.5" fill="' + L.ear + '" transform="rotate(-16 27 31)"/>' +
       '<ellipse cx="73" cy="31" rx="10" ry="12.5" fill="' + L.ear + '" transform="rotate(16 73 31)"/>' +
@@ -1569,7 +1602,7 @@ function mascot(who, extraClass){
 }
 
 function chickSVG(){
-  return '<svg viewBox="0 0 100 100" role="img" aria-label="병아리">' +
+  return '<svg viewBox="0 0 100 100" role="img" aria-label="baby chick">' +
     '<g stroke="#C9A26A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
       '<path d="M50 16 q3 -8 10 -9" fill="none" stroke="#C9A26A"/>' +
       '<circle cx="50" cy="56" r="31" fill="#FFF3C4"/>' +
@@ -1586,14 +1619,14 @@ function chickSVG(){
 
 /* ---------- stickers ---------- */
 var STICKERS = [
-  { id:'happy',   label:'방긋',   bg:'#FFF6DC' },
-  { id:'love',    label:'하트뿅', bg:'#FFEFF3' },
-  { id:'cry',     label:'엉엉',   bg:'#EAF4FF' },
-  { id:'sleep',   label:'쿨쿨',   bg:'#F1ECFF' },
-  { id:'angry',   label:'부글',   bg:'#FFEFE6' },
-  { id:'wow',     label:'깜짝',   bg:'#EAFBF0' },
-  { id:'fighting',label:'화이팅', bg:'#FFF9E3' },
-  { id:'hungry',  label:'배고파', bg:'#FFF3E4' }
+  { id:'happy',   label:'Smile',    bg:'#FFF6DC' },
+  { id:'love',    label:'Love',     bg:'#FFEFF3' },
+  { id:'cry',     label:'Crying',   bg:'#EAF4FF' },
+  { id:'sleep',   label:'Sleeping', bg:'#F1ECFF' },
+  { id:'angry',   label:'Grumpy',   bg:'#FFEFE6' },
+  { id:'wow',     label:'Surprised', bg:'#EAFBF0' },
+  { id:'fighting',label:'You can do it!', bg:'#FFF9E3' },
+  { id:'hungry',  label:'Hungry',   bg:'#FFF3E4' }
 ];
 
 function stickerSVG(id){
@@ -1651,7 +1684,7 @@ function stickerSVG(id){
     props = '<path d="M20 34 l1.6 4 4 0 -3.2 2.6 1.2 4 -3.6-2.6 -3.6 2.6 1.2-4 -3.2-2.6 4 0 Z" fill="#FFE29A" stroke="#E5BF63" stroke-width="1.2"/>' +
       '<path d="M88 30 l1.6 4 4 0 -3.2 2.6 1.2 4 -3.6-2.6 -3.6 2.6 1.2-4 -3.2-2.6 4 0 Z" fill="#FFE7B0" stroke="#E5BF63" stroke-width="1.2"/>';
   }
-  return '<svg viewBox="0 0 120 120" role="img" aria-label="' + esc(s ? s.label : id) + ' 스티커">' +
+  return '<svg viewBox="0 0 120 120" role="img" aria-label="' + esc(s ? s.label : id) + ' sticker">' +
     '<g stroke="#7A6A5F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">' +
       '<ellipse cx="40" cy="46" rx="9" ry="11" fill="' + bg + '" transform="rotate(-14 40 46)"/>' +
       '<ellipse cx="80" cy="46" rx="9" ry="11" fill="' + bg + '" transform="rotate(14 80 46)"/>' +
@@ -1708,7 +1741,7 @@ function seedState(){
       { id:'td1', owner:'Stella', text:'Bomi MAP test', done:false, date:t },
       { id:'td2', owner:'Stella', text:'3 pages of math', done:false, date:t },
       { id:'td3', owner:'Stella', text:'1 chapter of Korean', done:false, date:t },
-      { id:'td4', owner:'Stella', text:'English copywork 15 min', done:false, date:t },
+      { id:'td4', owner:'Stella', text:'English copywork', done:false, date:t },
       { id:'td5', owner:'Stella', text:'Violin practice 20 min', done:false, date:t },
       { id:'td10', owner:'Stella', text:'Homework & pack backpack', done:false, date:t },
       { id:'td14', owner:'Stella', text:'Clean desk', done:false, date:t },
@@ -1716,7 +1749,7 @@ function seedState(){
       { id:'td6', owner:'Luna', text:'Bomi MAP test', done:false, date:t },
       { id:'td7', owner:'Luna', text:'3 pages of math', done:false, date:t },
       { id:'td8', owner:'Luna', text:'1 chapter of Korean', done:false, date:t },
-      { id:'td9', owner:'Luna', text:'English copywork 15 min', done:false, date:t },
+      { id:'td9', owner:'Luna', text:'English copywork', done:false, date:t },
       { id:'td11', owner:'Luna', text:'Homework & pack backpack', done:false, date:t },
       { id:'td15', owner:'Luna', text:'Clean desk', done:false, date:t }
     ],
@@ -1737,11 +1770,11 @@ function seedState(){
       /* 휴강: { 'YYYY-MM-DD': ['ls1', ...] } — 그 날만 그 수업을 건너뛰어요 */
       skipDates: {},
       lessons: [
-        { id:'ls1', kid:'Stella', day:0, time:'20:00', subject:'영어' },
-        { id:'ls2', kid:'Stella', day:3, time:'20:00', subject:'영어' },
-        { id:'ls3', kid:'Stella', day:4, time:'17:00', subject:'바이올린' },
-        { id:'ls4', kid:'Stella', day:5, time:'19:00', subject:'중국어' },
-        { id:'ls5', kid:'Luna', day:1, time:'20:00', subject:'영어' }
+        { id:'ls1', kid:'Stella', day:0, time:'20:00', subject:'English' },
+        { id:'ls2', kid:'Stella', day:3, time:'20:00', subject:'English' },
+        { id:'ls3', kid:'Stella', day:4, time:'17:00', subject:'Violin' },
+        { id:'ls4', kid:'Stella', day:5, time:'19:00', subject:'Chinese' },
+        { id:'ls5', kid:'Luna', day:1, time:'20:00', subject:'English' }
       ]
     },
     timer: { preset: 25 },
@@ -1963,14 +1996,14 @@ var sync = {
 };
 
 function syncModeLabel(mode){
-  if(mode === 'live') return '🟢 실시간 동기화';
-  if(mode === 'connecting') return '🟡 연결 중';
-  return '⚪ 이 기기만 저장';
+  if(mode === 'live') return '🟢 Live sync';
+  if(mode === 'connecting') return '🟡 Connecting';
+  return '⚪ This device only';
 }
 function syncModeDetail(mode){
-  if(mode === 'live') return '가족 모두 같은 내용을 함께 보고 있어요.';
-  if(mode === 'connecting') return '가족 데이터에 연결하는 중이에요.';
-  return '이 기기에만 저장하고 있어요. 연결되면 자동으로 맞춰요.';
+  if(mode === 'live') return 'Everyone in the family sees the same thing.';
+  if(mode === 'connecting') return 'Connecting to the family data.';
+  return 'Saving on this device only. It will catch up when it connects.';
 }
 
 function setSyncMode(mode){
@@ -1982,7 +2015,7 @@ function setSyncMode(mode){
   if(badge){
     if(badge.textContent !== label) badge.textContent = label;
     if(badge.getAttribute('data-state') !== mode) badge.setAttribute('data-state', mode);
-    badge.setAttribute('title', detail + ' · 눌러서 설정');
+    badge.setAttribute('title', detail + ' · tap for settings');
   }
   var line = $('#syncStateLine');
   if(line) line.textContent = label;
@@ -2027,7 +2060,7 @@ function writeLocal(){
   }catch(e){
     if(!saveWarned){
       saveWarned = true;
-      toast('이 기기의 저장 공간이 가득 찼어요. 채팅의 긴 녹음을 지워주세요 🙈');
+      toast('This device is out of storage. Please delete some long voice messages 🙈');
     }
     return false;
   }
@@ -2083,7 +2116,7 @@ function flushPush(){
         sync.dirty = true;
         if(!sync.warned){
           sync.warned = true;
-          toast('실시간 동기화에 연결하지 못했어요. 이 기기에 저장해둘게요');
+          toast('Could not connect to live sync. Saving on this device for now');
         }
         if(sync.everLive) setSyncMode('local');
         return;
@@ -2397,15 +2430,18 @@ function addLedger(kid, type, amount, memo){
 
 /* 할 일 완료 적립 메모 — 그날 날짜를 넣어요 (예: '11/16 할일완료').
    예전에 적힌 '오늘 할 일 모두 완료'도 같은 적립으로 알아봐요. */
+/* 적립 메모는 '11/16(월) 할일완료' 모양으로 적어요 — 용돈 내역에 그대로 보여요 */
 function studyDoneMemo(dayKeyStr){
   var p = String(dayKeyStr || todayKey()).split('-');
-  return Number(p[1]) + '/' + Number(p[2]) + ' 할일완료';
+  var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12, 0, 0, 0);
+  return Number(p[1]) + '/' + Number(p[2]) + '(' + WEEKDAYS_KO[d.getDay()] + ') 할일완료';
 }
+/* 새 메모('11/16 tasks done'), 영어 표기, 그리고 예전에 적힌 한국어 메모까지 같은 적립으로 알아봐요 */
 function isStudyDoneMemo(text){
   var t = String(text || '').trim();
   if(!t) return false;
-  if(t === '오늘 할 일 모두 완료') return true;
-  return /^\d{1,2}\/\d{1,2}\s*할일완료$/.test(t);
+  if(t === '오늘 할 일 모두 완료' || t === 'All tasks done' || t === 'Tasks done') return true;
+  return /^\d{1,2}\/\d{1,2}(\(.+\))?\s*(할일완료|tasks? done)$/i.test(t);
 }
 
 /* 숙제·수업을 끝내면 그 아이 용돈에 적립해요. 적립한 금액을 돌려줘요. */
@@ -2414,7 +2450,7 @@ function creditReward(kid, memo, anchor){
   if(!a) return 0;
   var reward = roundCents(num(a.reward, 1));
   if(reward <= 0) return 0;
-  addLedger(kid, 'study', reward, (memo || '공부 완료').slice(0, 30));
+  addLedger(kid, 'study', reward, (memo || 'Tasks done').slice(0, 30));
   if(anchor) coinBurst(anchor, 6);
   return reward;
 }
@@ -2446,7 +2482,7 @@ function renderAllowance(){
     startInput.setAttribute('data-dirty', '0');
   }
   var startHint = $('#allowStartHint');
-  if(startHint) startHint.innerHTML = '지금 시작 금액은 <b>' + esc(usd(tt.start)) + '</b>이에요. 새 금액을 넣고 저장을 눌러 주세요.';
+  if(startHint) startHint.innerHTML = 'Starting balance is <b>' + esc(usd(tt.start)) + '</b>. Type a new amount and tap Save.';
   var reward = roundCents(num(a.reward, 1)) || 1;
   var st = todoStats(kid);
   var claimed = claimedToday(kid);
@@ -2461,21 +2497,21 @@ function renderAllowance(){
       studyBtn.classList.toggle('ready', mode === 'C');
       studyBtn.setAttribute('aria-disabled', mode === 'C' ? 'false' : 'true');
       studyBtn.innerHTML = mode === 'A'
-        ? '<span class="coin" aria-hidden="true">✅</span>오늘 적립 완료! <b>(내일 다시)</b>'
+        ? '<span class="coin" aria-hidden="true">✅</span>Collected today! <b>(again tomorrow)</b>'
         : (mode === 'B'
-          ? '<span class="coin" aria-hidden="true">🔒</span>할 일 모두 체크하면 열려요! <b>(' + st.done + '/' + st.total + ' 완료)</b>'
-          : '<span class="coin" aria-hidden="true">💰</span>오늘 적립 완료! <b>+$1.00 받기</b>');
+          ? '<span class="coin" aria-hidden="true">🔒</span>Check every task to unlock <b>(' + st.done + '/' + st.total + ' done)</b>'
+          : '<span class="coin" aria-hidden="true">💰</span>All tasks done! <b>Collect +$1.00</b>');
     } else if(mode === 'B'){
       var lb = $('b', studyBtn);
-      if(lb) lb.textContent = '(' + st.done + '/' + st.total + ' 완료)';
+      if(lb) lb.textContent = '(' + st.done + '/' + st.total + ' done)';
     }
   }
   $$('#rewardPills .pill').forEach(function(b){
     b.classList.toggle('active', Math.abs(num(b.getAttribute('data-reward'), -1) - roundCents(reward)) < 0.005);
   });
   $('#todayLine').textContent = ts.count > 0
-    ? '오늘 적립 ' + ts.count + '번 · ' + usd(ts.amount) + ' 모았어요'
-    : '오늘은 아직 공부 기록이 없어요. 첫 적립을 해볼까요?';
+    ? 'Today: ' + ts.count + (ts.count === 1 ? ' reward' : ' rewards') + ' · ' + usd(ts.amount)
+    : 'No rewards yet today. Shall we start?';
 
   renderAllowLog(kid);
 }
@@ -2485,11 +2521,28 @@ function ledgerIcon(type){
   if(type === 'deposit') return '💰';
   return '🛍️';
 }
+/* 용돈 적립 내역은 메모를 적힌 그대로 보여줘요 (예: '11/15 할일완료').
+   날짜 메모는 손대지 않고, 예전 기본값 메모만 영어로 바꿔요. */
+function ledgerMemoLabel(memo){
+  var s = String(memo == null ? '' : memo).trim();
+  if(!s) return '';
+  if(s === '공부 완료') return 'Tasks done';
+  if(s === '오늘 할 일 모두 완료') return 'All tasks done';
+  if(s === '입금') return 'Added';
+  if(s === '사용') return 'Spent';
+  return s;
+}
+/* 내역 묶음의 날짜 제목 — '오늘/어제' 대신 '11/15'처럼 숫자로만 보여줘요 */
+function ledgerDayLabel(key){
+  var p = String(key || '').split('-');
+  if(p.length !== 3) return String(key || '');
+  return Number(p[1]) + '/' + Number(p[2]);
+}
 function ledgerName(e){
-  if(e.memo) return e.memo;
-  if(e.type === 'study') return '공부 완료';
-  if(e.type === 'deposit') return '입금';
-  return '사용';
+  if(e.memo) return ledgerMemoLabel(e.memo);
+  if(e.type === 'study') return 'Tasks done';
+  if(e.type === 'deposit') return 'Added';
+  return 'Spent';
 }
 
 /* 예전에 적힌 시간('오후 12:27')도 지금 앱 표기('12:27 PM')로 맞춰 보여줘요 — 저장값은 그대로 둬요 */
@@ -2512,7 +2565,7 @@ function ledgerKind(type){
 }
 function ledgerTag(type){
   var k = ledgerKind(type);
-  return k === 'deposit' ? '입금' : (k === 'spend' ? '사용' : '적립');
+  return k === 'deposit' ? 'Added' : (k === 'spend' ? 'Spent' : 'Reward');
 }
 
 /* 용돈·적립 내역 — 할 일 완료 적립·입금·사용을 날짜별(최신순)로 묶어 보여줘요 */
@@ -2521,7 +2574,7 @@ function renderAllowLog(kid){
   if(!box) return;
   var log = state.allowance[kid].log;
   if(!log.length){
-    box.innerHTML = '<div class="empty"><span class="em">🐣</span>아직 내역이 없어요.<br>할 일을 마치고 적립하거나 입금·사용을 기록하면<br>여기에 날짜별로 차곡차곡 쌓여요.</div>';
+    box.innerHTML = '<div class="empty"><span class="em">🐣</span>Nothing here yet.<br>Finish tasks to earn rewards, or add money in and out,<br>and it will all stack up here day by day.</div>';
     return;
   }
   var groups = [];
@@ -2549,7 +2602,7 @@ function renderAllowLog(kid){
     var dayNo = g.date ? Number(String(g.date).split('-')[2]) : '';
     html += '<div class="log-day">' +
       '<span class="cal">' + (dayNo === '' ? '·' : dayNo) + '</span>' +
-      '<span class="dtext">' + esc(g.date ? dayLabel(g.date) : '날짜 없음') + '</span>' +
+      '<span class="dtext">' + esc(g.date ? ledgerDayLabel(g.date) : 'No date') + '</span>' +
       '<span class="dsub">' + parts.join(' · ') + '</span></div>';
     html += '<div class="log-items">';
     g.items.forEach(function(e){
@@ -2564,7 +2617,7 @@ function renderAllowLog(kid){
             (t ? '<span class="li-time">' + esc(t) + '</span>' : '') + '</span>' +
         '</span>' +
         '<span class="li-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? usdSigned(e.amount) : usd(-num(e.amount, 0))) + '</span>' +
-        (isMom() ? '<button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="이 기록 지우기">×</button>' : '') +
+        (isMom() ? '<button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="Delete this record">×</button>' : '') +
         '</div>';
     });
     html += '</div>';
@@ -2636,8 +2689,7 @@ function prepClassesFor(kid, dateObj){
   return state.schedule.lessons.filter(function(l){
     if(l.kid !== kid || l.day !== day) return false;
     if(isLessonSkippedOn(l.id, key)) return false;   /* 내일이 휴강이면 준비 숙제도 없어요 */
-    var sub = String(l.subject || '');
-    return sub.indexOf('영어') >= 0 || sub.indexOf('중국어') >= 0;
+    return isPrepSubject(l.subject);
   });
 }
 
@@ -2716,7 +2768,7 @@ function kidLockedFor(kid){
 
 function toastKidLocked(kid){
   var lk = lockedKidProfile();
-  toast(lk + ' 기기에서는 ' + kid + ' 항목을 바꿀 수 없어요!');
+  toast('This device is locked to ' + personLabel(lk) + ' — ' + personLabel(kid) + '\'s tasks can\'t be changed here.');
 }
 
 /* 체크를 풀면 오늘 적립해둔 용돈($1.00)도 같이 취소해요 */
@@ -2743,7 +2795,7 @@ function cancelTodayClaim(kid){
   var removed = target ? 1 : 0;
   if(target) state.allowance[kid].log = log.filter(function(e){ return e !== target; });
   save();
-  toast('할 일 체크가 해제되어 오늘 적립된 ' + usd(1) + '도 취소됐어요.');
+  toast('The check was removed, so today\'s ' + usd(1) + ' reward was taken back too.');
   return true;
 }
 
@@ -2752,11 +2804,11 @@ function doStudy(){
   var a = state.allowance[kid];
   if(kidLockedFor(kid)){ toastKidLocked(kid); return; }
   if(claimedToday(kid)){
-    toast('오늘 ' + usd(1) + '은 이미 적립했어요. 내일 또 만나요 🌱');
+    toast('Today\'s ' + usd(1) + ' was already collected. See you tomorrow 🌱');
     return;
   }
   if(!allTodosDone(kid)){
-    toast('할 일을 전부 체크하면 누를 수 있어요!');
+    toast('Check every task to unlock this!');
     return;
   }
   var reward = roundCents(num(a.reward, 1)) || 1;
@@ -2767,7 +2819,7 @@ function doStudy(){
   renderTodos();
   bumpTotal();
   coinBurst($('#studyBtn'), 8);
-  toast(kid + ' 오늘 할 일 모두 완료! ' + usdSigned(reward) + ' 적립했어요 🪙');
+  toast(personLabel(kid) + ' finished every task today! ' + usdSigned(reward) + ' collected 🪙');
 }
 
 function setReward(value){
@@ -2788,7 +2840,7 @@ function setAllowanceStart(v){
   save();
   renderAllowance();
   bumpTotal();
-  toast('시작 금액을 ' + usd(val) + '로 정했어요');
+  toast('Starting balance set to ' + usd(val));
 }
 
 function saveStartInput(fromEnter){
@@ -2804,8 +2856,8 @@ function saveStartInput(fromEnter){
     inp.value = '0';
     inp.setAttribute('data-dirty', '0');
     toast(cur > 0
-      ? '지금 시작 금액은 ' + usd(cur) + '이에요. 바꿀 금액을 입력해 주세요'
-      : '바꿀 시작 금액을 입력해 주세요');
+      ? 'Starting balance is ' + usd(cur) + '. Type the amount you want instead.'
+      : 'Type the starting balance you want');
     return;
   }
   /* 저장된 시작 금액이 있는데 0으로 바꾸려 할 때만 한 번 더 확인해요 */
@@ -2813,9 +2865,9 @@ function saveStartInput(fromEnter){
     inp.value = '0';
     inp.setAttribute('data-dirty', '0');
     confirmModal(
-      '시작 금액을 $0.00으로 바꿀까요?',
-      '지금은 ' + usd(cur) + '으로 저장돼 있어요. $0.00으로 바꾸면 모은 돈이 그만큼 줄어들어요.',
-      '$0.00으로 바꾸기',
+      'Change the starting balance to $0.00?',
+      'It is saved as ' + usd(cur) + ' now. Setting it to $0.00 takes that much out of the saved money.',
+      'Change to $0.00',
       function(){ setAllowanceStart(0); },
       true
     );
@@ -2824,7 +2876,7 @@ function saveStartInput(fromEnter){
   if(v === cur){
     inp.value = '0';
     inp.setAttribute('data-dirty', '0');
-    toast('시작 금액은 이미 ' + usd(cur) + '이에요');
+    toast('The starting balance is already ' + usd(cur));
     return;
   }
   setAllowanceStart(v);
@@ -2833,15 +2885,15 @@ function saveStartInput(fromEnter){
 function doQuick(kind){
   var kid = currentKid();
   var amount = roundCents(num($('#quickAmount').value, 0));
-  if(amount <= 0){ toast('금액을 먼저 적어주세요'); $('#quickAmount').focus(); return; }
+  if(amount <= 0){ toast('Type an amount first'); $('#quickAmount').focus(); return; }
   var memo = $('#quickMemo').value.trim();
-  if(!memo) memo = kind === 'deposit' ? '입금' : '사용';
+  if(!memo) memo = kind === 'deposit' ? 'Added' : 'Spent';
   addLedger(kid, kind, amount, memo.slice(0, 30));
   $('#quickAmount').value = '';
   $('#quickMemo').value = '';
   renderAllowance();
   bumpTotal();
-  toast((kind === 'deposit' ? '입금 ' : '사용 ') + usd(amount) + ' 기록했어요');
+  toast((kind === 'deposit' ? 'Added ' : 'Spent ') + usd(amount));
 }
 
 /* =========================================================
@@ -2850,8 +2902,10 @@ function doQuick(kind){
 var hiFiveShown = false;
 var hiFiveTimer = null;
 /* 두 아이 할 일 목록의 맨 위에 오는 항목 */
-var PINNED_TODO_TEXT = '간식통, 물병 가져다 놓기';
-function isPinnedTodo(t){ return !!t && String(t.text || '').trim() === PINNED_TODO_TEXT; }
+var PINNED_TODO_TEXTS = ['Unpack snack box & water bottle', '간식통, 물병 가져다 놓기'];
+function isPinnedTodo(t){
+  return !!t && PINNED_TODO_TEXTS.indexOf(String(t.text || '').trim()) >= 0;
+}
 
 function filteredTodos(){
   var f = state.ui.todoFilter;
@@ -2888,7 +2942,7 @@ function isTodoPreview(){ return todoDayOffset() > 0; }
 function todoViewDate(){ return daysFromToday(todoDayOffset()); }
 function previewBannerText(dateObj){
   var d = dateObj || todoViewDate();
-  return '👀 ' + (d.getMonth() + 1) + '/' + d.getDate() + ' (' + WEEKDAYS[d.getDay()] + ') 미리 보기 · 체크는 오늘 날짜에만 가능해요';
+  return '👀 Preview of ' + MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate() + ' (' + WEEKDAYS[d.getDay()] + ') · you can only check things off for today';
 }
 
 function renderTodoDayBar(){
@@ -2899,7 +2953,7 @@ function renderTodoDayBar(){
   for(var i = 0; i < 7; i++){
     var d = daysFromToday(i);
     var label = i === 0
-      ? '오늘 (' + WEEKDAYS[d.getDay()] + ')'
+      ? 'Today (' + WEEKDAYS[d.getDay()] + ')'
       : WEEKDAYS[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate();
     html += '<button class="day-pill' + (i === cur ? ' active' : '') + (i === 0 ? ' today' : '') + '" type="button" data-day-offset="' + i + '" aria-pressed="' + (i === cur ? 'true' : 'false') + '">' + esc(label) + '</button>';
   }
@@ -2926,7 +2980,7 @@ function setTodoDayOffset(n){
 function blockInPreview(what){
   if(!isTodoPreview()) return false;
   var d = todoViewDate();
-  toast((d.getMonth() + 1) + '/' + d.getDate() + ' 미리 보기 중이라 ' + what + ' 안 돼요. \'오늘\'로 돌아가서 해주세요!');
+  toast('You are previewing ' + MONTHS_SHORT[d.getMonth()] + ' ' + d.getDate() + ', so ' + what + ' is not possible. Go back to Today first!');
   return true;
 }
 
@@ -2939,9 +2993,9 @@ function renderTodoFilter(){
   order.forEach(function(p){
     var active = f === p ? ' active' : '';
     if(p === '전체'){
-      html += '<button class="pill' + active + '" type="button" data-filter="전체">전체</button>';
+      html += '<button class="pill' + active + '" type="button" data-filter="전체">All</button>';
     } else {
-      html += '<button class="pill' + active + '" type="button" data-filter="' + p + '">' + mascot(p) + esc(p) + '</button>';
+      html += '<button class="pill' + active + '" type="button" data-filter="' + p + '">' + mascot(p) + esc(personLabel(p)) + '</button>';
     }
   });
   box.innerHTML = html;
@@ -2985,7 +3039,7 @@ function renderSchedule(){
   }
   var daySel = $('#lessonDay');
   if(daySel && !daySel.options.length){
-    daySel.innerHTML = WEEKDAYS.map(function(n, i){ return '<option value="' + i + '">' + n + '요일</option>'; }).join('');
+    daySel.innerHTML = WEEKDAYS.map(function(n, i){ return '<option value="' + i + '">' + n + '</option>'; }).join('');
     daySel.value = String(today);
   }
 
@@ -2997,22 +3051,22 @@ function renderSchedule(){
     var evLine = todayEvents.map(function(ev){
       return '<div class="st-line st-bday' + (ev.kind === 'memorial' ? ' st-memorial' : '') + '">' +
         '<span class="st-cake" aria-hidden="true">' + eventMark(ev) + '</span>' +
-        '<span class="st-who"><b>' + esc(ev.name) + '</b> ' + esc(eventLabel(ev)) +
-        '<span class="st-time">' + esc(ev.lunar ? '음력 ' + ev.lunar[0] + '월 ' + ev.lunar[1] + '일' : '매년 ' + ev.solar[0] + '월 ' + ev.solar[1] + '일') + '</span></span>' +
+        '<span class="st-who"><b>' + esc(personLabel(ev.name)) + '</b> · ' + esc(eventLabel(ev)) +
+        '<span class="st-time">' + esc(eventWhen(ev)) + '</span></span>' +
         '</div>';
     }).join('');
     box.innerHTML = (mine.length || todayEvents.length)
       ? evLine + mine.map(function(l){
           var done = l.completedDate === todayKey();
           return '<div class="st-line">' + mascot(l.kid) +
-            '<span class="st-who"><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) +
+            '<span class="st-who"><b>' + esc(personLabel(l.kid)) + '</b> · ' + esc(subjectLabel(l.subject)) +
             '<span class="st-time">' + esc(timeLabel(l.time)) + '</span></span>' +
             (done
-              ? '<button class="lesson-done done" type="button" data-lesson-done="' + esc(l.id) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' 수업 완료 취소') + '">수업 완료 ✓</button>'
-              : '<button class="lesson-done" type="button" data-lesson-done="' + esc(l.id) + '" aria-label="' + esc(l.kid + ' ' + l.subject + ' 수업 완료로 표시') + '">수업 완료</button>') +
+              ? '<button class="lesson-done done" type="button" data-lesson-done="' + esc(l.id) + '" aria-label="' + esc('Undo class done for ' + personLabel(l.kid) + ' ' + subjectLabel(l.subject)) + '">Class done ✓</button>'
+              : '<button class="lesson-done" type="button" data-lesson-done="' + esc(l.id) + '" aria-label="' + esc('Mark ' + personLabel(l.kid) + ' ' + subjectLabel(l.subject) + ' class done') + '">Class done</button>') +
             '</div>';
         }).join('')
-      : '<div class="st-empty">오늘은 수업이 없어요. 느긋한 하루 🐣</div>';
+      : '<div class="st-empty">No classes today. Take it easy 🐣</div>';
   }
 
   var grid = $('#weekGrid');
@@ -3031,7 +3085,7 @@ function renderSchedule(){
       var dayOpen = '<div class="day-col' + (i === today ? ' today' : '') + '">' + head +
         '<div class="dc-items">';
       if(!list.length && !events.length && !fevents.length){
-        return dayOpen + '<span class="dc-empty">일정 없음</span></div></div>';
+        return dayOpen + '<span class="dc-empty">Nothing planned</span></div></div>';
       }
       var bdayHtml = fevents.map(function(ev){
         return '<span class="dc-event dc-bday' + (ev.kind === 'memorial' ? ' dc-memorial' : '') + '" title="' + esc(eventTitle(ev) + ' · ' + eventWhen(ev)) + '">' +
@@ -3042,18 +3096,18 @@ function renderSchedule(){
       var lessonHtml = list.map(function(l){
         var skipped = isLessonSkippedOn(l.id, wk.key);
         var chipInner = '<span class="lc-time">' + esc(timeLabel(l.time)) + '</span>' +
-          '<span class="lc-who">' + esc(l.kid) + ' ·</span>' +
-          '<span class="lc-sub">' + esc(l.subject) + '</span>' +
-          (skipped ? '<span class="lc-skip">휴강</span>' : '');
+          '<span class="lc-who">' + esc(personLabel(l.kid)) + ' ·</span>' +
+          '<span class="lc-sub">' + esc(subjectLabel(l.subject)) + '</span>' +
+          (skipped ? '<span class="lc-skip">Skipped</span>' : '');
         var chipClass = 'lc-chip' + (l.completedDate === todayK ? ' lc-done' : '') + (skipped ? ' lc-off' : '');
-        var chipLabel = l.kid + ' ' + l.subject + ' ' + timeLabel(l.time) + (skipped ? ' · 이번 주 휴강' : '');
+        var chipLabel = personLabel(l.kid) + ' ' + subjectLabel(l.subject) + ' ' + timeLabel(l.time) + (skipped ? ' · skipped this week' : '');
         if(!isMom()) return '<span class="' + chipClass + '" data-kid="' + esc(l.kid) + '" title="' + esc(chipLabel) + '">' + chipInner + '</span>';
-        return '<button class="' + chipClass + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(chipLabel) + ' 수업 지우기">' +
+        return '<button class="' + chipClass + '" type="button" data-lesson="' + esc(l.id) + '" data-kid="' + esc(l.kid) + '" aria-label="' + esc(chipLabel) + ' · remove class">' +
           chipInner +
           '</button>';
       }).join('');
       var eventHtml = events.map(function(m){
-        var who = String(m.who || '가족');
+        var who = personLabel(m.who || '가족');
         var text = String(m.text || '');
         return '<span class="dc-event" title="' + esc(who + ' · ' + text) + '">' +
           '<span class="ev-em" aria-hidden="true">📝</span>' +
@@ -3074,7 +3128,7 @@ function completeLesson(id){
     les.completedDate = '';
     save();
     renderAll();
-    toast(les.kid + ' ' + les.subject + ' 수업 완료를 취소했어요');
+    toast('Undid class done for ' + personLabel(les.kid) + ' ' + subjectLabel(les.subject));
     return;
   }
   /* 수업은 완료 표시만 해요. 용돈은 '오늘 할 일 모두 완료'에서 한 번만 적립! */
@@ -3082,7 +3136,7 @@ function completeLesson(id){
   save();
   renderSchedule();
   renderCalendar();
-  toast(les.kid + ' ' + les.subject + ' 수업 완료! ✓');
+  toast(personLabel(les.kid) + ' ' + subjectLabel(les.subject) + ' class done! ✓');
 }
 
 function renderTodos(){
@@ -3100,16 +3154,16 @@ function renderTodos(){
   var pct = preview ? 0 : (total ? Math.round(done / total * 100) : 0);
   $('#todoProgressBar').style.width = pct + '%';
   $('#todoProgressText').textContent = preview
-    ? ('미리 보기 · 할 일 ' + total + '개')
-    : (done + ' / ' + total + ' 완료');
+    ? ('Preview · ' + total + (total === 1 ? ' task' : ' tasks'))
+    : (done + ' / ' + total + ' done');
 
   var prepHtml = prep.map(function(l){
     var pdone = preview ? false : prepDoneFor(l);
     var locked = kidLockedFor(l.kid);
     return '<div class="todo-item prep' + (pdone ? ' done' : '') + (locked ? ' locked' : '') + (preview ? ' preview' : '') + '"' + (preview ? ' aria-disabled="true"' : ' data-prep-toggle="' + esc(l.id) + '"') + '>' +
-      '<button class="check" type="button"' + (preview ? ' disabled' : '') + ' aria-pressed="' + (pdone ? 'true' : 'false') + '" aria-label="' + esc('내일 ' + l.subject + ' 수업 숙제') + (preview ? ' (미리 보기, 체크 불가)' : ' 완료 표시') + '">✓</button>' +
-      '<span class="t-text">내일 ' + esc(l.subject) + ' 수업 숙제 <span class="prep-when">(' + esc(WEEKDAYS[l.day]) + ' ' + esc(l.time) + ')</span></span>' +
-      '<span class="t-owner">' + mascot(l.kid) + esc(l.kid) + (locked ? '<span class="t-lock" aria-hidden="true">🔒</span>' : '') + '</span>' +
+      '<button class="check" type="button"' + (preview ? ' disabled' : '') + ' aria-pressed="' + (pdone ? 'true' : 'false') + '" aria-label="' + esc('Homework for tomorrow\'s ' + subjectLabel(l.subject) + ' class') + (preview ? ' (preview, cannot check)' : ' mark done') + '">✓</button>' +
+      '<span class="t-text">Tomorrow\'s ' + esc(subjectLabel(l.subject)) + ' homework <span class="prep-when">(' + esc(WEEKDAYS[l.day]) + ' ' + esc(l.time) + ')</span></span>' +
+      '<span class="t-owner">' + mascot(l.kid) + esc(personLabel(l.kid)) + (locked ? '<span class="t-lock" aria-hidden="true">🔒</span>' : '') + '</span>' +
       '</div>';
   }).join('');
 
@@ -3117,18 +3171,18 @@ function renderTodos(){
   if(!list.length && !prep.length){
     box.innerHTML = '<div class="empty"><span class="em">🌱</span>' +
       (preview
-        ? '이 날은 할 일이 없어요. 느긋한 하루 🍃'
-        : (state.ui.todoFilter === '전체' ? '할 일이 없어요.' : esc(state.ui.todoFilter) + ' 할 일이 없어요.')) +
+        ? 'No tasks on this day. Take it easy 🍃'
+        : (state.ui.todoFilter === '전체' ? 'No tasks.' : 'No tasks for ' + esc(personLabel(state.ui.todoFilter)) + '.')) +
       '</div>';
   } else {
     box.innerHTML = prepHtml + list.map(function(t){
       var paid = !preview && KIDS.indexOf(t.owner) >= 0 && !!(state.dailyTodo[t.owner] && state.dailyTodo[t.owner][todayKey()]);
       var locked = kidLockedFor(t.owner);
       return '<div class="todo-item' + ((t.done && !preview) ? ' done' : '') + (locked ? ' locked' : '') + (preview ? ' preview' : '') + '"' + (preview ? ' aria-disabled="true"' : ' data-toggle="' + esc(t.id) + '"') + '>' +
-        '<button class="check" type="button"' + (preview ? ' disabled' : '') + ' aria-pressed="' + ((t.done && !preview) ? 'true' : 'false') + '" aria-label="' + esc(t.text) + (t.weekdaysOnly ? ' (주중)' : '') + (preview ? ' (미리 보기, 체크 불가)' : ' 완료 표시') + '">✓</button>' +
-        '<span class="t-text">' + (t.weekdaysOnly ? '<span class="wd-tag" title="월~금에만 하는 할 일">주중</span> ' : '') + esc(t.text) + (t.done && paid ? ' <span class="done-tag">완료</span>' : '') + '</span>' +
-        '<span class="t-owner">' + mascot(t.owner) + esc(t.owner) + (locked ? '<span class="t-lock" aria-hidden="true">🔒</span>' : '') + '</span>' +
-        (isMom() && !preview ? '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="할 일 삭제">×</button>' : '') +
+        '<button class="check" type="button"' + (preview ? ' disabled' : '') + ' aria-pressed="' + ((t.done && !preview) ? 'true' : 'false') + '" aria-label="' + esc(t.text) + (t.weekdaysOnly ? ' (weekdays)' : '') + (preview ? ' (preview, cannot check)' : ' mark done') + '">✓</button>' +
+        '<span class="t-text">' + (t.weekdaysOnly ? '<span class="wd-tag" title="Only on weekdays, Monday to Friday">Weekdays</span> ' : '') + esc(t.text) + (t.done && paid ? ' <span class="done-tag">Done</span>' : '') + '</span>' +
+        '<span class="t-owner">' + mascot(t.owner) + esc(personLabel(t.owner)) + (locked ? '<span class="t-lock" aria-hidden="true">🔒</span>' : '') + '</span>' +
+        (isMom() && !preview ? '<button class="t-del" type="button" data-tdel="' + esc(t.id) + '" aria-label="Delete task">×</button>' : '') +
         '</div>';
     }).join('');
   }
@@ -3155,7 +3209,7 @@ function showHiFive(whoOverride){
   var slot = $('#hiFiveSlot');
   if(!slot) return;
   var f = state.ui.todoFilter;
-  var who = whoOverride || (f === '전체' ? '우리 가족' : f);
+  var who = personLabel(whoOverride || (f === '전체' ? '가족' : f));
   slot.innerHTML = '<div class="hifive" id="hiFiveBanner">' +
     '<span class="confetti" style="left:6%;animation-delay:.1s">✨</span>' +
     '<span class="confetti" style="left:22%;animation-delay:.7s">💛</span>' +
@@ -3163,9 +3217,9 @@ function showHiFive(whoOverride){
     '<span class="confetti" style="left:72%;animation-delay:.4s">🌸</span>' +
     '<span class="confetti" style="left:88%;animation-delay:1s">✨</span>' +
     '<span class="hf-hands" aria-hidden="true">🙌</span>' +
-    '<h3>하이파이브!</h3>' +
-    '<p>' + esc(who) + ' 할 일을 모두 끝냈어요. 정말 잘했어요!</p>' +
-    '<button class="hf-close" type="button" aria-label="닫기" data-hf-close>✕</button>' +
+    '<h3>High five!</h3>' +
+    '<p>' + esc(who) + ' finished every task today. Awesome job!</p>' +
+    '<button class="hf-close" type="button" aria-label="Close" data-hf-close>✕</button>' +
     '</div>';
   if(hiFiveTimer) clearTimeout(hiFiveTimer);
   hiFiveTimer = setTimeout(function(){
@@ -3182,7 +3236,7 @@ function showHiFive(whoOverride){
 }
 
 function togglePrep(id){
-  if(blockInPreview('준비 숙제 체크')) return;
+  if(blockInPreview('checking homework')) return;
   var les = null;
   state.schedule.lessons.forEach(function(l){ if(l.id === id) les = l; });
   if(!les) return;
@@ -3203,15 +3257,15 @@ function togglePrep(id){
     showHiFive(les.kid);
     hiFiveShown = true;
     toast(claimedToday(les.kid)
-      ? '할 일 모두 완료! 오늘 ' + usd(1) + '은 이미 받았어요 ✓'
-      : '할 일 모두 완료! 용돈 탭에서 오늘 ' + usd(1) + ' 적립 버튼을 눌러보세요!');
+      ? 'All tasks done! Today\'s ' + usd(1) + ' was already collected ✓'
+      : 'All tasks done! Tap the collect button in Allowance for today\'s ' + usd(1) + '!');
   } else {
-    toast(nowDone ? '내일 ' + les.subject + ' 수업 숙제 완료! ✓' : '체크를 풀었어요');
+    toast(nowDone ? 'Tomorrow\'s ' + subjectLabel(les.subject) + ' homework done! ✓' : 'Check removed');
   }
 }
 
 function toggleTodo(id, anchor){
-  if(blockInPreview('할 일 체크')) return;
+  if(blockInPreview('checking tasks')) return;
   var t = null;
   state.todos.forEach(function(x){ if(x.id === id) t = x; });
   if(!t) return;
@@ -3232,12 +3286,12 @@ function toggleTodo(id, anchor){
     showHiFive(t.owner);
     hiFiveShown = true;
     toast(claimedToday(t.owner)
-      ? '할 일 모두 완료! 오늘 ' + usd(1) + '은 이미 받았어요 ✓'
-      : '할 일 모두 완료! 용돈 탭에서 오늘 ' + usd(1) + ' 적립 버튼을 눌러보세요!');
+      ? 'All tasks done! Today\'s ' + usd(1) + ' was already collected ✓'
+      : 'All tasks done! Tap the collect button in Allowance for today\'s ' + usd(1) + '!');
   } else if(t.done){
     toast(KIDS.indexOf(t.owner) >= 0 && left > 0
-      ? '완료! ' + t.text + ' ✓ (' + left + '개 남았어요)'
-      : '완료! ' + t.text + ' ✓');
+      ? 'Done! ' + t.text + ' ✓ (' + left + ' left)'
+      : 'Done! ' + t.text + ' ✓');
   }
 }
 
@@ -3256,7 +3310,7 @@ function resetDailyChecks(){
   renderTodos();
   renderAllowance();
   renderCalendar();
-  toast(cleared ? '오늘 체크를 모두 풀었어요. 새로운 하루 시작! 🌤️' : '이미 모두 체크가 풀려 있어요');
+  toast(cleared ? 'All of today\'s checks are cleared. Fresh start! 🌤️' : 'Everything is already unchecked');
 }
 
 /* =========================================================
@@ -3288,12 +3342,12 @@ function renderChatWho(){
   box.innerHTML = PEOPLE.map(function(p){
     return '<button class="who-pill' + (p === me ? ' active' : '') + '" type="button" data-who="' + p + '"' +
       (locked ? ' disabled aria-disabled="true"' : '') + ' aria-pressed="' + (p === me) + '">' +
-      mascot(p) + esc(p) + '</button>';
+      mascot(p) + esc(personLabel(p)) + '</button>';
   }).join('');
   $('#chatLock').checked = locked;
   $('#chatLockState').textContent = locked
-    ? (me + '로 사용 중이에요 🔒')
-    : '지금은 ' + me + '(으)로 말해요';
+    ? ('Locked as ' + personLabel(me) + ' 🔒')
+    : ('Using ' + personLabel(me));
 }
 
 function waveBars(){
@@ -3311,7 +3365,7 @@ function renderChat(){
   var msgs = state.chat.messages.slice().sort(function(a, b){ return num(a.ts, 0) - num(b.ts, 0); });
 
   if(!msgs.length){
-    box.innerHTML = '<div class="empty"><span class="em">🐥</span>아직 대화가 없어요.<br>첫 메시지를 남겨보세요!</div>';
+    box.innerHTML = '<div class="empty"><span class="em">🐥</span>No messages yet.<br>Say something to start!</div>';
     return;
   }
 
@@ -3334,7 +3388,7 @@ function renderChat(){
       inner = '<div class="bubble sticker">' + stickerSVG(m.sticker) + '</div>';
     } else if(m.type === 'voice'){
       inner = '<div class="voice-bubble">' +
-        '<button class="voice-play" type="button" data-play="' + esc(m.id) + '" aria-label="음성 메시지 재생">▶</button>' +
+        '<button class="voice-play" type="button" data-play="' + esc(m.id) + '" aria-label="Play voice message">▶</button>' +
         '<span class="voice-wave" aria-hidden="true">' + waveBars() + '</span>' +
         '<span class="voice-dur">' + esc(m.dur || '0:00') + '</span>' +
         '</div>';
@@ -3345,15 +3399,15 @@ function renderChat(){
     html += '<div class="msg' + (mine ? ' me' : '') + '">' +
       mascot(m.who) +
       '<div class="bubble-wrap">' +
-        '<span class="who-name">' + esc(m.who) + '</span>' +
+        '<span class="who-name">' + esc(personLabel(m.who)) + '</span>' +
         inner +
         '<span class="bubble-meta">' +
           '<span>' + esc(hm(d)) + '</span>' +
-          '<button class="heart-btn' + (hearted ? ' on' : '') + '" type="button" data-heart="' + esc(m.id) + '" aria-label="하트 반응" aria-pressed="' + hearted + '">' +
+          '<button class="heart-btn' + (hearted ? ' on' : '') + '" type="button" data-heart="' + esc(m.id) + '" aria-label="Add a heart" aria-pressed="' + hearted + '">' +
             '<span class="hb-ico" aria-hidden="true">' + (hearted ? '❤️' : '🤍') + '</span>' +
             (hearts.length ? '<span>' + hearts.length + '</span>' : '') +
           '</button>' +
-          (canDel ? '<button class="msg-del" type="button" data-cmsgdel="' + esc(m.id) + '" aria-label="이 메시지 지우기" title="이 메시지 지우기">×</button>' : '') +
+          (canDel ? '<button class="msg-del" type="button" data-cmsgdel="' + esc(m.id) + '" aria-label="Delete this message" title="Delete this message">×</button>' : '') +
         '</span>' +
       '</div>' +
     '</div>';
@@ -3383,7 +3437,7 @@ function ntfyPublish(opts){
   var o = opts || {};
   var payload = {
     topic: ntfyTopic(),
-    title: String(o.title || '💬 가족 채팅').slice(0, 120),
+    title: String(o.title || '💬 Family Chat').slice(0, 120),
     message: String(o.message || '').slice(0, 300),
     priority: o.priority || 3,
     tags: o.tags || ['speech_balloon']
@@ -3403,11 +3457,11 @@ function ntfyPublish(opts){
 /* 채팅을 보낸 그 기기에서만 알림을 보내요 (여러 기기가 같이 켜져 있어도 한 번만) */
 function pushChatNotify(msg){
   if(!msg || !ntfyOn()) return;
-  var who = msg.who || '가족';
+  var who = personLabel(msg.who || '가족');
   if(msg.type === 'sticker'){
-    ntfyPublish({ title:'💬 ' + who, message:'스티커를 보냈어요!', tags:['sparkles'] });
+    ntfyPublish({ title:'💬 ' + who, message:'sent a sticker!', tags:['sparkles'] });
   } else if(msg.type === 'voice'){
-    ntfyPublish({ title:'💬 ' + who, message:'음성 메시지를 보냈어요! (' + String(msg.dur || '0:00') + ')', tags:['microphone'] });
+    ntfyPublish({ title:'💬 ' + who, message:'sent a voice message (' + String(msg.dur || '0:00') + ')', tags:['microphone'] });
   } else {
     ntfyPublish({ title:'💬 ' + who, message:String(msg.text || ''), tags:['speech_balloon'] });
   }
@@ -3429,7 +3483,7 @@ function syncBell(){
   if(!b) return;
   var on = ntfyOn();
   b.setAttribute('data-on', on ? '1' : '0');
-  b.title = on ? '가족 채팅 알림 켜짐 · 눌러서 설정' : '가족 채팅 알림 꺼짐 · 눌러서 설정';
+  b.title = on ? 'Family chat notifications are on · tap for settings' : 'Family chat notifications are off · tap for settings';
 }
 
 /* 제목 없에 이 기기를 잠근 프로필 이름을 보여줘요 */
@@ -3440,8 +3494,8 @@ function renderLockBadge(){
   var me = (state && state.chat && state.chat.me) || '';
   if(on && me){
     b.hidden = false;
-    b.innerHTML = '🔒 <b>' + esc(me) + '</b>';
-    b.title = me + '(으)로 잠긴 기기예요';
+    b.innerHTML = '🔒 <b>' + esc(personLabel(me)) + '</b>';
+    b.title = 'This device is locked as ' + personLabel(me);
   } else {
     b.hidden = true;
     b.innerHTML = '';
@@ -3478,31 +3532,31 @@ function openNotifModal(){
   var topic = ntfyTopic();
   var on = ntfyOn();
   openModal(
-    '<h2>🔔 가족 채팅 알림</h2>' +
-    '<p class="modal-sub">가족이 채팅을 보내면 아이폰·아이패드 알림창에 바로 떠요. 무료 ntfy 앱을 쓰고, 가입은 필요 없어요.</p>' +
+    '<h2>🔔 Family Chat Notifications</h2>' +
+    '<p class="modal-sub">When someone in the family sends a chat, it pops up right on the iPhone and iPad. It uses the free ntfy app — no sign-up needed.</p>' +
     '<div class="setting-block">' +
-      '<div class="notif-state ' + (on ? 'on' : 'off') + '" id="notifState">' + (on ? '🔔 알림 켜짐' : '🔕 알림 꺼짐') + '</div>' +
+      '<div class="notif-state ' + (on ? 'on' : 'off') + '" id="notifState">' + (on ? '🔔 Notifications on' : '🔕 Notifications off') + '</div>' +
       '<label class="switch notif-switch"><input type="checkbox" id="notifSwitch"' + (on ? ' checked' : '') + '>' +
-        '<span class="track" aria-hidden="true"></span><span>가족 채팅 알림 보내기</span></label>' +
+        '<span class="track" aria-hidden="true"></span><span>Send family chat notifications</span></label>' +
     '</div>' +
     '<div class="setting-block">' +
-      '<h3>우리 가족 토픽</h3>' +
-      '<p>이 이름을 아는 기기만 알림을 받아요. 가족끼리만 나눠주세요.</p>' +
+      '<h3>Our Family Topic</h3>' +
+      '<p>Only devices that know this name get the notifications. Keep it just for the family.</p>' +
       '<div class="topic-row"><code class="topic-name" id="topicName">' + esc(topic) + '</code>' +
-        '<button class="btn ghost sm" type="button" id="topicCopy">토픽 복사</button></div>' +
+        '<button class="btn ghost sm" type="button" id="topicCopy">Copy topic</button></div>' +
     '</div>' +
     '<div class="setting-block">' +
-      '<h3>알림 받는 방법</h3>' +
+      '<h3>How to Get Notifications</h3>' +
       '<ol class="howto">' +
-        '<li>App Store에서 <b>ntfy</b> 무료 앱 설치</li>' +
-        '<li>앱 열고 <b>+</b> 눌러서 위 토픽 이름 입력해 구독</li>' +
-        '<li>이제 가족 채팅이 오면 아이폰·아이패드 알림창에 바로 떠요!</li>' +
+        '<li>Install the free <b>ntfy</b> app from the App Store</li>' +
+        '<li>Open the app, tap <b>+</b>, and subscribe with the topic name above</li>' +
+        '<li>Now family chat messages pop up on the iPhone and iPad right away!</li>' +
       '</ol>' +
-      '<p class="howto-tip">알림이 안 보이면 아이폰 설정 → ntfy → 알림을 ‘허용’으로 바꿔주세요.</p>' +
+      '<p class="howto-tip">If notifications do not show up, go to iPhone Settings → ntfy → Notifications and allow them.</p>' +
     '</div>' +
     '<div class="modal-actions">' +
-      '<button class="btn mint" type="button" id="notifTest">테스트 알림 보내기</button>' +
-      '<button class="btn ghost" type="button" data-modal-close>닫기</button>' +
+      '<button class="btn mint" type="button" id="notifTest">Send a test notification</button>' +
+      '<button class="btn ghost" type="button" data-modal-close>Close</button>' +
     '</div>' +
     '<p class="notif-msg" id="notifMsg"></p>',
     { onReady: function(back){
@@ -3514,43 +3568,43 @@ function openNotifModal(){
           save();
           var nowOn = ntfyOn();
           stateBox.className = 'notif-state ' + (nowOn ? 'on' : 'off');
-          stateBox.textContent = nowOn ? '🔔 알림 켜짐' : '🔕 알림 꺼짐';
+          stateBox.textContent = nowOn ? '🔔 Notifications on' : '🔕 Notifications off';
           syncBell();
-          toast(nowOn ? '가족 채팅 알림을 켰어요 🔔' : '가족 채팅 알림을 껐어요 🔕');
+          toast(nowOn ? 'Family chat notifications are on 🔔' : 'Family chat notifications are off 🔕');
         });
         $('#topicCopy', back).addEventListener('click', function(){
           var btn = this;
           copyPlainText(ntfyTopic(), function(ok){
             if(ok){
-              btn.textContent = '✓ 복사됨';
-              toast('토픽 이름을 복사했어요');
+              btn.textContent = '✓ Copied';
+              toast('Topic name copied');
             } else {
-              toast('복사가 안 됐어요. 토픽 이름을 길게 눌러 복사해주세요');
+              toast('Could not copy. Press and hold the topic name to copy it');
             }
-            setTimeout(function(){ btn.textContent = '토픽 복사'; }, 1800);
+            setTimeout(function(){ btn.textContent = 'Copy topic'; }, 1800);
           });
         });
         $('#notifTest', back).addEventListener('click', function(){
           var btn = this;
           if(btn.disabled) return;
           btn.disabled = true;
-          btn.textContent = '보내는 중…';
+          btn.textContent = 'Sending…';
           note.className = 'notif-msg';
           note.textContent = '';
           ntfyPublish({
-            title: '💬 가족 채팅 알림 테스트',
-            message: (state.chat.me || '가족') + ' 알림 테스트! 잘 도착했어요 🎉',
+            title: '💬 Family chat test notification',
+            message: personLabel(state.chat.me || '가족') + ' here — the test notification arrived 🎉',
             tags: ['bell']
           }).then(function(r){
             btn.disabled = false;
-            btn.textContent = '테스트 알림 보내기';
+            btn.textContent = 'Send a test notification';
             if(r.ok){
               note.className = 'notif-msg ok';
-              note.textContent = '보냈어요! 구독한 아이폰·아이패드 알림창을 확인해보세요 🔔';
-              toast('테스트 알림을 보냈어요 🔔');
+              note.textContent = 'Sent! Check the notification on the iPhone or iPad that subscribed 🔔';
+              toast('Test notification sent 🔔');
             } else {
               note.className = 'notif-msg bad';
-              note.textContent = '알림을 보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러주세요.';
+              note.textContent = 'Could not send the notification. Check the internet connection and try again.';
             }
           });
         });
@@ -3570,7 +3624,7 @@ function sendText(){
 function sendSticker(id){
   pushChat({ id: uid('c'), who: state.chat.me, type:'sticker', sticker: id, ts: Date.now(), hearts: [] });
   $('#stickerPanel').hidden = true;
-  toast('스티커를 보냈어요 ✨');
+  toast('Sticker sent ✨');
 }
 
 function toggleHeart(id){
@@ -3597,17 +3651,17 @@ function deleteChatMessage(id){
   var m = findMessage(id);
   if(!m) return;
   if(!canDeleteMessage(m)){
-    toast('내가 보낸 메시지만 지울 수 있어요 🔒');
+    toast('You can only delete your own messages 🔒');
     return;
   }
   if(m.type === 'sticker'){
-    var sub = '스티커를 지울까요?';
+    var sub = 'Delete this sticker?';
   } else if(m.type === 'voice'){
-    var sub = '음성 메시지를 지울까요?';
+    var sub = 'Delete this voice message?';
   } else {
     var sub = '\"' + String(m.text || '').slice(0, 40) + '\"';
   }
-  confirmModal('메시지를 지울까요?', m.who + ' · ' + sub, '지우기', function(){
+  confirmModal('Delete this message?', personLabel(m.who) + ' · ' + sub, 'Delete', function(){
     if(playingAudio && m.type === 'voice'){
       try{ playingAudio.pause(); }catch(e){}
       playingAudio = null;
@@ -3615,7 +3669,7 @@ function deleteChatMessage(id){
     state.chat.messages = state.chat.messages.filter(function(x){ return x.id !== id; });
     save();          /* 이 기기에 저장 + 가족 모두에게 동기화 */
     renderChat();
-    toast('메시지를 지웠어요');
+    toast('Message deleted');
   }, true);
 }
 
@@ -3623,7 +3677,7 @@ function playVoice(id){
   var m = findMessage(id);
   if(!m) return;
   if(m.sample || !m.audio){
-    toast('샘플 음성이라 재생되지 않아요. 직접 녹음하면 들을 수 있어요 🎧');
+    toast('This is a sample voice message, so it will not play. Record your own to hear it 🎧');
     return;
   }
   if(playingAudio){ try{ playingAudio.pause(); }catch(e){} playingAudio = null; }
@@ -3633,10 +3687,10 @@ function playVoice(id){
     a.onended = function(){ playingAudio = null; };
     var p = a.play();
     if(p && p.catch){
-      p.catch(function(){ toast('이 기기에서 소리를 재생할 수 없어요'); });
+      p.catch(function(){ toast('This device cannot play the sound'); });
     }
   }catch(e){
-    toast('이 브라우저에서는 음성을 재생할 수 없어요');
+    toast('This browser cannot play voice messages');
   }
 }
 
@@ -3659,7 +3713,7 @@ function updateRecTime(){
 
 function startRecording(){
   if(!voiceSupported()){
-    showVoiceFallback('이 브라우저에서는 녹음을 쓸 수 없어요. 글자나 스티커로 마음을 전해보세요 🙈');
+    showVoiceFallback('This browser cannot record. Send a message or a sticker instead 🙈');
     return;
   }
   navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
@@ -3682,7 +3736,7 @@ function startRecording(){
     rec.start();
     recStart = Date.now();
     $('#voiceBtn').classList.add('live');
-    $('#voiceBtn').setAttribute('aria-label', '녹음 멈추기');
+    $('#voiceBtn').setAttribute('aria-label', 'Stop recording');
     $('#recStatus').hidden = false;
     $('#recTime').textContent = '0:00';
     recTick = setInterval(updateRecTime, 250);
@@ -3690,11 +3744,11 @@ function startRecording(){
   }).catch(function(err){
     var name = err && err.name ? err.name : '';
     if(name === 'NotAllowedError' || name === 'SecurityError'){
-      showVoiceFallback('마이크 사용을 허락하지 않으셨어요. 브라우저 설정에서 마이크를 허락하면 녹음돼요 🎙️');
+      showVoiceFallback('The microphone was not allowed. Allow the mic in browser settings to record 🎙️');
     } else if(name === 'NotFoundError' || name === 'DevicesNotFoundError'){
-      showVoiceFallback('이 기기에서 마이크를 찾지 못했어요 🎙️');
+      showVoiceFallback('No microphone was found on this device 🎙️');
     } else {
-      showVoiceFallback('녹음을 시작할 수 없어요. 글자나 스티커로 마음을 전해보세요 🙈');
+      showVoiceFallback('Could not start recording. Send a message or a sticker instead 🙈');
     }
   });
 }
@@ -3709,7 +3763,7 @@ function stopRecording(){
   if(recTick) clearInterval(recTick);
   if(recTimerStop) clearTimeout(recTimerStop);
   $('#voiceBtn').classList.remove('live');
-  $('#voiceBtn').setAttribute('aria-label', '음성 메시지 녹음');
+  $('#voiceBtn').setAttribute('aria-label', 'Record a voice message');
   $('#recStatus').hidden = true;
 }
 
@@ -3720,11 +3774,11 @@ function onRecordingStop(){
   recChunks = [];
   rec = null;
   if(durMs < 600){
-    toast('너무 짧아요. 1초 이상 말해주세요 🙂');
+    toast('Too short — please talk for at least a second 🙂');
     return;
   }
   if(blob.size > 900000){
-    toast('녹음이 너무 길어요. 20초 안으로 다시 해주세요');
+    toast('That recording is too long. Please keep it under 20 seconds');
     return;
   }
   var reader = new FileReader();
@@ -3738,9 +3792,9 @@ function onRecordingStop(){
       ts: Date.now(),
       hearts: []
     });
-    toast('음성 메시지를 보냈어요 🎙️');
+    toast('Voice message sent 🎙️');
   };
-  reader.onerror = function(){ toast('녹음을 저장하지 못했어요'); };
+  reader.onerror = function(){ toast('Could not save the recording'); };
   reader.readAsDataURL(blob);
 }
 
@@ -3821,9 +3875,9 @@ function finishTimer(){
   var minutes = Math.round(timer.total / 60000);
   openModal(
     '<div class="mascot-big">' + chickSVG() + '</div>' +
-    '<h2 style="justify-content:center">공부 끝! 잘했어요 🎉</h2>' +
-    '<p class="modal-sub" style="text-align:center">' + minutes + '분 동안 정말 집중했어요.<br>눈도 쉬어주고, 물 한 컵 마셔요!</p>' +
-    '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>좋아요</button></div>'
+    '<h2 style="justify-content:center">Time\'s up — great job! 🎉</h2>' +
+    '<p class="modal-sub" style="text-align:center">You focused for ' + minutes + ' minutes.<br>Rest your eyes and drink a glass of water!</p>' +
+    '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>Nice</button></div>'
   );
 }
 
@@ -3838,13 +3892,13 @@ function renderTimer(){
   $('#timerText').textContent = fmtClock(timer.remaining);
   var st = $('#timerState');
   st.classList.toggle('working', timer.running);
-  if(timer.running) st.textContent = '공부 중 ✏️';
-  else if(timer.remaining <= 0) st.textContent = '다 했어요! 🎉';
-  else if(timer.remaining < timer.total) st.textContent = '잠깐 멈췄어요';
-  else st.textContent = '준비됐어요';
+  if(timer.running) st.textContent = 'Studying ✏️';
+  else if(timer.remaining <= 0) st.textContent = 'All done! 🎉';
+  else if(timer.remaining < timer.total) st.textContent = 'Paused';
+  else st.textContent = 'Ready';
 
   var startBtn = $('#timerStartBtn');
-  startBtn.textContent = timer.running ? '일시정지' : (timer.remaining < timer.total && timer.remaining > 0 ? '계속하기' : '시작');
+  startBtn.textContent = timer.running ? 'Pause' : (timer.remaining < timer.total && timer.remaining > 0 ? 'Resume' : 'Start');
 
   $$('#timerPresets .pill').forEach(function(b){
     b.classList.toggle('active', num(b.getAttribute('data-min'), -1) * 60000 === timer.total);
@@ -3896,7 +3950,7 @@ function playChime(){
 }
 
 function moonSVG(){
-  return '<svg viewBox="0 0 140 140" role="img" aria-label="잠자는 달">' +
+  return '<svg viewBox="0 0 140 140" role="img" aria-label="sleeping moon">' +
     '<g stroke="#E6C877" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' +
       '<path d="M92 12a52 52 0 1 0 34 70A40 40 0 1 1 92 12Z" fill="#FFE9A8"/>' +
       '<path d="M66 62q6 6 12 0" fill="none" stroke="#8A6E3A" stroke-width="3"/>' +
@@ -3923,13 +3977,13 @@ function showSleepScreen(){
   wrap.id = 'sleepModal';
   wrap.setAttribute('role', 'dialog');
   wrap.setAttribute('aria-modal', 'true');
-  wrap.setAttribute('aria-label', '태블릿 쉬는 시간');
+  wrap.setAttribute('aria-label', 'Tablet break time');
   wrap.innerHTML = '<div class="stars" aria-hidden="true">' + stars + '</div>' +
     '<div class="moon-wrap">' + moonSVG() + '</div>' +
-    '<h2>태블릿 쉬는 시간이에요! 🌙</h2>' +
-    '<p>오늘도 많이 했어요. 이제 화면을 잠깐 덮고<br>가족과 이야기해볼까요?</p>' +
-    '<button class="btn" type="button" id="sleepClose">알겠어요</button>' +
-    '<p class="sleep-small">소리를 끄려면 알겠어요를 눌러주세요</p>';
+    '<h2>Time for the tablet to rest! 🌙</h2>' +
+    '<p>You did a lot today. Let\'s put the screen down for a bit<br>and talk with the family.</p>' +
+    '<button class="btn" type="button" id="sleepClose">Okay</button>' +
+    '<p class="sleep-small">Tap Okay to stop the sound</p>';
   document.body.appendChild(wrap);
   $('#sleepClose').addEventListener('click', function(){
     wrap.parentNode.removeChild(wrap);
@@ -3959,8 +4013,8 @@ function fireSleepAlarm(){
 function alarmTargetText(ts){
   var d = new Date(ts);
   var dk = dateKey(d);
-  if(dk === todayKey()) return '오늘 ' + hm(d);
-  if(dk === dateKey(daysAgo(-1))) return '내일 ' + hm(d);
+  if(dk === todayKey()) return 'Today ' + hm(d);
+  if(dk === dateKey(daysAgo(-1))) return 'Tomorrow ' + hm(d);
   return shortDate(dk) + ' ' + hm(d);
 }
 
@@ -3977,7 +4031,7 @@ function renderAlarm(){
   var tgl = $('#alarmToggle');
   if(tgl) tgl.checked = !!a.on;
   var lab = $('#alarmToggleLabel');
-  if(lab) lab.textContent = a.on ? '켜짐' : '꺼짐';
+  if(lab) lab.textContent = a.on ? 'On' : 'Off';
 
   $$('#alarmMode button').forEach(function(b){
     b.classList.toggle('active', b.getAttribute('data-mode') === a.mode);
@@ -3994,14 +4048,14 @@ function renderAlarm(){
   var status = $('#alarmStatus');
   status.classList.toggle('on', !!a.on);
   if(!a.on){
-    status.textContent = '🌙 알람이 꺼져 있어요';
+    status.textContent = '🌙 Alarm is off';
     return;
   }
   if(a.mode === 'clock'){
-    status.textContent = '⏰ ' + alarmTargetText(a.targetTs || nextClockTs(a.time)) + '에 알려드릴게요';
+    status.textContent = '⏰ I will chime at ' + alarmTargetText(a.targetTs || nextClockTs(a.time));
   } else {
     var left = Math.max(0, (a.targetTs || Date.now()) - Date.now());
-    status.textContent = '⏳ ' + Math.max(1, Math.ceil(left / 60000)) + '분 뒤(' + alarmTargetText(a.targetTs || Date.now()) + ')에 알려드릴게요';
+    status.textContent = '⏳ Chimes in ' + Math.max(1, Math.ceil(left / 60000)) + ' min (' + alarmTargetText(a.targetTs || Date.now()) + ')';
   }
 }
 
@@ -4018,15 +4072,15 @@ function enableAlarm(){
   save();
   renderAlarm();
   toast(a.mode === 'clock'
-    ? alarmTargetText(a.targetTs) + '에 태블릿 알람을 맞췄어요 🌙'
-    : '지금부터 ' + Math.round((a.targetTs - Date.now()) / 60000) + '분 뒤에 알려드릴게요 🌙');
+    ? 'Tablet alarm set for ' + alarmTargetText(a.targetTs) + ' 🌙'
+    : 'I will chime in ' + Math.round((a.targetTs - Date.now()) / 60000) + ' minutes 🌙');
 }
 
 function disableAlarm(){
   state.alarm.on = false;
   save();
   renderAlarm();
-  toast('태블릿 알람을 껐어요');
+  toast('Tablet alarm turned off');
 }
 
 function tickAlarm(){
@@ -4044,7 +4098,7 @@ function tickAlarm(){
   }
   var status = $('#alarmStatus');
   if(status && a.mode === 'countdown'){
-    status.textContent = '⏳ ' + Math.max(1, Math.ceil(left / 60000)) + '분 뒤(' + alarmTargetText(a.targetTs) + ')에 알려드릴게요';
+    status.textContent = '⏳ Chimes in ' + Math.max(1, Math.ceil(left / 60000)) + ' min (' + alarmTargetText(a.targetTs) + ')';
   }
 }
 
@@ -4067,36 +4121,36 @@ function openSettings(){
   var url = state.settings.firebaseUrl || '';
   var msgCount = state.chat.messages.length;
   var logCount = state.allowance.Stella.log.length + state.allowance.Luna.log.length;
-  var where = sync.mode === 'live' ? '가족 모두 + 이 기기' : '이 기기 브라우저';
+  var where = sync.mode === 'live' ? 'The whole family + this device' : 'This device\'s browser';
   var html =
-    '<h2>⚙️ 설정</h2>' +
+    '<h2>⚙️ Settings</h2>' +
     '<div class="setting-block">' +
-      '<h3>실시간 동기화</h3>' +
-      '<p>같은 주소를 쓰는 폰과 태블릿이 용돈·할 일·달력·도장·채팅을 함께 봐요. 인터넷이 잠깐 끊겨도 이 기기에 저장했다가 다시 연결되면 맞춰요.</p>' +
-      '<div class="kv"><span>지금 상태</span><b id="syncStateLine">' + esc(syncModeLabel(sync.mode)) + '</b></div>' +
+      '<h3>Live Sync</h3>' +
+      '<p>Phones and tablets on the same address share the allowance, to-dos, calendar, photos and chat. If the internet drops for a moment, changes are saved on this device and catch up when it reconnects.</p>' +
+      '<div class="kv"><span>Status</span><b id="syncStateLine">' + esc(syncModeLabel(sync.mode)) + '</b></div>' +
       '<p class="small muted" id="syncDetail" style="margin:6px 0 9px">' + esc(syncModeDetail(sync.mode)) + '</p>' +
       '<label class="sr-only" for="firebaseUrl">Firebase Realtime Database URL</label>' +
-      '<input class="input" id="firebaseUrl" type="url" inputmode="url" placeholder="https://내-프로젝트.firebaseio.com" autocomplete="off">' +
+      '<input class="input" id="firebaseUrl" type="url" inputmode="url" placeholder="https://my-project.firebaseio.com" autocomplete="off">' +
       '<div class="modal-actions" style="margin-top:9px">' +
-        '<button class="btn ghost sm" type="button" id="fbDefault">기본 주소</button>' +
-        '<button class="btn ghost sm" type="button" id="fbClear">이 기기만</button>' +
-        '<button class="btn primary sm" type="button" id="fbSave">연결</button>' +
+        '<button class="btn ghost sm" type="button" id="fbDefault">Default address</button>' +
+        '<button class="btn ghost sm" type="button" id="fbClear">This device only</button>' +
+        '<button class="btn primary sm" type="button" id="fbSave">Connect</button>' +
       '</div>' +
-      '<p class="small muted" style="margin-top:9px">🔒 \'이 기기 잠금\'과 내 프로필은 이 기기에만 저장돼요. 다른 기기와 섞이지 않아요.</p>' +
+      '<p class="small muted" style="margin-top:9px">🔒 \'Lock this device\' and your own profile are saved on this device only. They never mix with other devices.</p>' +
     '</div>' +
     '<div class="setting-block">' +
-      '<h3>내 기록</h3>' +
-      '<div class="kv"><span>저장 위치</span><b>' + esc(where) + '</b></div>' +
-      '<div class="kv"><span>용돈 기록</span><b>' + logCount + '개</b></div>' +
-      '<div class="kv"><span>채팅 메시지</span><b>' + msgCount + '개</b></div>' +
-      '<div class="kv"><span>쓰는 공간</span><b>약 ' + bytesLabel(storageBytes()) + '</b></div>' +
+      '<h3>My Records</h3>' +
+      '<div class="kv"><span>Saved in</span><b>' + esc(where) + '</b></div>' +
+      '<div class="kv"><span>Allowance records</span><b>' + logCount + '</b></div>' +
+      '<div class="kv"><span>Chat messages</span><b>' + msgCount + '</b></div>' +
+      '<div class="kv"><span>Space used</span><b>about ' + bytesLabel(storageBytes()) + '</b></div>' +
       '<div class="modal-actions" style="margin-top:10px">' +
-        '<button class="btn ghost sm" type="button" id="exportBtn">📤 내보내기</button>' +
-        (isMom() ? '<button class="btn pink sm" type="button" id="resetBtn">처음으로</button>' : '') +
+        '<button class="btn ghost sm" type="button" id="exportBtn">📤 Export</button>' +
+        (isMom() ? '<button class="btn pink sm" type="button" id="resetBtn">Start over</button>' : '') +
       '</div>' +
     '</div>' +
-    '<p class="small muted" style="text-align:center;margin-top:4px">우리 가족 대시보드 · 실시간 동기화 1.1 버전</p>' +
-    '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>닫기</button></div>';
+    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.10.6</p>' +
+    '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>Close</button></div>';
 
   openModal(html, {
     onReady: function(back, close){
@@ -4104,14 +4158,14 @@ function openSettings(){
 
       $('#fbSave', back).addEventListener('click', function(){
         var v = $('#firebaseUrl', back).value.trim().replace(/\/+$/, '');
-        if(!v){ toast('주소를 적어주세요. 이 기기에만 저장하려면 \'이 기기만\'을 눌러요'); return; }
-        if(!/^https?:\/\/.+/.test(v)){ toast('주소는 https:// 로 시작해야 해요'); return; }
+        if(!v){ toast('Please type the address. To keep everything on this device, tap \'This device only\''); return; }
+        if(!/^https?:\/\/.+/.test(v)){ toast('The address must start with https://'); return; }
         state.settings.firebaseUrl = v;
         state.settings.localOnly = false;
         save(true);
         close();
         startSync();
-        toast('실시간 동기화를 시작할게요');
+        toast('Starting live sync');
       });
       $('#fbDefault', back).addEventListener('click', function(){
         state.settings.firebaseUrl = DEFAULT_FIREBASE_URL;
@@ -4119,7 +4173,7 @@ function openSettings(){
         save(true);
         close();
         startSync();
-        toast('우리 가족 주소로 연결할게요');
+        toast('Connecting to our family address');
       });
       $('#fbClear', back).addEventListener('click', function(){
         state.settings.localOnly = true;
@@ -4127,24 +4181,24 @@ function openSettings(){
         close();
         stopSync();
         setSyncMode('local');
-        toast('이제 이 기기에만 저장해요');
+        toast('Now saving on this device only');
       });
       $('#exportBtn', back).addEventListener('click', function(){
         try{
           var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
           var a = document.createElement('a');
           a.href = URL.createObjectURL(blob);
-          a.download = '우리-가족-대시보드-백업.json';
+          a.download = 'family-dashboard-backup.json';
           document.body.appendChild(a);
           a.click();
           setTimeout(function(){ URL.revokeObjectURL(a.href); if(a.parentNode) a.parentNode.removeChild(a); }, 1200);
-          toast('백업 파일을 내려받았어요');
-        }catch(e){ toast('내보내기를 할 수 없어요'); }
+          toast('Backup file downloaded');
+        }catch(e){ toast('Could not export'); }
       });
       var resetAllBtn = $('#resetBtn', back);
       if(resetAllBtn) resetAllBtn.addEventListener('click', function(){
         close();
-        confirmModal('처음 데이터로 돌아갈까요?', '용돈 기록, 도장, 채팅이 모두 지워지고 처음 예시 데이터로 돌아가요. 같이 쓰는 기기에서도 똑같이 바뀌어요.', '처음으로', function(){
+        confirmModal('Start over with fresh data?', 'Allowance records, stamps and chat will all be cleared and the starter data comes back. Shared devices change the same way.', 'Start over', function(){
           try{ localStorage.removeItem(STORE_KEY); }catch(e){}
           var keepSettings = state.settings;
           var keepUi = state.ui;
@@ -4158,7 +4212,7 @@ function openSettings(){
           save();
           renderAll();
           showTab(state.ui.tab || 'calendar', true);
-          toast('처음 데이터로 돌아갔어요');
+          toast('Back to the starter data');
         }, true);
       });
     }
@@ -4248,19 +4302,19 @@ function familyEventsOn(key){
 
 /* 아이콘·표기는 일정마다 정한 값이 먼저예요 (🎂 생일·생신 / 🕊️ 기일 / 🕯️ 제사) */
 function eventMark(ev){ return ev.mark || (ev.kind === 'memorial' ? '🕊️' : '🎂'); }
-function eventLabel(ev){ return ev.label || (ev.kind === 'memorial' ? '기일' : '생일'); }
-function eventTitle(ev){ return ev.name + ' ' + eventLabel(ev); }
+function eventLabel(ev){ return ev.label || (ev.kind === 'memorial' ? 'Memorial' : 'Birthday'); }
+function eventTitle(ev){ return personLabel(ev.name) + '\'s ' + eventLabel(ev).toLowerCase(); }
 function eventWhen(ev){
   var md = ev.lunar || ev.solar;
-  if(ev.lunar) return '음력 ' + md[0] + '월 ' + md[1] + '일 · 해마다 양력 날짜가 달라져요';
-  return '매년 ' + md[0] + '월 ' + md[1] + '일';
+  if(ev.lunar) return 'Lunar ' + md[0] + '/' + md[1] + ' · the date changes every year';
+  return 'Every year on ' + md[0] + '/' + md[1];
 }
 
 /* 메모 비교용 글자 — 이모지·공백·기호를 걷어내요 ('엄마 생일🥳' → '엄마생일') */
 function memoCompareText(t){
   return String(t || '')
     .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{2BFF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}]/gu, '')
-    .replace(/[\s~!.,·…\-_()（）]/g, '')
+    .replace(/[\s~!.,·…\-_()（）'’]/g, '')
     .toLowerCase();
 }
 
@@ -4274,7 +4328,8 @@ function isDuplicateBirthdayMemo(memo, key){
     return b.aliases.some(function(a){
       var al = memoCompareText(a);
       if(!al) return false;
-      return text === al + '생일' || text === al + 'birthday' || text === al + '생일이에요';
+      return text === al + '생일' || text === al + 'birthday' || text === al + '생일이에요' ||
+        text === al + 'sbirthday' || text === al + 'birthdaytoday';
     });
   });
 }
@@ -4327,7 +4382,7 @@ function doneEmoji(kid){ return kid === 'Luna' ? '🌙' : '⭐'; }
 function renderCalendar(){
   var title = $('#calTitle');
   if(!title) return;
-  title.textContent = calView.y + '년 ' + (calView.m + 1) + '월';
+  title.textContent = monthName(calView.m) + ' ' + calView.y;
 
   var todayK = todayKey();
   var first = new Date(calView.y, calView.m, 1);
@@ -4370,13 +4425,13 @@ function renderCalendar(){
     if(money.length && shown < maxDots){ dots += '<i class="cc-dot m"></i>'; shown++; }
     if(memos.length && shown < maxDots){ dots += '<i class="cc-dot e"></i>'; shown++; }
 
-    var label = (calView.m + 1) + '월 ' + i + '일 (' + WEEKDAYS[wd] + ') ';
+    var label = monthName(calView.m) + ' ' + i + ' (' + WEEKDAYS[wd] + ') ';
     var extra = [];
     fevents.forEach(function(ev){ extra.push(eventTitle(ev)); });
-    if(lessons.length) extra.push('수업 ' + lessons.length + '개');
-    if(money.length) extra.push('용돈 기록 ' + money.length + '개');
-    if(memos.length) extra.push('메모 ' + memos.length + '개');
-    dailyDone.forEach(function(k){ extra.push(k + ' 할 일 완료'); });
+    if(lessons.length) extra.push(lessons.length + (lessons.length === 1 ? ' class' : ' classes'));
+    if(money.length) extra.push(money.length + ' allowance');
+    if(memos.length) extra.push(memos.length + (memos.length === 1 ? ' memo' : ' memos'));
+    dailyDone.forEach(function(k){ extra.push(personLabel(k) + ' all tasks done'); });
 
     cells.push('<button class="' + cls + '" type="button" role="gridcell" data-date="' + key + '" aria-label="' + esc(label + (extra.length ? '· ' + extra.join(', ') : '')) + '" aria-pressed="' + (key === calView.sel) + '">' +
       '<span class="cc-day">' + i + '</span>' +
@@ -4402,13 +4457,13 @@ function renderCalendarDetail(){
   var wd = calWeekdayOf(key);
 
   var t = $('#calSelTitle');
-  if(t) t.textContent = Number(p[1]) + '월 ' + Number(p[2]) + '일 (' + WEEKDAYS[wd] + ')';
+  if(t) t.textContent = monthName(Number(p[1]) - 1) + ' ' + Number(p[2]) + ' (' + WEEKDAYS[wd] + ')';
   var tag = $('#calSelTag');
   if(tag){
     var rel = '';
-    if(key === todayKey()) rel = '오늘';
-    else if(key === dateKey(daysAgo(1))) rel = '어제';
-    else if(key === dateKey(daysAgo(-1))) rel = '내일';
+    if(key === todayKey()) rel = 'Today';
+    else if(key === dateKey(daysAgo(1))) rel = 'Yesterday';
+    else if(key === dateKey(daysAgo(-1))) rel = 'Tomorrow';
     tag.hidden = !rel;
     tag.textContent = rel;
   }
@@ -4422,7 +4477,7 @@ function renderCalendarDetail(){
         '<span class="cb-cake" aria-hidden="true">' + eventMark(ev) + '</span>' +
         '<span class="cb-main"><span class="cb-name">' + esc(eventTitle(ev)) + '</span>' +
         '<span class="cb-when">' + esc(eventWhen(ev)) + '</span></span>' +
-        (key === todayKey() ? '<span class="cb-now">' + (ev.kind === 'memorial' ? '오늘' : '오늘 🎉') + '</span>' : '') +
+        (key === todayKey() ? '<span class="cb-now">' + (ev.kind === 'memorial' ? 'Today' : 'Today 🎉') + '</span>' : '') +
         '</div>';
     }).join('');
   }
@@ -4434,12 +4489,12 @@ function renderCalendarDetail(){
       ? lessons.map(function(l){
           var done = l.completedDate === key;
           return '<div class="cal-class-row">' + mascot(l.kid) +
-            '<span class="cc-main"><b>' + esc(l.kid) + '</b> · ' + esc(l.subject) +
+            '<span class="cc-main"><b>' + esc(personLabel(l.kid)) + '</b> · ' + esc(subjectLabel(l.subject)) +
             '<span class="cc-time">' + esc(timeLabel(l.time)) + '</span></span>' +
-            (done ? '<span class="cc-done">완료 ✓</span>' : '') +
+            (done ? '<span class="cc-done">Done ✓</span>' : '') +
             '</div>';
         }).join('')
-      : '<div class="cal-empty">이날은 수업이 없어요 🐣</div>';
+      : '<div class="cal-empty">No classes on this day 🐣</div>';
   }
 
   var doneBox = $('#calDone');
@@ -4450,8 +4505,8 @@ function renderCalendarDetail(){
     doneBox.innerHTML = doneKids.map(function(k){
       var claimed = !!(state.dailyTodo && isObject(state.dailyTodo[k]) && state.dailyTodo[k][key]);
       return '<div class="cal-done-row">' + mascot(k, 'cd-ava') +
-        '<span class="cd-main"><b>' + esc(k) + '</b> ' + (key === todayKey() ? '오늘 ' : '') + '할 일 모두 완료' +
-        '<span class="cd-note">' + esc(doneEmoji(k)) + ' · ' + esc(claimed ? '용돈 ' + usd(1) + '도 받았어요' : '할 일을 모두 끝냈어요') + '</span></span>' +
+        '<span class="cd-main"><b>' + esc(personLabel(k)) + '</b> · ' + (key === todayKey() ? 'today · ' : '') + 'All tasks done' +
+        '<span class="cd-note">' + esc(doneEmoji(k)) + ' · ' + esc(claimed ? 'collected the ' + usd(1) + ' reward too' : 'finished every task') + '</span></span>' +
         '<span class="cd-mark" aria-hidden="true">✓</span>' +
         '</div>';
     }).join('');
@@ -4467,11 +4522,11 @@ function renderCalendarDetail(){
           return '<div class="cal-money-row">' +
             '<span class="cm-ico" aria-hidden="true">' + ledgerIcon(m.e.type) + '</span>' +
             '<span class="cm-main"><span class="cm-name">' + esc(ledgerName(m.e)) + '</span>' +
-            '<span class="cm-who">' + esc(m.kid) + ' · ' + esc(m.e.time || '') + '</span></span>' +
+            '<span class="cm-who">' + esc(personLabel(m.kid)) + ' · ' + esc(logTimeLabel(m.e.time) || '') + '</span></span>' +
             '<span class="cm-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? usdSigned(amt) : usd(-amt)) + '</span>' +
             '</div>';
         }).join('')
-      : '<div class="cal-empty">이날은 용돈 기록이 없어요</div>';
+      : '<div class="cal-empty">No allowance records on this day</div>';
   }
 
   var memoBox = $('#calMemos');
@@ -4487,13 +4542,13 @@ function renderCalendarDetail(){
           }
           return '<div class="cal-memo">' +
             '<span class="cm-text">' + esc(m.text) +
-            '<span class="cm-meta">' + esc(m.who || '가족') + (when ? ' · ' + esc(when) : '') + '</span></span>' +
-            (isMom() ? '<button class="del" type="button" data-memo-del="' + esc(m.id) + '" aria-label="이 메모 지우기">×</button>' : '') +
+            '<span class="cm-meta">' + esc(personLabel(m.who || '가족')) + (when ? ' · ' + esc(when) : '') + '</span></span>' +
+            (isMom() ? '<button class="del" type="button" data-memo-del="' + esc(m.id) + '" aria-label="Delete this memo">×</button>' : '') +
             '</div>';
         }).join('')
-      : (mergedBday > 0 ? '' : '<div class="cal-empty">아직 메모가 없어요. 이 날에 가족 메모를 남겨보세요 ✏️</div>');
+      : (mergedBday > 0 ? '' : '<div class="cal-empty">No memos yet. Leave a family memo for this day ✏️</div>');
     /* 생일이 매년 따로 뜨니, 예전에 적어 둔 한 줄 생일 메모는 위 생일로 합쳐 보여줘요 */
-    if(mergedBday > 0) memosHtml += '<div class="cal-bday-merged">🎂 이날 생일 메모는 위 생일로 합쳐 보여요</div>';
+    if(mergedBday > 0) memosHtml += '<div class="cal-bday-merged">🎂 The birthday note for this day is shown in the birthday above</div>';
     memoBox.innerHTML = memosHtml;
   }
 }
@@ -4530,7 +4585,7 @@ function addCalMemo(){
   var input = $('#calMemoInput');
   if(!input) return;
   var text = String(input.value || '').trim().slice(0, 60);
-  if(!text){ toast('메모 내용을 적어주세요'); input.focus(); return; }
+  if(!text){ toast('Please write the memo'); input.focus(); return; }
   var key = calView.sel;
   if(!key) return;
   if(!isObject(state.calendarEvents)) state.calendarEvents = {};
@@ -4544,7 +4599,7 @@ function addCalMemo(){
   input.value = '';
   save();
   renderCalendar();
-  toast('메모를 남겼어요 📝');
+  toast('Memo saved 📝');
 }
 
 function deleteCalMemo(id){
@@ -4557,7 +4612,7 @@ function deleteCalMemo(id){
   else if(state.calendarEvents) delete state.calendarEvents[key];
   save();
   renderCalendar();
-  toast('메모를 지웠어요');
+  toast('Memo deleted');
 }
 
 /* =========================================================
@@ -4570,6 +4625,7 @@ var PHOTO_MAX_EDGE = 1080;          /* 긴 변 최대 1080px */
 var PHOTO_QUALITY = 0.72;           /* JPEG 품질 — 1장 100KB 안팎 */
 var PHOTO_MAX_INPUT = 25 * 1024 * 1024;
 var PHOTO_WHO = ['Stella', 'Luna', '가족', '엄마', '아빠'];
+var photoRefreshTimer = null;
 var photos = {
   month: '',            /* 지금 보고 있는 달 'YYYY-MM' */
   cache: {},            /* 'YYYY-MM' → [사진…] (불러온 달만) */
@@ -4586,7 +4642,7 @@ function photosBaseUrl(){
 function photoMonth(){ return photos.month || todayKey().slice(0, 7); }
 function monthLabel(key){
   var p = String(key || '').split('-');
-  return Number(p[0]) + '년 ' + Number(p[1]) + '월';
+  return monthName(Number(p[1]) - 1) + ' ' + Number(p[0]);
 }
 function monthShift(key, delta){
   var p = String(key).split('-');
@@ -4621,16 +4677,20 @@ function normalizePhoto(p, key){
 function photosLoad(month, opts){
   var m = month || photoMonth();
   var force = !!(opts && opts.force);
+  /* quiet: 조용히 새로 불러오기 — 이미 보이는 사진은 그대로 두고 뒤에서만 맞춰요 */
+  var quiet = !!(opts && opts.quiet) && !!photos.cache[m];
   if(!force && (photos.cache[m] || photos.loading[m])) return;
-  photos.loading[m] = true;
-  photos.error[m] = '';
-  renderPhotos();
+  if(!quiet){
+    photos.loading[m] = true;
+    photos.error[m] = '';
+    renderPhotos();
+  }
   var finish = function(err, list){
     photos.loading[m] = false;
-    if(err) photos.error[m] = '불러오지 못했어요';
+    if(err) photos.error[m] = 'Could not load';
     else photos.cache[m] = list;
     if(photoMonth() === m) renderPhotos();
-    if(err) toast('사진첩을 불러오지 못했어요. 잠시 뒤 다시 해볼게요');
+    if(err && !quiet) toast('Could not load the photos. I will try again in a moment');
   };
   if(typeof fetch !== 'function'){ finish(new Error('no-fetch')); return; }
   fetch(photosBaseUrl() + '/' + m + '.json', { cache: 'no-store' }).then(function(res){
@@ -4658,41 +4718,58 @@ function renderPhotos(){
   var sub = $('#photoMonthSub');
   if(sub){
     sub.textContent = photos.loading[m]
-      ? '불러오는 중…'
+      ? 'Loading…'
       : (photos.error[m]
-        ? '불러오지 못했어요'
-        : (list ? (list.length ? list.length + '장' : '아직 사진이 없어요') : ''));
+        ? 'Could not load'
+        : (list ? (list.length ? list.length + (list.length === 1 ? ' photo' : ' photos') : 'No photos yet') : ''));
   }
   if(!grid) return;
   if(!list || !list.length){
     if(photos.loading[m]){
-      grid.innerHTML = '<div class="empty photo-empty"><span class="em">📷</span>사진을 불러오는 중이에요…</div>';
+      grid.innerHTML = '<div class="empty photo-empty"><span class="em">📷</span>Loading photos…</div>';
     } else if(photos.error[m]){
-      grid.innerHTML = '<div class="empty photo-empty"><span class="em">😢</span>사진을 불러오지 못했어요.<br>' +
-        '<button class="btn ghost sm photo-retry" type="button">다시 불러오기</button></div>';
+      grid.innerHTML = '<div class="empty photo-empty"><span class="em">😢</span>Could not load the photos.<br>' +
+        '<button class="btn ghost sm photo-retry" type="button">Try again</button></div>';
     } else {
-      grid.innerHTML = '<div class="empty photo-empty"><span class="em">📸</span>이 달에는 아직 사진이 없어요.<br>위에서 사진을 찍거나 앨범에서 골라보세요!</div>';
+      grid.innerHTML = '<div class="empty photo-empty"><span class="em">📸</span>No photos this month yet.<br>Take a photo or pick one from the album above!</div>';
     }
     return;
   }
   grid.innerHTML = list.map(function(p){
-    var alt = p.who + ' 사진 ' + photoDateLabel(p.date) + (p.comment ? ' · ' + p.comment : '');
-    return '<button class="photo-cell" type="button" data-photo="' + esc(p.id) + '" aria-label="' + esc(alt + ' 크게 보기') + '">' +
+    var alt = personLabel(p.who) + ' photo ' + photoDateLabel(p.date) + (p.comment ? ' · ' + p.comment : '');
+    return '<button class="photo-cell" type="button" data-photo="' + esc(p.id) + '" aria-label="' + esc(alt + ' — view larger') + '">' +
       '<span class="ph-img"><img src="' + p.data + '" alt="' + esc(alt) + '" loading="lazy"></span>' +
       '<span class="ph-meta">' +
         '<span class="ph-date">' + esc(photoDateLabel(p.date)) + '</span>' +
-        '<span class="ph-who" data-who="' + esc(p.who) + '">' + esc(p.who) + '</span>' +
+        '<span class="ph-who" data-who="' + esc(p.who) + '">' + esc(personLabel(p.who)) + '</span>' +
       '</span>' +
       (p.comment ? '<span class="ph-comment">' + esc(p.comment) + '</span>' : '') +
     '</button>';
   }).join('');
 }
 
+/* 사진첩을 보고 있는 동안에는 가끔 새로 불러와요 —
+   다른 사람이 자기 기기에서 올린 사진도 새로고침 없이 다 같이 보여요. */
+function photosStartAutoRefresh(){
+  if(photoRefreshTimer) return;
+  photoRefreshTimer = setInterval(function(){
+    if(!state || !state.ui || state.ui.tab !== 'photos') return;
+    if(document.visibilityState === 'hidden') return;
+    photosLoad(photoMonth(), { force: true, quiet: true });
+  }, 20000);
+}
+/* 앱으로 돌아오면 사진첩을 한 번 새로 불러와요 */
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible' && state && state.ui && state.ui.tab === 'photos'){
+    photosLoad(photoMonth(), { force: true, quiet: true });
+  }
+});
+
 function photosMove(delta){
   var cur = photoMonth();
   var next = monthShift(cur, delta);
   if(delta > 0 && cur >= todayKey().slice(0, 7)){
-    toast('이번 달이 마지막이에요');
+    toast('This is the latest month');
     return;
   }
   photos.month = next;
@@ -4757,11 +4834,11 @@ function startPhotoPick(input){
   var file = input && input.files && input.files[0];
   try{ input.value = ''; }catch(e){}
   if(!file) return;
-  if(!/^image\//i.test(String(file.type || ''))){ toast('사진 파일(이미지)만 올릴 수 있어요'); return; }
-  if(file.size > PHOTO_MAX_INPUT){ toast('사진이 너무 커요. 25MB 이하 사진으로 해주세요'); return; }
-  toast('사진을 작게 줄이는 중이에요…');
+  if(!/^image\//i.test(String(file.type || ''))){ toast('You can only add image files'); return; }
+  if(file.size > PHOTO_MAX_INPUT){ toast('That photo is too big. Please use one under 25MB'); return; }
+  toast('Shrinking the photo…');
   compressPhoto(file, function(err, dataUrl){
-    if(err || !dataUrl){ toast('사진을 읽지 못했어요. 다른 사진으로 해보세요'); return; }
+    if(err || !dataUrl){ toast('Could not read that photo. Try another one'); return; }
     openPhotoForm(dataUrl);
   });
 }
@@ -4769,23 +4846,23 @@ function startPhotoPick(input){
 function openPhotoForm(dataUrl){
   var t = todayKey();
   var whoOpts = PHOTO_WHO.map(function(w){
-    return '<option value="' + esc(w) + '"' + (w === '가족' ? ' selected' : '') + '>' + esc(w) + '</option>';
+    return '<option value="' + esc(w) + '"' + (w === '가족' ? ' selected' : '') + '>' + esc(personLabel(w)) + '</option>';
   }).join('');
   openModal(
-    '<h2>📸 사진 올리기</h2>' +
-    '<p class="modal-sub">사진은 긴 변 ' + PHOTO_MAX_EDGE + 'px로 줄여서 그 달 사진첩에만 따로 올라가요. (할 일·채팅 데이터는 그대로예요)</p>' +
-    '<div class="ph-preview"><img src="' + dataUrl + '" alt="올릴 사진 미리보기"></div>' +
+    '<h2>📸 Add a Photo</h2>' +
+    '<p class="modal-sub">Photos are shrunk to ' + PHOTO_MAX_EDGE + 'px on the long side and saved for that month. Everyone in the family can see them. (To-dos and chat are not touched.)</p>' +
+    '<div class="ph-preview"><img src="' + dataUrl + '" alt="Photo preview"></div>' +
     '<div class="ph-form">' +
-      '<div class="field"><label for="photoDate">날짜</label>' +
+      '<div class="field"><label for="photoDate">Date</label>' +
         '<input class="input" id="photoDate" type="date" value="' + t + '" max="' + t + '"></div>' +
-      '<div class="field"><label for="photoWho">대상</label>' +
+      '<div class="field"><label for="photoWho">Who is it for?</label>' +
         '<select class="input" id="photoWho">' + whoOpts + '</select></div>' +
-      '<div class="field"><label for="photoComment">한 줄 코멘트 (선택)</label>' +
-        '<input class="input" id="photoComment" type="text" maxlength="60" placeholder="예: 첫눈 온 날" autocomplete="off"></div>' +
+      '<div class="field"><label for="photoComment">One-line note (optional)</label>' +
+        '<input class="input" id="photoComment" type="text" maxlength="60" placeholder="e.g. the first snow" autocomplete="off"></div>' +
     '</div>' +
     '<div class="modal-actions">' +
-      '<button class="btn ghost" type="button" data-modal-close>취소</button>' +
-      '<button class="btn primary" type="button" data-photo-save>올리기</button>' +
+      '<button class="btn ghost" type="button" data-modal-close>Cancel</button>' +
+      '<button class="btn primary" type="button" data-photo-save>Add photo</button>' +
     '</div>',
     { onReady: function(back, close){
         var saveBtn = $('[data-photo-save]', back);
@@ -4795,22 +4872,22 @@ function openPhotoForm(dataUrl){
           var whoEl = $('#photoWho', back);
           var cEl = $('#photoComment', back);
           var dateStr = String((dateEl && dateEl.value) || '').trim();
-          if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){ toast('사진 날짜를 골라주세요'); return; }
-          if(dateStr > todayKey()){ toast('아직 오지 않은 날짜는 고를 수 없어요'); return; }
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){ toast('Please pick the photo date'); return; }
+          if(dateStr > todayKey()){ toast('You cannot pick a date that has not come yet'); return; }
           var who = (whoEl && PHOTO_WHO.indexOf(whoEl.value) >= 0) ? whoEl.value : '가족';
           var comment = String((cEl && cEl.value) || '').trim().slice(0, 60);
           if(saveBtn.disabled) return;
           saveBtn.disabled = true;
-          saveBtn.textContent = '올리는 중…';
+          saveBtn.textContent = 'Adding…';
           uploadPhoto({ date: dateStr, who: who, comment: comment, data: dataUrl }, function(err){
             if(err){
               saveBtn.disabled = false;
-              saveBtn.textContent = '올리기';
-              toast('사진을 올리지 못했어요. 인터넷 연결을 확인해 주세요');
+              saveBtn.textContent = 'Add photo';
+              toast('Could not add the photo. Please check the internet connection');
               return;
             }
             close();
-            toast('사진을 사진첩에 올렸어요 📸');
+            toast('Photo added — the whole family can see it 📸');
           });
         });
       } }
@@ -4877,17 +4954,17 @@ function openPhotoView(id){
   var canDel = canDeletePhoto(p);
   var comment = p.comment ? esc(p.comment) : '';
   wrap.innerHTML =
-    '<div class="pl-inner" role="dialog" aria-modal="true" aria-label="사진 크게 보기">' +
+    '<div class="pl-inner" role="dialog" aria-modal="true" aria-label="View photo larger">' +
       '<div class="pl-bar">' +
-        '<span class="pl-title">' + esc(photoDateLabel(p.date)) + ' · ' + esc(p.who) + '</span>' +
-        '<button class="pl-btn" type="button" data-pl-close aria-label="닫기">✕</button>' +
+        '<span class="pl-title">' + esc(photoDateLabel(p.date)) + ' · ' + esc(personLabel(p.who)) + '</span>' +
+        '<button class="pl-btn" type="button" data-pl-close aria-label="Close">✕</button>' +
       '</div>' +
-      '<div class="pl-photo"><img src="' + p.data + '" alt="' + esc(p.who + ' 사진 ' + photoDateLabel(p.date)) + '"></div>' +
+      '<div class="pl-photo"><img src="' + p.data + '" alt="' + esc(personLabel(p.who) + ' photo ' + photoDateLabel(p.date)) + '"></div>' +
       '<div class="pl-foot" data-pl-foot>' +
         (comment ? '<p class="pl-comment">' + comment + '</p>' : '') +
         '<div class="pl-row">' +
-          '<span class="pl-meta">' + esc(p.who) + ' · 올린 사람 ' + esc(p.by || '가족') + ' · ' + esc(photoDateLabel(p.date)) + '</span>' +
-          (canDel ? '<button class="pl-del" type="button" data-pl-del>🗑️ 지우기</button>' : '') +
+          '<span class="pl-meta">' + esc(personLabel(p.who)) + ' · added by ' + esc(personLabel(p.by || '가족')) + ' · ' + esc(photoDateLabel(p.date)) + '</span>' +
+          (canDel ? '<button class="pl-del" type="button" data-pl-del>🗑️ Delete</button>' : '') +
         '</div>' +
       '</div>' +
     '</div>';
@@ -4906,10 +4983,10 @@ function askDeletePhoto(p, wrap){
   if(!foot) return;
   foot.innerHTML =
     '<div class="pl-confirm">' +
-      '<p>이 사진을 지울까요?<br><span class="small muted">지우면 가족 모두의 사진첩에서 사라져요.</span></p>' +
+      '<p>Delete this photo?<br><span class="small muted">It disappears from everyone\'s photos too.</span></p>' +
       '<div class="pl-confirm-actions">' +
-        '<button class="btn ghost sm" type="button" data-pl-cancel>취소</button>' +
-        '<button class="btn pink sm" type="button" data-pl-ok>지우기</button>' +
+        '<button class="btn ghost sm" type="button" data-pl-cancel>Cancel</button>' +
+        '<button class="btn pink sm" type="button" data-pl-ok>Delete</button>' +
       '</div>' +
     '</div>';
   var cancel = $('[data-pl-cancel]', foot);
@@ -4919,21 +4996,21 @@ function askDeletePhoto(p, wrap){
   ok.addEventListener('click', function(){
     if(ok.disabled) return;
     ok.disabled = true;
-    ok.textContent = '지우는 중…';
+    ok.textContent = 'Deleting…';
     deletePhoto(p, function(err){
       if(err){
         ok.disabled = false;
-        ok.textContent = '지우기';
-        toast('사진을 지우지 못했어요. 잠시 뒤 다시 해주세요');
+        ok.textContent = 'Delete';
+        toast('Could not delete the photo. Please try again in a moment');
         return;
       }
       closePhotoView();
-      toast('사진을 지웠어요');
+      toast('Photo deleted');
     });
   });
 }
 function deletePhoto(p, cb){
-  if(!canDeletePhoto(p)){ toast('지우는 건 엄마나 올린 사람만 할 수 있어요 🔒'); cb(new Error('denied')); return; }
+  if(!canDeletePhoto(p)){ toast('Only Mom or the person who added it can delete it 🔒'); cb(new Error('denied')); return; }
   var month = String(p.date || '').slice(0, 7) || photoMonth();
   if(typeof fetch !== 'function'){ cb(new Error('no-fetch')); return; }
   fetch(photosBaseUrl() + '/' + month + '/' + encodeURIComponent(p.id) + '.json', { method: 'DELETE' })
@@ -4963,9 +5040,10 @@ function showTab(name, silent){
   });
   if(name === 'calendar') renderCalendar();
   if(name === 'photos'){
-    /* 사진첩 탭을 열 때만 그 달 사진을 불러와요 */
+    /* 사진첩 탭을 열 때마다 다시 불러와요 — 다른 기기에서 올린 사진도 바로 보이게 */
     renderPhotos();
-    photosLoad(photoMonth());
+    photosLoad(photoMonth(), { force: true });
+    photosStartAutoRefresh();
   }
   if(!silent){ window.scrollTo(0, 0); }
   if(name === 'chat') scrollChat();
@@ -5026,7 +5104,7 @@ function bindEvents(){
     var b = e.target.closest ? e.target.closest('[data-reward]') : null;
     if(!b) return;
     setReward(num(b.getAttribute('data-reward'), 1));
-    toast('공부 1회에 ' + usd(state.allowance[currentKid()].reward) + ' 적립해요');
+    toast('Earns ' + usd(state.allowance[currentKid()].reward) + ' per task day');
   });
   $('#studyBtn').addEventListener('click', doStudy);
   $('#quickDeposit').addEventListener('click', function(){ doQuick('deposit'); });
@@ -5034,13 +5112,13 @@ function bindEvents(){
   $('#allowLog').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-del]') : null;
     if(!b) return;
-    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
+    if(!isMom()){ toast('Only Mom can delete 🔒'); return; }
     var id = b.getAttribute('data-del');
     var log = state.allowance[currentKid()].log;
     state.allowance[currentKid()].log = log.filter(function(x){ return x.id !== id; });
     save();
     renderAllowance();
-    toast('기록을 지웠어요');
+    toast('Record deleted');
   });
 
   /* todo */
@@ -5053,14 +5131,14 @@ function bindEvents(){
   });
   $('#todoList').addEventListener('click', function(e){
     var del = e.target.closest ? e.target.closest('[data-tdel]') : null;
-    if(del && blockInPreview('할 일 지우기')) return;
-    if(del && !isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
+    if(del && blockInPreview('deleting tasks')) return;
+    if(del && !isMom()){ toast('Only Mom can delete 🔒'); return; }
     if(del){
       var did = del.getAttribute('data-tdel');
       state.todos = state.todos.filter(function(t){ return t.id !== did; });
       save();
       renderTodos();
-      toast('할 일을 지웠어요');
+      toast('Task deleted');
       return;
     }
     var prep = e.target.closest ? e.target.closest('[data-prep-toggle]') : null;
@@ -5083,14 +5161,14 @@ function bindEvents(){
     var day = Number($('#lessonDay').value);
     var time = $('#lessonTime').value || '20:00';
     var subject = $('#lessonSubject').value.trim();
-    if(!subject){ toast('무슨 수업인지 적어주세요'); $('#lessonSubject').focus(); return; }
+    if(!subject){ toast('Please type the subject'); $('#lessonSubject').focus(); return; }
     if(KIDS.indexOf(kid) < 0) kid = KIDS[0];
     if(!(day >= 0 && day <= 6)) day = new Date().getDay();
     state.schedule.lessons.push({ id: uid('ls'), kid: kid, day: day, time: time, subject: subject.slice(0, 12) });
     save();
     $('#lessonSubject').value = '';
     renderSchedule();
-    toast(kid + ' ' + WEEKDAYS[day] + '요일 ' + timeLabel(time) + ' ' + subject + ' 추가했어요 🗓️');
+    toast(personLabel(kid) + ' · ' + WEEKDAYS[day] + ' ' + timeLabel(time) + ' ' + subjectLabel(subject) + ' added 🗓️');
   });
   $('#schedToday').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-lesson-done]') : null;
@@ -5100,16 +5178,16 @@ function bindEvents(){
   $('#weekGrid').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-lesson]') : null;
     if(!b) return;
-    if(!isMom()){ toast('지우는 건 엄마만 할 수 있어요 🔒'); return; }
+    if(!isMom()){ toast('Only Mom can delete 🔒'); return; }
     var id = b.getAttribute('data-lesson');
     var les = null;
     state.schedule.lessons.forEach(function(l){ if(l.id === id) les = l; });
     if(!les) return;
-    confirmModal('수업을 지울까요?', les.kid + ' ' + WEEKDAYS[les.day] + '요일 ' + timeLabel(les.time) + ' ' + les.subject + ' 수업이에요.', '지우기', function(){
+    confirmModal('Delete this class?', personLabel(les.kid) + ' · ' + WEEKDAYS[les.day] + ' ' + timeLabel(les.time) + ' ' + subjectLabel(les.subject) + '.', 'Delete', function(){
       state.schedule.lessons = state.schedule.lessons.filter(function(l){ return l.id !== id; });
       save();
       renderSchedule();
-      toast('수업을 지웠어요');
+      toast('Class deleted');
     }, true);
   });
 
@@ -5117,13 +5195,13 @@ function bindEvents(){
   $('#chatWho').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-who]') : null;
     if(!b) return;
-    if(state.chat.locked){ toast('이 기기가 잠겨 있어요. 잠금을 끄면 바꿀 수 있어요 🔒'); return; }
+    if(state.chat.locked){ toast('This device is locked. Turn the lock off to change it 🔒'); return; }
     state.chat.me = b.getAttribute('data-who');
     save(true);
     renderChatWho();
     renderChat();
     renderAll();  /* 프로필이 바뀌면 지우기 버튼도 바로 보이거나 숨겨져요 */
-    toast('이제 ' + state.chat.me + '(으)로 말해요');
+    toast('Now using ' + personLabel(state.chat.me));
   });
   $('#chatLock').addEventListener('change', function(){
     state.chat.locked = this.checked;
@@ -5132,7 +5210,7 @@ function bindEvents(){
     renderLockBadge();
     renderTodos();   /* 잠그면 다른 아이 항목이 바로 잠겨 보여요 */
     renderAllowance();
-    toast(this.checked ? '이 기기를 ' + state.chat.me + '로 잠갔어요 🔒' : '잠금을 풀었어요');
+    toast(this.checked ? 'This device is locked as ' + personLabel(state.chat.me) + ' 🔒' : 'Device lock is off');
   });
   $('#refreshBtn').addEventListener('click', function(){
     save(true);                 /* 지금 화면 상태는 이 기기에 저장해두고 */
@@ -5171,9 +5249,9 @@ function bindEvents(){
   });
   $('#timerCustomApply').addEventListener('click', function(){
     var v = Math.floor(num($('#timerCustom').value, 0));
-    if(v <= 0){ toast('몇 분 공부할지 적어주세요'); return; }
+    if(v <= 0){ toast('Type how many minutes to study'); return; }
     setTimerSetup(v);
-    toast(v + '분 타이머를 준비했어요');
+    toast(v + '-minute timer ready');
   });
   $('#timerStartBtn').addEventListener('click', function(){
     if(timer.running) pauseTimer();
@@ -5181,7 +5259,7 @@ function bindEvents(){
   });
   $('#timerResetBtn').addEventListener('click', function(){
     resetTimer();
-    toast('타이머를 처음으로 돌렸어요');
+    toast('Timer reset');
   });
   /* alarm */
   $('#alarmToggle').addEventListener('change', function(){
@@ -5203,7 +5281,7 @@ function bindEvents(){
       state.alarm.targetTs = nextClockTs(state.alarm.time);
       save();
       renderAlarm();
-      toast(alarmTargetText(state.alarm.targetTs) + '에 알려드릴게요');
+      toast('I will chime at ' + alarmTargetText(state.alarm.targetTs));
     } else {
       save();
     }
@@ -5216,7 +5294,7 @@ function bindEvents(){
   $('#alarmTestBtn').addEventListener('click', function(){
     ensureAudio();
     playChime();
-    toast('이렇게 종이 울려요 🔔');
+    toast('This is how the chime sounds 🔔');
   });
   $('#alarmPreviewBtn').addEventListener('click', function(){
     stopSleepSound();
@@ -5272,7 +5350,7 @@ function init(){
   $('#headerMascot').innerHTML = chickSVG();
 
   $('#stickerGrid').innerHTML = STICKERS.map(function(s){
-    return '<button class="sticker-btn" type="button" data-sticker="' + s.id + '" aria-label="' + esc(s.label) + ' 스티커">' + stickerSVG(s.id) + '</button>';
+    return '<button class="sticker-btn" type="button" data-sticker="' + s.id + '" aria-label="' + esc(s.label) + ' sticker">' + stickerSVG(s.id) + '</button>';
   }).join('');
 
   bindEvents();
@@ -5287,7 +5365,7 @@ function init(){
 
   if(!voiceSupported()){
     var note = $('#chatNote');
-    if(note) note.textContent = '이 브라우저는 녹음을 지원하지 않아요 · 글자와 스티커는 잘 돼요';
+    if(note) note.textContent = 'This browser cannot record · messages and stickers work fine';
   }
 
   setInterval(tickAlarm, 1000);
