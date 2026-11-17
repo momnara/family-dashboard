@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Our Family">
 <meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, photos, family chat and study timer">
-<meta name="app-version" content="1.10.6">
-<!-- family-dashboard 1.10.6 · English UI everywhere + photos visible to the whole family -->
+<meta name="app-version" content="1.10.7">
+<!-- family-dashboard 1.10.7 · clean allowance history (no extra date labels) -->
 <title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2590,20 +2590,8 @@ function renderAllowLog(kid){
 
   var html = '';
   groups.forEach(function(g){
-    var inSum = 0, outSum = 0;
-    g.items.forEach(function(e){
-      var amt = num(e.amount, 0);
-      if(e.type === 'spend') outSum += amt;
-      else inSum += amt;
-    });
-    var parts = [];
-    if(inSum > 0) parts.push('<span class="plus">' + usdSigned(inSum) + '</span>');
-    if(outSum > 0) parts.push('<span class="minus">' + usd(-outSum) + '</span>');
-    var dayNo = g.date ? Number(String(g.date).split('-')[2]) : '';
-    html += '<div class="log-day">' +
-      '<span class="cal">' + (dayNo === '' ? '·' : dayNo) + '</span>' +
-      '<span class="dtext">' + esc(g.date ? ledgerDayLabel(g.date) : 'No date') + '</span>' +
-      '<span class="dsub">' + parts.join(' · ') + '</span></div>';
+    /* 날짜 머리글(오늘·어제·11/15)은 보여주지 않아요 — 메모에 날짜가 이미 들어 있어요
+       (예: '11/15(일) 할일완료'). 그래서 아이콘·메모·금액만 깔끔하게 보여줘요. */
     html += '<div class="log-items">';
     g.items.forEach(function(e){
       var kind = ledgerKind(e.type);
@@ -4149,7 +4137,7 @@ function openSettings(){
         (isMom() ? '<button class="btn pink sm" type="button" id="resetBtn">Start over</button>' : '') +
       '</div>' +
     '</div>' +
-    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.10.6</p>' +
+    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.10.7</p>' +
     '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>Close</button></div>';
 
   openModal(html, {
