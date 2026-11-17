@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Our Family">
 <meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, photos, family chat and study timer">
-<meta name="app-version" content="1.10.7">
-<!-- family-dashboard 1.10.7 · clean allowance history (no extra date labels) -->
+<meta name="app-version" content="1.10.8">
+<!-- family-dashboard 1.10.8 · allowance history shows only type, memo and amount -->
 <title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1083,7 +1083,7 @@ main{padding-top:2px}
 
       <div class="card">
         <h2><span class="h2-emoji" aria-hidden="true">📒</span>Allowance History</h2>
-        <p class="card-sub">Task rewards, money added and money spent — newest first, grouped by day.</p>
+        <p class="card-sub">Task rewards, money added and money spent — newest first.</p>
         <div class="log-list" id="allowLog"></div>
       </div>
     </section>
@@ -2602,7 +2602,7 @@ function renderAllowLog(kid){
         '<span class="li-main">' +
           '<span class="li-name">' + esc(ledgerName(e)) + '</span>' +
           '<span class="li-meta"><span class="li-tag ' + kind + '">' + ledgerTag(e.type) + '</span>' +
-            (t ? '<span class="li-time">' + esc(t) + '</span>' : '') + '</span>' +
+            '</span>' +
         '</span>' +
         '<span class="li-amt ' + (plus ? 'plus' : 'minus') + '">' + (plus ? usdSigned(e.amount) : usd(-num(e.amount, 0))) + '</span>' +
         (isMom() ? '<button class="del" type="button" data-del="' + esc(e.id) + '" aria-label="Delete this record">×</button>' : '') +
@@ -4137,7 +4137,7 @@ function openSettings(){
         (isMom() ? '<button class="btn pink sm" type="button" id="resetBtn">Start over</button>' : '') +
       '</div>' +
     '</div>' +
-    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.10.7</p>' +
+    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.10.8</p>' +
     '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>Close</button></div>';
 
   openModal(html, {
