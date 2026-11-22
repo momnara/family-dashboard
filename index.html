@@ -2326,7 +2326,7 @@ function onRemoteValue(snap){
 
 function sharedSignature(st){
   try{
-    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.dailyDone, st.calendarEvents, st.prepTodo, st.chat.messages, st.memos, st.timer, st.alarm, (st.vocab && st.vocab.date) || '', (st.vocab && st.vocab.stella) ? st.vocab.stella.length : 0, (st.vocab && st.vocab.luna) ? st.vocab.luna.length : 0]);
+    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.dailyDone, st.calendarEvents, st.prepTodo, st.chat.messages, st.memos, st.timer, st.alarm, (st.vocab && st.vocab.date) || '', num(st.vocab && st.vocab.updatedAt, 0), (st.vocab && st.vocab.stella) ? st.vocab.stella.length : 0, (st.vocab && st.vocab.luna) ? st.vocab.luna.length : 0]);
   }catch(e){ return ''; }
 }
 
