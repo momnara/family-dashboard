@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Our Family">
 <meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, daily vocabulary, photos, family chat and study timer">
-<meta name="app-version" content="1.11.1">
-<!-- family-dashboard 1.11.1 · 📚 Vocab tab: 20 new words a day + 📝 quiz (similar · opposite · fill in the blank) -->
+<meta name="app-version" content="1.11.2">
+<!-- family-dashboard 1.11.2 · 📚 Vocab tab: English labels on word cards and quiz (Synonym · Antonym · Fill in the blank) -->
 <title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1252,7 +1252,7 @@ main{padding-top:2px}
           <div id="quizPlay" hidden>
             <div class="quiz-head">
               <span class="quiz-progress" id="quizProgress">1 / 20</span>
-              <span class="quiz-type" id="quizType">비슷한 말</span>
+              <span class="quiz-type" id="quizType">Synonym</span>
               <span class="quiz-score" id="quizScore">0 ✓</span>
             </div>
             <div class="quiz-track"><span class="quiz-track-fill" id="quizTrackFill"></span></div>
@@ -5317,8 +5317,8 @@ function vocabItemHTML(w, i){
   var masked = !!vocab.mode && !revealed;
   var cls = 'vocab-item' + (masked ? ' masked' : '') + (revealed ? ' revealed' : '');
   var rel = '';
-  if(w.syn) rel += '<span class="vi-tag syn"><b>비슷한 말</b>' + esc(w.syn) + '</span>';
-  if(w.ant) rel += '<span class="vi-tag ant"><b>반대말</b>' + esc(w.ant) + '</span>';
+  if(w.syn) rel += '<span class="vi-tag syn"><b>Synonym</b>' + esc(w.syn) + '</span>';
+  if(w.ant) rel += '<span class="vi-tag ant"><b>Antonym</b>' + esc(w.ant) + '</span>';
   var pos = w.pos
     ? '<span class="vi-pos">' + esc(w.pos) + (w.posKo ? ' · ' + esc(w.posKo) : '') + '</span>'
     : '';
@@ -5404,7 +5404,7 @@ function renderVocab(){
 }
 
 /* =========================================================
-   📝 단어장 퀴즈 — 비슷한 말 · 반대말 · 빈칸 채우기
+   📝 Word quiz — Synonym · Antonym · Fill in the blank
    - 오늘 단어 20개로 4지선다 문제를 만들어요 (아이별).
    - 문제·점수는 화면 안에서만 쓰고 Firebase에는 아무것도 쓰지 않아요.
    ========================================================= */
@@ -5496,9 +5496,9 @@ function vqMask(example, word){
   return mask.split('\u0000').join(VQ_BLANK);
 }
 function vqTypeLabel(type){
-  if(type === 'syn') return '비슷한 말';
-  if(type === 'ant') return '반대말';
-  return '빈칸 채우기';
+  if(type === 'syn') return 'Synonym';
+  if(type === 'ant') return 'Antonym';
+  return 'Fill in the blank';
 }
 function vqTypeLead(type){
   if(type === 'syn') return 'Which word has a similar meaning to:';
