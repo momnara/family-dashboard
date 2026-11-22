@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Our Family">
 <meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, daily vocabulary, photos, family chat and study timer">
-<meta name="app-version" content="1.11.2">
-<!-- family-dashboard 1.11.2 · 📚 Vocab tab: English labels on word cards and quiz (Synonym · Antonym · Fill in the blank) -->
+<meta name="app-version" content="1.11.3">
+<!-- family-dashboard 1.11.3 · 📝 Quiz: Q-number on each prompt, tap again to unselect before Check Answer, retry uses a different question type -->
 <title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1022,12 +1022,15 @@ main{padding-top:2px}
 .quiz-track-fill{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#FFD98A,#F7B8C8);transition:width .25s ease}
 .quiz-q{font-size:15.5px;line-height:1.5;color:#4A3D33;margin:0 0 13px;word-break:break-word}
 .quiz-q b{display:block;font-family:var(--font-title);font-weight:400;font-size:15px;color:#A4566A;margin-bottom:4px}
+.quiz-q .qq-num{display:inline-block;margin:0 4px 0 0;padding:0 7px 1px;border-radius:8px;background:#F1ECFF;border:1.5px solid #DED5F2;color:#61509A;font-size:12.5px;line-height:1.5;vertical-align:1px}
 .quiz-q .qq-sent{display:block;font-family:var(--font-title);font-size:17px;line-height:1.5;color:#4A3D33}
 .quiz-q .qq-meta{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:700;color:#4F6C96;background:#EBF2FC;border:1px solid #D7E5F8;border-radius:999px;padding:2px 8px}
 .quiz-opts{display:grid;grid-template-columns:1fr;gap:8px}
 .quiz-opt{display:flex;align-items:center;gap:9px;min-height:52px;padding:8px 12px;border-radius:15px;border:2px solid #E9E2F5;background:#fff;text-align:left;font-family:var(--font-title);font-size:16px;color:#4A3D33;box-shadow:0 2px 0 #EDE7F7;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease,opacity .15s ease}
 .quiz-opt .qo-key{flex:0 0 auto;width:24px;height:24px;border-radius:8px;background:#F3EEFF;color:#7B6AA8;display:grid;place-items:center;font-size:12px;font-weight:700}
 .quiz-opt:active{transform:translateY(2px);box-shadow:none}
+.quiz-opt.sel{border-color:#B6A4E6;background:#F7F2FF;box-shadow:0 2px 0 #DFD6F3}
+.quiz-opt.sel .qo-key{background:#DED3F7;color:#5B4890}
 .quiz-opt.right{border-color:#9FD3AE;background:#F2FBF4;box-shadow:0 2px 0 #CFE8D6}
 .quiz-opt.right .qo-key{background:#D8F0DF;color:#3F7352}
 .quiz-opt.wrong{border-color:#F3B8C4;background:#FFF5F7;box-shadow:0 2px 0 #F8DDE4}
@@ -1042,9 +1045,10 @@ main{padding-top:2px}
 .quiz-feedback .qf-ex{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-soft)}
 .quiz-hintbox{margin:10px 0 0;border-radius:14px;background:#FFFCF4;border:1.5px dashed #E8D7B4;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#7A5726}
 .quiz-hintbox b{font-family:var(--font-title);font-weight:400;margin-right:3px}
-.quiz-actions{display:flex;gap:8px;margin:14px 0 0}
+.quiz-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
 .quiz-actions .btn{flex:1 1 auto}
-.quiz-actions #quizHintBtn{flex:0 0 auto;min-width:94px}
+.quiz-actions #quizHintBtn{flex:0 0 auto;min-width:84px}
+.quiz-actions #quizCheck,.quiz-actions #quizNext{flex:1 1 auto;min-width:150px}
 .quiz-actions .btn[aria-pressed="true"]{border-color:#F0D9AE;background:#FFF4D9;color:#8A6530;box-shadow:0 3px 0 #F3D79A}
 .quiz-done{text-align:center;border-radius:20px;padding:18px 12px;background:linear-gradient(170deg,#FFFDF6,#F4FAFF);border:2px solid #E4EEF9}
 .quiz-done .qd-emoji{font-size:40px;line-height:1}
@@ -1262,7 +1266,8 @@ main{padding-top:2px}
             <div class="quiz-hintbox" id="quizHintBox" hidden></div>
             <div class="quiz-actions">
               <button class="btn ghost sm" id="quizHintBtn" type="button" aria-pressed="false"><span aria-hidden="true">💡</span> Hint</button>
-              <button class="btn primary" id="quizNext" type="button" disabled>Next <span aria-hidden="true">→</span></button>
+              <button class="btn primary" id="quizCheck" type="button" disabled>Check Answer</button>
+              <button class="btn mint" id="quizNext" type="button" disabled>Next <span aria-hidden="true">→</span></button>
             </div>
           </div>
           <div id="quizResult" hidden></div>
@@ -4308,7 +4313,7 @@ function openSettings(){
         (isMom() ? '<button class="btn pink sm" type="button" id="resetBtn">Start over</button>' : '') +
       '</div>' +
     '</div>' +
-    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.10.8</p>' +
+    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.11.3</p>' +
     '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>Close</button></div>';
 
   openModal(html, {
@@ -5552,27 +5557,50 @@ function vqOptions(q, list, rnd){
   if(pick.length < 3) return [];
   return vqShuffle(pick.concat([t]), rnd);
 }
-function vqBuildQuiz(list, seed){
+/* 문제에 쓸 빈칸 문장 — 다시 풀 때는 두 번째 예문(example2)이 있으면 그 문장을 써요 */
+function vqMaskFor(w, retry){
+  if(retry && w && w.example2){
+    var m2 = vqMask(w.example2, w.word);
+    if(m2) return { blank: m2, ex: String(w.example2) };
+  }
+  return { blank: vqMask(w && w.example, w && w.word), ex: String((w && w.example) || '') };
+}
+function vqBuildQuiz(list, seed, opt){
+  opt = opt || {};
+  var pool = (opt.pool && opt.pool.length ? opt.pool : list) || [];
+  var prev = opt.prev || {};
   var rnd = vqRand(seed);
   var order = ['blank', 'syn', 'ant'];
   var qs = [];
   (list || []).forEach(function(w, idx){
     if(!w || !w.word) return;
-    var blank = vqMask(w.example, w.word);
+    var m = vqMaskFor(w, !!opt.retry);
+    var blank = m.blank;
     var types = [];
     if(blank) types.push('blank');
     if(vqItems(w.syn).length) types.push('syn');
     if(vqItems(w.ant).length) types.push('ant');
     if(!types.length) return;
+    /* 다시 풀기 — 전에 나온 유형은 피해서 같은 문제가 또 나오지 않게 해요 */
+    var was = (prev[vqNorm(w.word)] && prev[vqNorm(w.word)].type) || '';
+    var cand = types.filter(function(t){ return t !== was; });
+    if(!cand.length) cand = types;
     /* 세 유형이 골고루 섞이게 문제마다 시작 유형을 돌려요 */
     var rot = order.slice(idx % 3).concat(order.slice(0, idx % 3));
-    var type = types[0];
+    var type = cand[0];
     for(var k = 0; k < rot.length; k++){
-      if(types.indexOf(rot[k]) >= 0){ type = rot[k]; break; }
+      if(cand.indexOf(rot[k]) >= 0){ type = rot[k]; break; }
     }
-    var q = { type: type, word: w, blank: blank, opts: [], answer: String(w.word), user: '', ok: false };
-    q.opts = vqOptions(q, list, rnd);
+    var q = { type: type, word: w, blank: blank, ex: m.ex, opts: [], answer: String(w.word), pick: '', user: '', ok: false, from: was };
+    q.opts = vqOptions(q, pool, rnd);
     if(q.opts.length < 4) return;
+    /* 다시 풀 때는 보기 순서를 한 칸 돌려서 정답 위치도 전과 다르게 해요 */
+    var pi = prev[vqNorm(w.word)];
+    if(opt.retry && pi && typeof pi.idx === 'number'){
+      var at = -1;
+      q.opts.forEach(function(o, k){ if(String(o.word) === q.answer) at = k; });
+      if(at === pi.idx) q.opts = q.opts.slice(1).concat([q.opts[0]]);
+    }
     qs.push(q);
   });
   return qs;
@@ -5587,9 +5615,11 @@ function vqAnsweredCount(){
   vquiz.qs.forEach(function(q){ if(q.user !== '') n++; });
   return n;
 }
-function vqStartQuiz(list, seed){
+function vqStartQuiz(list, seed, opt){
+  opt = opt || {};
   vquiz.seed = seed || vqSeed();
-  vquiz.qs = (list && list.length >= 4) ? vqBuildQuiz(list, vquiz.seed) : [];
+  var base = (opt.pool && opt.pool.length) ? opt.pool : list;
+  vquiz.qs = (list && list.length && base && base.length >= 4) ? vqBuildQuiz(list, vquiz.seed, opt) : [];
   vquiz.i = 0;
   vquiz.done = false;
   vquiz.hint = false;
@@ -5618,24 +5648,42 @@ function vqRestart(){
   if(play && play.scrollIntoView) { try{ play.scrollIntoView({ block: 'nearest' }); }catch(e){} }
 }
 function vqRetryWrong(){
-  var missed = [];
-  vquiz.qs.forEach(function(q){ if(!q.ok) missed.push(q.word); });
+  var missed = [], prev = {};
+  vquiz.qs.forEach(function(q){
+    if(q.ok) return;
+    missed.push(q.word);
+    /* 어떤 유형으로 물었는지, 정답이 몇 번째 보기였는지 기억해 둬요 */
+    prev[vqNorm(q.word && q.word.word)] = {
+      type: q.type,
+      idx: q.opts.map(function(o){ return String(o.word); }).indexOf(q.answer)
+    };
+  });
   if(!missed.length) return;
+  vquiz.kid = vocab.kid;
   vquiz.sig = vqSig();
-  vqStartQuiz(missed, vqSeed());
+  /* 보기는 오늘 단어 전체에서 뽑고, 문제는 틀린 단어로만 내요 */
+  vqStartQuiz(missed, vqSeed(), { retry: true, pool: vocabKidList(vocab.kid), prev: prev });
   renderQuiz();
   var play = document.getElementById('quizPlay');
   if(play && play.scrollIntoView) { try{ play.scrollIntoView({ block: 'nearest' }); }catch(e){} }
 }
-function vqAnswer(word){
+/* 보기를 누르면 채점 전까지 골라 두기만 해요 — 다시 누르면 선택이 풀려요 */
+function vqPick(word){
   var q = vquiz.qs[vquiz.i];
   if(!q || q.user !== '') return;
   var picked = String(word === null || word === undefined ? '' : word);
   var hit = false;
   q.opts.forEach(function(o){ if(String(o.word) === picked) hit = true; });
   if(!hit) return;
-  q.user = picked;
-  q.ok = picked === q.answer;
+  q.pick = (q.pick === picked) ? '' : picked;
+  renderQuiz();
+}
+/* Check Answer — 고른 보기로 채점해요 */
+function vqCheck(){
+  var q = vquiz.qs[vquiz.i];
+  if(!q || q.user !== '' || !q.pick) return;
+  q.user = q.pick;
+  q.ok = q.pick === q.answer;
   renderQuiz();
 }
 function vqNext(){
@@ -5720,11 +5768,12 @@ function renderQuiz(){
 
   var qEl = document.getElementById('quizQuestion');
   if(qEl){
+    var qNo = '<span class="qq-num">Q' + (vquiz.i + 1) + '.</span>';
     if(q.type === 'blank'){
-      qEl.innerHTML = '<b>Fill in the blank:</b><span class="qq-sent">“' + esc(q.blank) + '”</span>' +
+      qEl.innerHTML = '<b>' + qNo + ' Fill in the blank:</b><span class="qq-sent">“' + esc(q.blank) + '”</span>' +
         '<span class="qq-meta">' + esc(q.word.pos || '') + '</span>';
     } else {
-      qEl.innerHTML = '<b>' + esc(vqTypeLead(q.type)) + '</b><span class="qq-sent">' + esc(q.type === 'syn' ? q.word.syn : q.word.ant) + '</span>' +
+      qEl.innerHTML = '<b>' + qNo + ' ' + esc(vqTypeLead(q.type)) + '</b><span class="qq-sent">' + esc(q.type === 'syn' ? q.word.syn : q.word.ant) + '</span>' +
         (q.word.pos ? '<span class="qq-meta">' + esc(q.word.pos) + '</span>' : '');
     }
   }
@@ -5732,14 +5781,18 @@ function renderQuiz(){
   var optsBox = document.getElementById('quizOptions');
   if(optsBox){
     var keys = ['A', 'B', 'C', 'D'];
+    var sel = answered ? '' : String(q.pick || '');
     optsBox.innerHTML = q.opts.map(function(o, k){
       var cls = 'quiz-opt';
+      var on = String(o.word) === sel;
       if(answered){
         if(String(o.word) === q.answer) cls += ' right';
         else if(String(o.word) === q.user) cls += ' wrong';
         else cls += ' dim';
+      } else if(on){
+        cls += ' sel';
       }
-      return '<button class="' + cls + '" type="button" data-vopt="' + esc(o.word) + '"' +
+      return '<button class="' + cls + '" type="button" data-vopt="' + esc(o.word) + '" aria-pressed="' + (on ? 'true' : 'false') + '"' +
         (answered ? ' disabled' : '') + '>' +
         '<span class="qo-key" aria-hidden="true">' + keys[k] + '</span>' +
         '<span class="qo-word">' + esc(o.word) + '</span></button>';
@@ -5754,7 +5807,7 @@ function renderQuiz(){
       fb.innerHTML = (q.ok ? '✅ Correct! ' : '❌ Not quite — ') +
         '<b>' + esc(q.answer) + '</b>' +
         (q.word.meaning ? ' <span class="qm-ko">' + esc(q.word.meaning) + '</span>' : '') +
-        (q.word.example && q.type === 'blank' ? '<span class="qf-ex">“' + esc(q.word.example) + '”</span>' : '');
+        (q.ex && q.type === 'blank' ? '<span class="qf-ex">“' + esc(q.ex) + '”</span>' : '');
     } else {
       fb.hidden = true;
       fb.className = 'quiz-feedback';
@@ -5778,8 +5831,15 @@ function renderQuiz(){
     hbtn.setAttribute('aria-pressed', vquiz.hint ? 'true' : 'false');
     hbtn.disabled = !hintText;
   }
+  /* 채점 전에는 Check Answer, 채점 뒤에는 Next — 한 줄에 하나만 보여요 */
+  var ck = document.getElementById('quizCheck');
+  if(ck){
+    ck.style.display = answered ? 'none' : '';
+    ck.disabled = answered || !q.pick;
+  }
   var nx = document.getElementById('quizNext');
   if(nx){
+    nx.style.display = answered ? '' : 'none';
     nx.disabled = !answered;
     nx.innerHTML = (vquiz.i === total - 1)
       ? 'See score <span aria-hidden="true">→</span>'
@@ -6144,12 +6204,13 @@ function bindEvents(){
   $('#quizOptions').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-vopt]') : null;
     if(!b) return;
-    vqAnswer(b.getAttribute('data-vopt'));
+    vqPick(b.getAttribute('data-vopt'));
   });
   $('#quizHintBtn').addEventListener('click', function(){
     vquiz.hint = !vquiz.hint;
     renderQuiz();
   });
+  $('#quizCheck').addEventListener('click', vqCheck);
   $('#quizNext').addEventListener('click', vqNext);
   $('#quizResult').addEventListener('click', function(e){
     var t = e.target;
