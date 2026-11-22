@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Our Family">
 <meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, daily vocabulary, photos, family chat and study timer">
-<meta name="app-version" content="1.11.0">
-<!-- family-dashboard 1.11.0 · 📚 Vocab tab: 20 new words a day for Stella and Luna -->
+<meta name="app-version" content="1.11.1">
+<!-- family-dashboard 1.11.1 · 📚 Vocab tab: 20 new words a day + 📝 quiz (similar · opposite · fill in the blank) -->
 <title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1007,10 +1007,68 @@ main{padding-top:2px}
 .vocab-item.masked .vi-cover{display:flex}
 .vocab-foot{margin-top:12px;font-size:11px;color:var(--ink-faint);text-align:center;line-height:1.5}
 
+/* ---------- 📝 vocab quiz ---------- */
+.vocab-modes{display:flex;gap:5px;background:#F6F0FF;border:2px solid #E5DBF7;border-radius:18px;padding:5px;margin:0 0 12px}
+.vocab-mode{flex:1 1 0;min-height:44px;border:none;background:transparent;border-radius:14px;font-family:var(--font-title);font-size:14.5px;color:#7C6C93;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s ease,color .15s ease,box-shadow .15s ease}
+.vocab-mode[aria-pressed="true"]{background:#fff;color:#5F4B93;box-shadow:0 2px 0 #DED5F2,inset 0 0 0 1px #EADFFB}
+.vocab-mode:active{transform:scale(.98)}
+.quiz-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 9px}
+.quiz-progress{font-family:var(--font-title);font-size:13px;color:#5F5780;background:#F1ECFF;border:1.5px solid #DED5F2;border-radius:999px;padding:5px 11px;white-space:nowrap}
+.quiz-type{font-size:11.5px;font-weight:700;color:#7A5726;background:#FFF4D9;border:1.5px solid #F0D9AE;border-radius:999px;padding:5px 11px;white-space:nowrap}
+.quiz-type.ant{color:#8E4A5C;background:#FFF3F6;border-color:#F5D6DE}
+.quiz-type.blank{color:#3F6B4C;background:#F1FAF4;border-color:#CFE8D6}
+.quiz-score{margin-left:auto;font-family:var(--font-title);font-size:13px;color:#3F7352;background:#EFF9F2;border:1.5px solid #CFE8D6;border-radius:999px;padding:5px 11px;white-space:nowrap}
+.quiz-track{height:9px;border-radius:999px;background:#EFE9FA;overflow:hidden;margin:0 0 14px}
+.quiz-track-fill{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#FFD98A,#F7B8C8);transition:width .25s ease}
+.quiz-q{font-size:15.5px;line-height:1.5;color:#4A3D33;margin:0 0 13px;word-break:break-word}
+.quiz-q b{display:block;font-family:var(--font-title);font-weight:400;font-size:15px;color:#A4566A;margin-bottom:4px}
+.quiz-q .qq-sent{display:block;font-family:var(--font-title);font-size:17px;line-height:1.5;color:#4A3D33}
+.quiz-q .qq-meta{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:700;color:#4F6C96;background:#EBF2FC;border:1px solid #D7E5F8;border-radius:999px;padding:2px 8px}
+.quiz-opts{display:grid;grid-template-columns:1fr;gap:8px}
+.quiz-opt{display:flex;align-items:center;gap:9px;min-height:52px;padding:8px 12px;border-radius:15px;border:2px solid #E9E2F5;background:#fff;text-align:left;font-family:var(--font-title);font-size:16px;color:#4A3D33;box-shadow:0 2px 0 #EDE7F7;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease,opacity .15s ease}
+.quiz-opt .qo-key{flex:0 0 auto;width:24px;height:24px;border-radius:8px;background:#F3EEFF;color:#7B6AA8;display:grid;place-items:center;font-size:12px;font-weight:700}
+.quiz-opt:active{transform:translateY(2px);box-shadow:none}
+.quiz-opt.right{border-color:#9FD3AE;background:#F2FBF4;box-shadow:0 2px 0 #CFE8D6}
+.quiz-opt.right .qo-key{background:#D8F0DF;color:#3F7352}
+.quiz-opt.wrong{border-color:#F3B8C4;background:#FFF5F7;box-shadow:0 2px 0 #F8DDE4}
+.quiz-opt.wrong .qo-key{background:#FFE0E7;color:#A4566A}
+.quiz-opt.dim{opacity:.55}
+.quiz-opt:disabled{cursor:default}
+.quiz-feedback{margin:12px 0 0;border-radius:15px;padding:10px 13px;font-size:13.5px;line-height:1.55}
+.quiz-feedback.good{background:#F2FBF4;border:1.5px solid #CFE8D6;color:#3F6B4C}
+.quiz-feedback.bad{background:#FFF5F7;border:1.5px solid #F3CDD6;color:#8E4A5C}
+.quiz-feedback b{font-family:var(--font-title);font-weight:400;font-size:15px}
+.quiz-feedback .qm-ko{font-size:12.5px}
+.quiz-feedback .qf-ex{display:block;margin-top:4px;font-size:12.5px;color:var(--ink-soft)}
+.quiz-hintbox{margin:10px 0 0;border-radius:14px;background:#FFFCF4;border:1.5px dashed #E8D7B4;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#7A5726}
+.quiz-hintbox b{font-family:var(--font-title);font-weight:400;margin-right:3px}
+.quiz-actions{display:flex;gap:8px;margin:14px 0 0}
+.quiz-actions .btn{flex:1 1 auto}
+.quiz-actions #quizHintBtn{flex:0 0 auto;min-width:94px}
+.quiz-actions .btn[aria-pressed="true"]{border-color:#F0D9AE;background:#FFF4D9;color:#8A6530;box-shadow:0 3px 0 #F3D79A}
+.quiz-done{text-align:center;border-radius:20px;padding:18px 12px;background:linear-gradient(170deg,#FFFDF6,#F4FAFF);border:2px solid #E4EEF9}
+.quiz-done .qd-emoji{font-size:40px;line-height:1}
+.quiz-done .qd-score{font-family:var(--font-title);font-size:32px;color:#4A3D33;margin:6px 0 2px}
+.quiz-done .qd-score.quiz-empty-title{font-size:19px;color:#7A6A5F}
+.quiz-done .qd-sub{font-size:12.5px;color:var(--ink-soft);line-height:1.55}
+.quiz-miss{margin:14px 0 0;text-align:left;border-top:1.5px dashed #E8DCC6;padding-top:12px}
+.quiz-miss h3{font-family:var(--font-title);font-size:14px;font-weight:400;color:#A4566A;margin:0 0 8px}
+.quiz-miss ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.quiz-miss li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;font-size:13px;line-height:1.45;color:#5C4A3D;background:#FFFCF4;border:1.5px solid #F1E6D4;border-radius:12px;padding:7px 10px}
+.quiz-miss li b{font-family:var(--font-title);font-weight:400;font-size:15px;color:#A4566A}
+.quiz-miss li .qm-ko{color:var(--ink-soft);font-size:12.5px}
+.quiz-again{display:flex;flex-direction:column;gap:8px;margin:14px 0 0}
+
 /* ---------- responsive ---------- */
 @media (min-width:720px){
   .wrap{padding:0 22px}
   .vocab-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+  .quiz-opts{grid-template-columns:1fr 1fr;gap:10px}
+  .quiz-q .qq-sent{font-size:18px}
+  .quiz-again{flex-direction:row}
+  .quiz-again .btn{flex:1}
+  .quiz-done{padding:22px 18px}
+  .vocab-modes{max-width:420px;margin:0 auto 14px}
   .top-inner{padding:0 22px}
   .tabs{width:calc(100% - 44px);justify-content:center}
   .card{padding:20px}
@@ -1166,7 +1224,7 @@ main{padding-top:2px}
     <section class="panel" id="panel-vocab" aria-label="Daily vocabulary">
       <div class="card vocab-card">
         <h2><span class="h2-emoji" aria-hidden="true">📚</span>Today's Vocabulary</h2>
-        <p class="card-sub">20 new words every day at 12:00 PM. Read the meaning, the words that mean the same and the opposite, then the sentence. Tap 🔄 at the top to fetch new words.</p>
+        <p class="card-sub">20 new words every day at 12:00 PM. Study them as cards, then take the 20-question quiz.</p>
 
         <div class="vocab-top">
           <div class="vocab-kids" id="vocabKids" role="group" aria-label="Choose a kid"></div>
@@ -1176,12 +1234,40 @@ main{padding-top:2px}
           </div>
         </div>
 
-        <div class="vocab-tools">
-          <button class="btn ghost" id="vocabHide" type="button" aria-pressed="false"><span aria-hidden="true">🙈</span> Hide meanings</button>
+        <div class="vocab-modes" id="vocabModes" role="group" aria-label="Study or quiz">
+          <button class="vocab-mode" type="button" data-vmode="study" aria-pressed="true"><span aria-hidden="true">📖</span> Study</button>
+          <button class="vocab-mode" type="button" data-vmode="quiz" aria-pressed="false"><span aria-hidden="true">📝</span> Quiz</button>
         </div>
-        <p class="vocab-hint" id="vocabHint">Turn on study mode to hide the meanings, then tap a card to check yourself.</p>
 
-        <div class="vocab-list" id="vocabList"></div>
+        <div id="vocabStudy">
+          <div class="vocab-tools">
+            <button class="btn ghost" id="vocabHide" type="button" aria-pressed="false"><span aria-hidden="true">🙈</span> Hide meanings</button>
+          </div>
+          <p class="vocab-hint" id="vocabHint">Turn on study mode to hide the meanings, then tap a card to check yourself.</p>
+
+          <div class="vocab-list" id="vocabList"></div>
+        </div>
+
+        <div id="vocabQuiz" hidden>
+          <div id="quizPlay" hidden>
+            <div class="quiz-head">
+              <span class="quiz-progress" id="quizProgress">1 / 20</span>
+              <span class="quiz-type" id="quizType">비슷한 말</span>
+              <span class="quiz-score" id="quizScore">0 ✓</span>
+            </div>
+            <div class="quiz-track"><span class="quiz-track-fill" id="quizTrackFill"></span></div>
+            <p class="quiz-q" id="quizQuestion"></p>
+            <div class="quiz-opts" id="quizOptions"></div>
+            <div class="quiz-feedback" id="quizFeedback" hidden></div>
+            <div class="quiz-hintbox" id="quizHintBox" hidden></div>
+            <div class="quiz-actions">
+              <button class="btn ghost sm" id="quizHintBtn" type="button" aria-pressed="false"><span aria-hidden="true">💡</span> Hint</button>
+              <button class="btn primary" id="quizNext" type="button" disabled>Next <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+          <div id="quizResult" hidden></div>
+        </div>
+
         <p class="vocab-foot" id="vocabFoot">Stella · Wordly Wise 4 (Grade 4) · Luna · Grade 2</p>
       </div>
     </section>
@@ -5101,7 +5187,7 @@ function deletePhoto(p, cb){
    - 이 앱은 단어를 읽기만 해요. 하루 12:00 PM에 새 단어가 올라오면 탭을 열 때 바로 보여요.
    - 단어 한 개: { word, pos, posKo, meaning, syn, ant, example, exampleKo }
    ========================================================= */
-var vocab = { kid: '', mode: false, revealed: {}, loading: false, error: '' };
+var vocab = { kid: '', mode: false, tab: 'study', revealed: {}, loading: false, error: '' };
 
 function vocabWord(x){
   if(!isObject(x)) return null;
@@ -5257,6 +5343,7 @@ function renderVocab(){
   if(vocab.kid !== 'Stella' && vocab.kid !== 'Luna'){
     vocab.kid = (state && state.ui && state.ui.kid === 'Luna') ? 'Luna' : 'Stella';
   }
+  if(vocab.tab !== 'quiz') vocab.tab = 'study';
   var kidsBox = document.getElementById('vocabKids');
   if(kidsBox){
     kidsBox.innerHTML = [['Stella', '4th grade'], ['Luna', '2nd grade']].map(function(k){
@@ -5270,6 +5357,18 @@ function renderVocab(){
   if(dateEl) dateEl.textContent = vocabDateText();
   var countEl = document.getElementById('vocabCount');
   if(countEl) countEl.textContent = list.length + (list.length === 1 ? ' word' : ' words');
+  /* 📖 Study ↔ 📝 Quiz — 아이별로 따로 연습해요 */
+  var modes = document.getElementById('vocabModes');
+  if(modes){
+    Array.prototype.slice.call(modes.querySelectorAll('[data-vmode]')).forEach(function(b){
+      var on = b.getAttribute('data-vmode') === vocab.tab;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  var study = document.getElementById('vocabStudy');
+  var quiz = document.getElementById('vocabQuiz');
+  if(study) study.hidden = vocab.tab === 'quiz';
+  if(quiz) quiz.hidden = vocab.tab !== 'quiz';
   var hide = document.getElementById('vocabHide');
   if(hide){
     hide.setAttribute('aria-pressed', vocab.mode ? 'true' : 'false');
@@ -5292,6 +5391,10 @@ function renderVocab(){
       (fresh ? '  ·  ' + fresh : '') +
       (vocab.error ? '  ·  Could not check for new words' : '');
   }
+  if(vocab.tab === 'quiz'){
+    vqSync();
+    return;
+  }
   if(!list.length){
     box.innerHTML = '<div class="empty vocab-empty"><span class="em" aria-hidden="true">' +
       '📚' + '</span>No words yet for ' + esc(vocab.kid) + '.<br>New words come every day at 12:00 PM.</div>';
@@ -5299,6 +5402,391 @@ function renderVocab(){
   }
   box.innerHTML = list.map(vocabItemHTML).join('');
 }
+
+/* =========================================================
+   📝 단어장 퀴즈 — 비슷한 말 · 반대말 · 빈칸 채우기
+   - 오늘 단어 20개로 4지선다 문제를 만들어요 (아이별).
+   - 문제·점수는 화면 안에서만 쓰고 Firebase에는 아무것도 쓰지 않아요.
+   ========================================================= */
+var VQ_BLANK = '( ______ )';
+var vquiz = { kid: '', sig: '', seed: 0, qs: [], i: 0, done: false, hint: false };
+
+function vqSeed(){
+  return Math.floor(Math.random() * 1000000000) + 1;
+}
+/* 같은 퀴즈는 같은 순서로 나오게 — 다시 그려도 보기 순서가 흔들리지 않아요 */
+function vqRand(seed){
+  var s = (Math.floor(num(seed, 1)) >>> 0) || 1;
+  return function(){
+    s ^= s << 13; s >>>= 0;
+    s ^= s >>> 17;
+    s ^= s << 5; s >>>= 0;
+    return s / 4294967296;
+  };
+}
+function vqShuffle(arr, rnd){
+  var a = arr.slice();
+  for(var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(rnd() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function vqNorm(s){
+  return String(s === null || s === undefined ? '' : s).toLowerCase()
+    .replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function vqItems(s){
+  return String(s === null || s === undefined ? '' : s).toLowerCase()
+    .split(/[,;\/]+/)
+    .map(function(x){ return x.replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim(); })
+    .filter(function(x){ return !!x; });
+}
+function vqEscapeRe(s){
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function vqWordRe(word, flags){
+  var w = vqNorm(word);
+  if(!w) return null;
+  return new RegExp('(^|[^a-z0-9])' + vqEscapeRe(w) + '($|[^a-z0-9])', flags || 'i');
+}
+/* 표제어의 형태 변화 후보 — -s, -es, -ed, -d, -ing, -y→ies/ied, 자음 중복 등 */
+function vqForms(word){
+  var b = vqNorm(word);
+  if(!b) return [];
+  var out = [];
+  function add(x){ if(x && out.indexOf(x) < 0) out.push(x); }
+  add(b);
+  add(b + 's'); add(b + 'es'); add(b + 'ed'); add(b + 'd'); add(b + 'ing');
+  add(b + 'er'); add(b + 'est'); add(b + 'ly'); add(b + 'ness');
+  if(/e$/.test(b)){ add(b.slice(0, -1) + 'ing'); add(b.slice(0, -1) + 'ed'); }
+  if(/[^aeiou][aeiou][bdgklmnprt]$/.test(b)){
+    var d = b + b.slice(-1);
+    add(d + 'ed'); add(d + 'ing'); add(d + 'er'); add(d + 'est');
+  }
+  if(/y$/.test(b) && !/[aeiou]y$/.test(b)){
+    var st = b.slice(0, -1);
+    add(st + 'ies'); add(st + 'ied'); add(st + 'ier'); add(st + 'iest'); add(st + 'ily');
+  }
+  out.sort(function(a, b2){ return b2.length - a.length; });
+  return out;
+}
+/* 예문 속 표제어만 ( ______ )로 가려요. 형태가 바뀌어 있어도 찾아요.
+   확실히 못 가리면 ''를 돌려주고, 그 단어는 다른 문제 유형으로 물어요. */
+function vqMask(example, word){
+  var ex = String(example === null || example === undefined ? '' : example).trim();
+  var base = vqNorm(word);
+  if(!ex || !base) return '';
+  var forms = vqForms(word);
+  var mask = ex;
+  var hits = 0;
+  forms.forEach(function(f){
+    var re = new RegExp('(^|[^A-Za-z0-9])' + vqEscapeRe(f) + '(?=$|[^A-Za-z0-9])', 'gi');
+    mask = mask.replace(re, function(m, before){ hits++; return before + '\u0000'; });
+  });
+  if(!hits) return '';
+  /* 같은 낱말이 여러 번 나오면 문장이 망가져요 */
+  if(hits > 2) return '';
+  var rest = mask.split('\u0000').join(' ');
+  var leak = vqWordRe(base, 'i');
+  if(leak && leak.test(rest)) return '';
+  /* 가리고 나서 너무 짧아지면 문장이 아니에요 */
+  var stripped = rest.replace(/[^A-Za-z]/g, '');
+  if(stripped.length < 8) return '';
+  return mask.split('\u0000').join(VQ_BLANK);
+}
+function vqTypeLabel(type){
+  if(type === 'syn') return '비슷한 말';
+  if(type === 'ant') return '반대말';
+  return '빈칸 채우기';
+}
+function vqTypeLead(type){
+  if(type === 'syn') return 'Which word has a similar meaning to:';
+  if(type === 'ant') return 'Which word is the opposite of:';
+  return '';
+}
+/* 정답이 두 개가 되거나 바로 들키는 보기는 빼요 */
+function vqClash(t, o, type){
+  var tw = vqNorm(t.word), ow = vqNorm(o.word);
+  var tSyn = vqItems(t.syn), oSyn = vqItems(o.syn);
+  var tAnt = vqItems(t.ant), oAnt = vqItems(o.ant);
+  function overlap(x, y){
+    for(var i = 0; i < x.length; i++){ if(y.indexOf(x[i]) >= 0) return true; }
+    return false;
+  }
+  if(type === 'ant'){
+    return overlap(tAnt, oAnt) || oSyn.indexOf(tw) >= 0 || oAnt.indexOf(tw) >= 0 || tw === ow;
+  }
+  /* 뜻이 같으면 정답이 두 개가 돼요 */
+  var sameMeaning = !!vqNorm(t.meaning) && vqNorm(t.meaning) === vqNorm(o.meaning);
+  if(type === 'blank'){
+    /* 빈칸에는 반의어도 문장이 말이 돼서 같이 넣지 않아요 (always / never) */
+    return tSyn.indexOf(ow) >= 0 || oSyn.indexOf(tw) >= 0 || overlap(tSyn, oSyn) || sameMeaning ||
+      tAnt.indexOf(ow) >= 0 || oAnt.indexOf(tw) >= 0;
+  }
+  return tSyn.indexOf(ow) >= 0 || oSyn.indexOf(tw) >= 0 || overlap(tSyn, oSyn) || sameMeaning;
+}
+function vqOptions(q, list, rnd){
+  var t = q.word;
+  var tw = vqNorm(t.word);
+  var tPos = String(t.pos || '').toLowerCase();
+  var clue = q.type === 'blank' ? String(q.blank || '') : String(q.type === 'syn' ? t.syn : t.ant);
+  var pool = list.filter(function(w){
+    if(vqNorm(w.word) === tw) return false;
+    var re = vqWordRe(w.word, 'i');
+    if(re && re.test(clue)) return false;      /* 단서 문장에 보기 낱말이 보이면 바로 들켜요 */
+    return !vqClash(t, w, q.type);
+  });
+  var pick = [];
+  function take(from){
+    from.forEach(function(w){
+      if(pick.length < 3 && pick.indexOf(w) < 0 && vqNorm(w.word) !== tw) pick.push(w);
+    });
+  }
+  take(vqShuffle(pool.filter(function(w){ return String(w.pos || '').toLowerCase() === tPos && tPos !== ''; }), rnd));
+  if(pick.length < 3) take(vqShuffle(pool, rnd));
+  if(pick.length < 3){
+    /* 마지막 안전장치 — 같은 품사 보기가 모자랄 때 */
+    take(vqShuffle(list.filter(function(w){ return vqNorm(w.word) !== tw; }), rnd));
+  }
+  if(pick.length < 3) return [];
+  return vqShuffle(pick.concat([t]), rnd);
+}
+function vqBuildQuiz(list, seed){
+  var rnd = vqRand(seed);
+  var order = ['blank', 'syn', 'ant'];
+  var qs = [];
+  (list || []).forEach(function(w, idx){
+    if(!w || !w.word) return;
+    var blank = vqMask(w.example, w.word);
+    var types = [];
+    if(blank) types.push('blank');
+    if(vqItems(w.syn).length) types.push('syn');
+    if(vqItems(w.ant).length) types.push('ant');
+    if(!types.length) return;
+    /* 세 유형이 골고루 섞이게 문제마다 시작 유형을 돌려요 */
+    var rot = order.slice(idx % 3).concat(order.slice(0, idx % 3));
+    var type = types[0];
+    for(var k = 0; k < rot.length; k++){
+      if(types.indexOf(rot[k]) >= 0){ type = rot[k]; break; }
+    }
+    var q = { type: type, word: w, blank: blank, opts: [], answer: String(w.word), user: '', ok: false };
+    q.opts = vqOptions(q, list, rnd);
+    if(q.opts.length < 4) return;
+    qs.push(q);
+  });
+  return qs;
+}
+function vqScoreSoFar(){
+  var n = 0;
+  vquiz.qs.forEach(function(q){ if(q.user !== '' && q.ok) n++; });
+  return n;
+}
+function vqAnsweredCount(){
+  var n = 0;
+  vquiz.qs.forEach(function(q){ if(q.user !== '') n++; });
+  return n;
+}
+function vqStartQuiz(list, seed){
+  vquiz.seed = seed || vqSeed();
+  vquiz.qs = (list && list.length >= 4) ? vqBuildQuiz(list, vquiz.seed) : [];
+  vquiz.i = 0;
+  vquiz.done = false;
+  vquiz.hint = false;
+}
+function vqSig(){
+  var v = (state && state.vocab) || {};
+  return [vocab.kid, String(v.date || ''), Math.round(num(v.updatedAt, 0)), vocabKidList(vocab.kid).length].join('|');
+}
+/* 열려 있는 화면과 단어가 다르면 새 퀴즈를 만들어요 */
+function vqSync(){
+  var list = vocabKidList(vocab.kid);
+  var sig = vqSig();
+  if(!vquiz.qs.length || vquiz.kid !== vocab.kid || vquiz.sig !== sig){
+    vquiz.kid = vocab.kid;
+    vquiz.sig = sig;
+    vqStartQuiz(list, vqSeed());
+  }
+  renderQuiz();
+}
+function vqRestart(){
+  vquiz.kid = vocab.kid;
+  vquiz.sig = vqSig();
+  vqStartQuiz(vocabKidList(vocab.kid), vqSeed());
+  renderQuiz();
+  var play = document.getElementById('quizPlay');
+  if(play && play.scrollIntoView) { try{ play.scrollIntoView({ block: 'nearest' }); }catch(e){} }
+}
+function vqRetryWrong(){
+  var missed = [];
+  vquiz.qs.forEach(function(q){ if(!q.ok) missed.push(q.word); });
+  if(!missed.length) return;
+  vquiz.sig = vqSig();
+  vqStartQuiz(missed, vqSeed());
+  renderQuiz();
+  var play = document.getElementById('quizPlay');
+  if(play && play.scrollIntoView) { try{ play.scrollIntoView({ block: 'nearest' }); }catch(e){} }
+}
+function vqAnswer(word){
+  var q = vquiz.qs[vquiz.i];
+  if(!q || q.user !== '') return;
+  var picked = String(word === null || word === undefined ? '' : word);
+  var hit = false;
+  q.opts.forEach(function(o){ if(String(o.word) === picked) hit = true; });
+  if(!hit) return;
+  q.user = picked;
+  q.ok = picked === q.answer;
+  renderQuiz();
+}
+function vqNext(){
+  var q = vquiz.qs[vquiz.i];
+  if(!q || q.user === '') return;
+  if(vquiz.i >= vquiz.qs.length - 1){
+    vquiz.done = true;
+    renderQuiz();
+    return;
+  }
+  vquiz.i++;
+  vquiz.hint = false;
+  renderQuiz();
+}
+function vqHintText(q){
+  if(!q || !q.word) return '';
+  if(q.type === 'blank') return q.word.exampleKo || q.word.meaning || '';
+  return q.word.meaning || q.word.exampleKo || '';
+}
+function vqResultHTML(){
+  var total = vquiz.qs.length;
+  var right = vqScoreSoFar();
+  var missed = vquiz.qs.filter(function(q){ return !q.ok; });
+  var pct = total ? Math.round(right / total * 100) : 0;
+  var emoji = right === total ? '🏆' : (pct >= 80 ? '🎉' : (pct >= 50 ? '💪' : '🌱'));
+  var sub = right === total
+    ? 'Perfect! Every word correct.'
+    : (missed.length + (missed.length === 1 ? ' word to review' : ' words to review'));
+  var html = '<div class="quiz-done">' +
+      '<div class="qd-emoji" aria-hidden="true">' + emoji + '</div>' +
+      '<div class="qd-score">' + right + ' / ' + total + '</div>' +
+      '<div class="qd-sub">' + esc(vocab.kid) + ' · ' + esc(vocabDateText()) + '<br>' + esc(sub) + '</div>';
+  if(missed.length){
+    html += '<div class="quiz-miss"><h3>Words to review</h3><ul>' +
+      missed.map(function(q){
+        return '<li><b>' + esc(q.word.word) + '</b>' +
+          '<span class="qm-ko">' + esc(q.word.meaning || '') + '</span></li>';
+      }).join('') + '</ul></div>';
+  }
+  html += '</div>';
+  html += '<div class="quiz-again">' +
+    (missed.length ? '<button class="btn mint" id="quizRetryWrong" type="button"><span aria-hidden="true">🔄</span> Retry Wrong Ones</button>' : '') +
+    '<button class="btn primary" id="quizNew" type="button"><span aria-hidden="true">🔁</span> New Quiz</button>' +
+    '</div>';
+  return html;
+}
+function renderQuiz(){
+  var play = document.getElementById('quizPlay');
+  var res = document.getElementById('quizResult');
+  if(!play || !res) return;
+  if(!vquiz.qs.length){
+    play.hidden = true;
+    res.hidden = false;
+    res.innerHTML = '<div class="quiz-done"><div class="qd-emoji" aria-hidden="true">📝</div>' +
+      '<div class="qd-score quiz-empty-title">Not enough words yet</div>' +
+      '<div class="qd-sub">A quiz needs at least 4 words. New words come every day at 12:00 PM.</div></div>';
+    return;
+  }
+  if(vquiz.done){
+    play.hidden = true;
+    res.hidden = false;
+    res.innerHTML = vqResultHTML();
+    return;
+  }
+  play.hidden = false;
+  res.hidden = true;
+  res.innerHTML = '';
+  var q = vquiz.qs[vquiz.i];
+  var total = vquiz.qs.length;
+  var answered = q.user !== '';
+  var progress = document.getElementById('quizProgress');
+  if(progress) progress.textContent = (vquiz.i + 1) + ' / ' + total;
+  var typeEl = document.getElementById('quizType');
+  if(typeEl){
+    typeEl.textContent = vqTypeLabel(q.type);
+    typeEl.className = 'quiz-type ' + q.type;
+  }
+  var scoreEl = document.getElementById('quizScore');
+  if(scoreEl) scoreEl.textContent = vqScoreSoFar() + ' ✓';
+  var fill = document.getElementById('quizTrackFill');
+  if(fill) fill.style.width = Math.round((answered ? vquiz.i + 1 : vquiz.i) / total * 100) + '%';
+
+  var qEl = document.getElementById('quizQuestion');
+  if(qEl){
+    if(q.type === 'blank'){
+      qEl.innerHTML = '<b>Fill in the blank:</b><span class="qq-sent">“' + esc(q.blank) + '”</span>' +
+        '<span class="qq-meta">' + esc(q.word.pos || '') + '</span>';
+    } else {
+      qEl.innerHTML = '<b>' + esc(vqTypeLead(q.type)) + '</b><span class="qq-sent">' + esc(q.type === 'syn' ? q.word.syn : q.word.ant) + '</span>' +
+        (q.word.pos ? '<span class="qq-meta">' + esc(q.word.pos) + '</span>' : '');
+    }
+  }
+
+  var optsBox = document.getElementById('quizOptions');
+  if(optsBox){
+    var keys = ['A', 'B', 'C', 'D'];
+    optsBox.innerHTML = q.opts.map(function(o, k){
+      var cls = 'quiz-opt';
+      if(answered){
+        if(String(o.word) === q.answer) cls += ' right';
+        else if(String(o.word) === q.user) cls += ' wrong';
+        else cls += ' dim';
+      }
+      return '<button class="' + cls + '" type="button" data-vopt="' + esc(o.word) + '"' +
+        (answered ? ' disabled' : '') + '>' +
+        '<span class="qo-key" aria-hidden="true">' + keys[k] + '</span>' +
+        '<span class="qo-word">' + esc(o.word) + '</span></button>';
+    }).join('');
+  }
+
+  var fb = document.getElementById('quizFeedback');
+  if(fb){
+    if(answered){
+      fb.hidden = false;
+      fb.className = 'quiz-feedback ' + (q.ok ? 'good' : 'bad');
+      fb.innerHTML = (q.ok ? '✅ Correct! ' : '❌ Not quite — ') +
+        '<b>' + esc(q.answer) + '</b>' +
+        (q.word.meaning ? ' <span class="qm-ko">' + esc(q.word.meaning) + '</span>' : '') +
+        (q.word.example && q.type === 'blank' ? '<span class="qf-ex">“' + esc(q.word.example) + '”</span>' : '');
+    } else {
+      fb.hidden = true;
+      fb.className = 'quiz-feedback';
+      fb.innerHTML = '';
+    }
+  }
+
+  var hintText = vqHintText(q);
+  var hb = document.getElementById('quizHintBox');
+  if(hb){
+    if(vquiz.hint && hintText){
+      hb.hidden = false;
+      hb.innerHTML = '<b>💡 Hint</b> ' + esc(hintText);
+    } else {
+      hb.hidden = true;
+      hb.innerHTML = '';
+    }
+  }
+  var hbtn = document.getElementById('quizHintBtn');
+  if(hbtn){
+    hbtn.setAttribute('aria-pressed', vquiz.hint ? 'true' : 'false');
+    hbtn.disabled = !hintText;
+  }
+  var nx = document.getElementById('quizNext');
+  if(nx){
+    nx.disabled = !answered;
+    nx.innerHTML = (vquiz.i === total - 1)
+      ? 'See score <span aria-hidden="true">→</span>'
+      : 'Next <span aria-hidden="true">→</span>';
+  }
+}
+/* 퀴즈는 화면 안에서만 도는 연습이라 저장하지 않아요 — 다른 기기·새로고침에 영향 없음 */
 
 /* =========================================================
    Tabs + rendering all
@@ -5622,6 +6110,12 @@ function bindEvents(){
   });
 
   /* 📚 단어장 */
+  $('#vocabModes').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-vmode]') : null;
+    if(!b) return;
+    vocab.tab = b.getAttribute('data-vmode') === 'quiz' ? 'quiz' : 'study';
+    renderVocab();
+  });
   $('#vocabKids').addEventListener('click', function(e){
     var b = e.target.closest ? e.target.closest('[data-vkid]') : null;
     if(!b) return;
@@ -5644,6 +6138,23 @@ function bindEvents(){
     var i = String(card.getAttribute('data-i') || '');
     vocab.revealed[i] = !vocab.revealed[i];
     renderVocab();
+  });
+
+  /* 📝 단어장 퀴즈 */
+  $('#quizOptions').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-vopt]') : null;
+    if(!b) return;
+    vqAnswer(b.getAttribute('data-vopt'));
+  });
+  $('#quizHintBtn').addEventListener('click', function(){
+    vquiz.hint = !vquiz.hint;
+    renderQuiz();
+  });
+  $('#quizNext').addEventListener('click', vqNext);
+  $('#quizResult').addEventListener('click', function(e){
+    var t = e.target;
+    if(t.closest && t.closest('#quizRetryWrong')){ vqRetryWrong(); return; }
+    if(t.closest && t.closest('#quizNew')){ vqRestart(); return; }
   });
 
   /* settings */
