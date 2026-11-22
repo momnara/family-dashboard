@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Our Family">
 <meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, daily vocabulary, photos, family chat and study timer">
-<meta name="app-version" content="1.11.4">
-<!-- family-dashboard 1.11.4 · 📚 Vocab: date navigator to review a past day's 20 words in Study and Quiz (Firebase familyDashboard/vocabHistory) -->
+<meta name="app-version" content="1.11.5">
+<!-- family-dashboard 1.11.5 · ✅ Daily to-do: added 'Study 20 vocab words' for Stella and Luna (default template + live Firebase todos) -->
 <title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1939,6 +1939,7 @@ function seedState(){
       { id:'td4', owner:'Stella', text:'English copywork', done:false, date:t },
       { id:'td5', owner:'Stella', text:'Violin practice 20 min', done:false, date:t },
       { id:'td10', owner:'Stella', text:'Homework & pack backpack', done:false, date:t },
+      { id:'td_vocab_stella', owner:'Stella', text:'Study 20 vocab words', done:false, date:t },
       { id:'td14', owner:'Stella', text:'Clean desk', done:false, date:t },
       { id:'td13', owner:'Luna', text:'Unpack snack box & water bottle', done:false, weekdaysOnly:true, date:t },
       { id:'td6', owner:'Luna', text:'Bomi MAP test', done:false, date:t },
@@ -1946,6 +1947,7 @@ function seedState(){
       { id:'td8', owner:'Luna', text:'1 chapter of Korean', done:false, date:t },
       { id:'td9', owner:'Luna', text:'English copywork', done:false, date:t },
       { id:'td11', owner:'Luna', text:'Homework & pack backpack', done:false, date:t },
+      { id:'td_vocab_luna', owner:'Luna', text:'Study 20 vocab words', done:false, date:t },
       { id:'td15', owner:'Luna', text:'Clean desk', done:false, date:t }
     ],
     stamps: {
@@ -4339,7 +4341,7 @@ function openSettings(){
         (isMom() ? '<button class="btn pink sm" type="button" id="resetBtn">Start over</button>' : '') +
       '</div>' +
     '</div>' +
-    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.11.4</p>' +
+    '<p class="small muted" style="text-align:center;margin-top:4px">Our Family Dashboard · v1.11.5</p>' +
     '<div class="modal-actions"><button class="btn primary" type="button" data-modal-close>Close</button></div>';
 
   openModal(html, {
