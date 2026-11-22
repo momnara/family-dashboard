@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Our Family">
-<meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, photos, family chat and study timer">
-<meta name="app-version" content="1.10.8">
-<!-- family-dashboard 1.10.8 · allowance history shows only type, memo and amount -->
+<meta name="description" content="Our family dashboard - allowance, to-do list, family calendar, daily vocabulary, photos, family chat and study timer">
+<meta name="app-version" content="1.11.0">
+<!-- family-dashboard 1.11.0 · 📚 Vocab tab: 20 new words a day for Stella and Luna -->
 <title>Our Family Dashboard 🐥</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,7 +106,7 @@ header.top{
 .sync-badge[data-state="local"]{border-color:#EADFCB;background:#FFFCF4;color:#9C8874}
 
 /* ---------- tabs ---------- */
-/* 탭이 여섯 개라 아이폰처럼 좁은 화면에서는 두 줄로 예쁘게 접혀요 (가로 스크롤 없이 한눈에) */
+/* 탭이 일곱 개라 아이폰처럼 좁은 화면에서는 두 줄(4+3)로 예쁘게 접혀요 (가로 스크롤 없이 한눈에) */
 .tabs{
   display:flex;flex-wrap:wrap;gap:5px;justify-content:center;
   margin:9px auto 0;padding:6px;
@@ -959,6 +959,53 @@ main{padding-top:2px}
 .pl-confirm-actions{display:flex;gap:8px}
 .pl-confirm-actions .btn{flex:1}
 
+/* ---------- 📚 daily vocabulary ---------- */
+.vocab-card{background:linear-gradient(170deg,#FFFDF6 0%,#F4FAFF 58%,#FFF5F9 100%);border-color:#E7E5F6}
+.vocab-top{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 10px}
+.vocab-kids{display:flex;gap:6px;flex-wrap:wrap}
+.vocab-kids .pill{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;min-height:50px;padding:5px 13px;line-height:1.2;text-align:left;gap:1px}
+.vocab-kids .pill b{font-family:var(--font-title);font-size:14px;font-weight:400;color:#5C4A3D}
+.vocab-kids .pill span{font-size:10px;font-weight:700;color:var(--ink-faint);letter-spacing:-.2px}
+.vocab-kids .pill.active b{color:#A4566A}
+.vocab-kids .pill.active span{color:#BC7E90}
+.vocab-date{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-title);font-size:12px;color:#8A6530;background:#FFF4D9;border:1.5px solid #F0D9AE;border-radius:999px;padding:5px 11px;white-space:nowrap}
+.vocab-count{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:#5F5780;background:#F1ECFF;border:1.5px solid #DED5F2;border-radius:999px;padding:5px 11px;white-space:nowrap}
+.vocab-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:2px 0 4px}
+.vocab-tools .btn{flex:1 1 auto;min-width:150px}
+.vocab-tools .btn[aria-pressed="true"]{border-color:#C9BEF0;background:linear-gradient(180deg,#F6F1FF,#EAE2FF);box-shadow:0 3px 0 #D9CFF4;color:#5F4B93}
+.vocab-hint{font-size:11.5px;color:var(--ink-soft);margin:0 0 12px;line-height:1.5}
+.vocab-list{display:flex;flex-direction:column;gap:9px}
+.vocab-item{
+  position:relative;border:2px solid #EFE7DA;border-radius:16px;background:#fff;
+  padding:11px 12px 12px;box-shadow:0 2px 0 rgba(243,228,206,.55);
+  transition:border-color .15s ease,background .2s ease,box-shadow .15s ease;
+}
+.vocab-item.masked{border-color:#F6DDA7;background:linear-gradient(160deg,#FFFCF3,#FFF9EE);cursor:pointer;box-shadow:0 2px 0 #F7E7C6}
+.vocab-item.masked:active{transform:scale(.995)}
+.vocab-item.revealed{border-color:#C7E7D2;background:#FCFEFC}
+.vi-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.vi-num{font-family:var(--font-title);font-size:11px;color:#BFA57F;min-width:15px}
+.vi-word{font-family:var(--font-title);font-size:19px;line-height:1.25;color:#4A3D33;letter-spacing:-.2px;word-break:break-word}
+.vi-pos{font-size:10.5px;font-weight:700;color:#4F6C96;background:#EBF2FC;border:1px solid #D7E5F8;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.vi-say{margin-left:auto;flex:0 0 auto;width:40px;height:40px;border-radius:13px;border:2px solid #EFE7DA;background:#FFFCF4;font-size:16px;display:grid;place-items:center;box-shadow:0 2px 0 #F3E6D2}
+.vi-say:active{transform:translateY(2px);box-shadow:none}
+.vi-body{margin-top:7px;transition:filter .18s ease,opacity .18s ease}
+.vocab-item.masked .vi-body{filter:blur(5px);opacity:.22;pointer-events:none;user-select:none}
+.vi-meaning{font-family:var(--font-title);font-size:15.5px;color:#7A5726;line-height:1.4}
+.vi-rel{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.vi-tag{font-size:11.5px;color:var(--ink-soft);background:#FFFCF4;border:1px solid #F1E6D4;border-radius:9px;padding:3px 8px;line-height:1.45}
+.vi-tag b{color:#5C4A3D;font-weight:700;margin-right:2px}
+.vi-tag.syn{background:#F3FBF5;border-color:#D8EEDE}
+.vi-tag.syn b{color:#3F7352}
+.vi-tag.ant{background:#FFF5F7;border-color:#F8DDE4}
+.vi-tag.ant b{color:#A4566A}
+.vi-ex{margin-top:7px;font-size:13px;color:#4A3D33;line-height:1.5}
+.vi-exko{margin-top:2px;font-size:12px;color:var(--ink-soft);line-height:1.55}
+.vi-cover{display:none;align-items:center;justify-content:center;gap:6px;margin-top:9px;min-height:40px;
+  font-family:var(--font-title);font-size:13px;color:#8A6530;background:#FFF4D9;border:1.5px dashed #F0D9AE;border-radius:12px}
+.vocab-item.masked .vi-cover{display:flex}
+.vocab-foot{margin-top:12px;font-size:11px;color:var(--ink-faint);text-align:center;line-height:1.5}
+
 /* ---------- responsive ---------- */
 @media (min-width:720px){
   .wrap{padding:0 22px}
@@ -973,9 +1020,9 @@ main{padding-top:2px}
   .timer-buttons .btn{font-size:17px}
 }
 @media (max-width:520px){
-  /* 두 줄로 접힌 탭이 헤더를 너무 많이 차지하지 않게 조금 납작하게. 한 줄에 3개씩 접혀서 3+3으로 예쁘게 놓여요 */
+  /* 두 줄로 접힌 탭이 헤더를 너무 많이 차지하지 않게 조금 납작하게. 한 줄에 4개씩 접혀서 4+3으로 예쁘게 놓여요 */
   .tabs{gap:4px;padding:5px;border-radius:18px}
-  .tab{flex:1 1 calc(33.333% - 4px);min-height:40px;padding:0 6px;font-size:13px;border-radius:12px;gap:4px}
+  .tab{flex:1 1 calc(22% - 4px);min-height:40px;padding:0 4px;font-size:12.5px;border-radius:12px;gap:4px}
   .tab .ico{font-size:15px}
 }
 @media (max-width:380px){
@@ -1012,6 +1059,7 @@ main{padding-top:2px}
   <nav class="tabs" id="tabs" aria-label="Menu">
     <button class="tab active" type="button" data-tab="calendar" aria-selected="true"><span class="ico" aria-hidden="true">📅</span>Calendar</button>
     <button class="tab" type="button" data-tab="todo" aria-selected="false"><span class="ico" aria-hidden="true">✅</span>To-Do</button>
+    <button class="tab" type="button" data-tab="vocab" aria-selected="false"><span class="ico" aria-hidden="true">📚</span>Vocab</button>
     <button class="tab" type="button" data-tab="allowance" aria-selected="false"><span class="ico" aria-hidden="true">💰</span>Allowance</button>
     <button class="tab" type="button" data-tab="photos" aria-selected="false"><span class="ico" aria-hidden="true">📸</span>Photos</button>
     <button class="tab" type="button" data-tab="chat" aria-selected="false"><span class="ico" aria-hidden="true">💬</span>Chat</button>
@@ -1108,6 +1156,28 @@ main{padding-top:2px}
           <button class="cal-nav" id="photoNext" type="button" aria-label="Next month">▶</button>
         </div>
         <div class="photo-grid" id="photoGrid"></div>
+      </div>
+    </section>
+
+    <!-- ============ 📚 Vocab ============ -->
+    <section class="panel" id="panel-vocab" aria-label="Daily vocabulary">
+      <div class="card vocab-card">
+        <h2><span class="h2-emoji" aria-hidden="true">📚</span>Today's Vocabulary</h2>
+        <p class="card-sub">20 new words every day at 12:00 PM. Read the meaning, the words that mean the same and the opposite, then the sentence. Tap 🔄 at the top to fetch new words.</p>
+
+        <div class="vocab-top">
+          <div class="vocab-kids" id="vocabKids" role="group" aria-label="Choose a kid"></div>
+          <span class="vocab-date" id="vocabDate">Loading…</span>
+          <span class="vocab-count" id="vocabCount">0 words</span>
+        </div>
+
+        <div class="vocab-tools">
+          <button class="btn ghost" id="vocabHide" type="button" aria-pressed="false"><span aria-hidden="true">🙈</span> Hide meanings</button>
+        </div>
+        <p class="vocab-hint" id="vocabHint">Turn on study mode to hide the meanings, then tap a card to check yourself.</p>
+
+        <div class="vocab-list" id="vocabList"></div>
+        <p class="vocab-foot" id="vocabFoot">Stella · Wordly Wise 4 (Grade 4) · Luna · Grade 2</p>
       </div>
     </section>
 
@@ -1711,6 +1781,9 @@ function seedState(){
   var y = dateKey(daysAgo(1));
   return {
     version: SCHEMA_VERSION,
+    /* 📚 오늘의 단어 20개 — Firebase familyDashboard/v1/vocab에 함께 보관해요.
+       { date:'YYYY-MM-DD', updatedAt:ms, stella:[...20], luna:[...20] } */
+    vocab: { date: '', updatedAt: 0, stella: [], luna: [] },
     allowance: {
       /* 새 학기 시작: 두 아이 모두 $0.00에서 차곡차곡 모으기 */
       Stella: { start: 0, reward: 1, log: [] },
@@ -1860,7 +1933,7 @@ function normalize(saved){
   /* 요일별 미리 보기(0=오늘 ~ 6) — 이 기기 화면에서만 쓰는 값이에요 */
   var dayOff = Math.round(num(s.ui.todoDayOffset, 0));
   s.ui.todoDayOffset = (dayOff >= 0 && dayOff <= 6) ? dayOff : 0;
-  if(['calendar','todo','allowance','photos','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
+  if(['calendar','todo','vocab','allowance','photos','chat','timer'].indexOf(s.ui.tab) < 0) s.ui.tab = 'calendar';
   if(!s.timer.preset || num(s.timer.preset, 0) <= 0) s.timer.preset = 25;
   /* 휴강 표도 날짜 키가 계속 늘어나는 표라서 mergeDefaults로는 살아남지 않아요 — 직접 살려요 */
   var savedSkip = (isObject(saved) && isObject(saved.schedule) && isObject(saved.schedule.skipDates))
@@ -1969,6 +2042,9 @@ function normalize(saved){
       ts: num(m.ts, 0) || Date.now()
     });
   });
+  /* 📚 단어장도 날짜가 붙은 표라서 직접 맞춰요 — 모르는 기기가 보낸 payload에 없어도
+     이 기기에 있던 단어는 지우지 않아요 (요청이 없으면 바뀌지 않는 값) */
+  s.vocab = normalizeVocab(isObject(saved) ? saved.vocab : null, isObject(base.vocab) ? base.vocab : null);
   return s;
 }
 
@@ -2100,6 +2176,8 @@ function syncPayload(){
     ntfyOn: state.ntfyOn !== false,
     timer: state.timer,
     alarm: state.alarm,
+    /* 📚 단어장 — 이 기기가 통째로 다시 써도(전체 덮어쓰기) 단어가 사라지지 않게 함께 실어요 */
+    vocab: vocabPayload(),
     updatedAt: Math.round(state.meta.updatedAt || Date.now()),
     lastWriterId: DEVICE_ID
   };
@@ -2243,7 +2321,7 @@ function onRemoteValue(snap){
 
 function sharedSignature(st){
   try{
-    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.dailyDone, st.calendarEvents, st.prepTodo, st.chat.messages, st.memos, st.timer, st.alarm]);
+    return JSON.stringify([st.allowance, st.missions, st.todos, st.stamps, st.schedule, st.dailyTodo, st.dailyDone, st.calendarEvents, st.prepTodo, st.chat.messages, st.memos, st.timer, st.alarm, (st.vocab && st.vocab.date) || '', (st.vocab && st.vocab.stella) ? st.vocab.stella.length : 0, (st.vocab && st.vocab.luna) ? st.vocab.luna.length : 0]);
   }catch(e){ return ''; }
 }
 
@@ -2345,6 +2423,8 @@ function applyRemote(remote){
       ntfyOn: (typeof remote.ntfyOn === 'boolean') ? remote.ntfyOn : state.ntfyOn,
       timer: isObject(remote.timer) ? remote.timer : state.timer,
       alarm: isObject(remote.alarm) ? remote.alarm : state.alarm,
+      /* 📚 단어장은 원격에 있을 때만 따라가요 — 단어를 모르는 기기가 지우지 않게요 */
+      vocab: isObject(remote.vocab) ? remote.vocab : state.vocab,
       settings: state.settings,
       ui: state.ui,
       meta: { updatedAt: num(remote.updatedAt, 0) || Date.now() }
@@ -5011,6 +5091,211 @@ function deletePhoto(p, cb){
 }
 
 /* =========================================================
+   📚 Daily vocabulary — 20 words a day
+   Firebase: familyDashboard/v1/vocab  { date:'YYYY-MM-DD', updatedAt, stella:[20], luna:[20] }
+   - 이 앱은 단어를 읽기만 해요. 하루 12:00 PM에 새 단어가 올라오면 탭을 열 때 바로 보여요.
+   - 단어 한 개: { word, pos, posKo, meaning, syn, ant, example, exampleKo }
+   ========================================================= */
+var vocab = { kid: '', mode: false, revealed: {}, loading: false, error: '' };
+
+function vocabWord(x){
+  if(!isObject(x)) return null;
+  var word = String(x.word == null ? '' : x.word).trim().slice(0, 40);
+  if(!word) return null;
+  return {
+    word: word,
+    pos: String(x.pos || '').trim().slice(0, 16),
+    posKo: String(x.posKo || '').trim().slice(0, 16),
+    meaning: String(x.meaning || '').trim().slice(0, 120),
+    syn: String(x.syn || '').trim().slice(0, 120),
+    ant: String(x.ant || '').trim().slice(0, 120),
+    example: String(x.example || '').trim().slice(0, 220),
+    exampleKo: String(x.exampleKo || '').trim().slice(0, 220)
+  };
+}
+/* Firebase는 배열을 번호 키를 가진 객체로 돌려줄 때도 있어요 */
+function vocabToList(raw){
+  var arr = Array.isArray(raw)
+    ? raw
+    : (isObject(raw) ? Object.keys(raw).sort(function(a, b){ return num(a, 0) - num(b, 0); }).map(function(k){ return raw[k]; }) : []);
+  var out = [];
+  arr.forEach(function(x){
+    var w = vocabWord(x);
+    if(w) out.push(w);
+  });
+  return out.slice(0, 30);
+}
+function normalizeVocab(raw, fallback){
+  var src = isObject(raw) ? raw : null;
+  var date = (src && /^\d{4}-\d{2}-\d{2}$/.test(String(src.date || ''))) ? String(src.date) : '';
+  var stella = vocabToList(src ? src.stella : null);
+  var luna = vocabToList(src ? src.luna : null);
+  if(!date && !stella.length && !luna.length && isObject(fallback)){
+    return {
+      date: /^\d{4}-\d{2}-\d{2}$/.test(String(fallback.date || '')) ? String(fallback.date) : '',
+      updatedAt: num(fallback.updatedAt, 0),
+      stella: Array.isArray(fallback.stella) ? fallback.stella : [],
+      luna: Array.isArray(fallback.luna) ? fallback.luna : []
+    };
+  }
+  return { date: date, updatedAt: Math.round(num(src && src.updatedAt, 0)), stella: stella, luna: luna };
+}
+function vocabPayload(){
+  var v = (state && state.vocab) || {};
+  return {
+    date: String(v.date || ''),
+    updatedAt: Math.round(num(v.updatedAt, 0)),
+    stella: Array.isArray(v.stella) ? v.stella : [],
+    luna: Array.isArray(v.luna) ? v.luna : []
+  };
+}
+function vocabBaseUrl(){
+  var st = (state && state.settings) ? state.settings : {};
+  if(st.localOnly) return '';
+  var url = String(st.firebaseUrl || '').trim().replace(/\/+$/, '');
+  if(!url) return '';
+  return url + '/' + DB_PATH + '/vocab';
+}
+function vocabKidList(kid){
+  var v = (state && state.vocab) || {};
+  var list = kid === 'Luna' ? v.luna : v.stella;
+  return Array.isArray(list) ? list : [];
+}
+function vocabDateText(){
+  var v = (state && state.vocab) || {};
+  var d = String(v.date || '');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return 'No words yet';
+  var dt = new Date(Number(d.slice(0, 4)), Number(d.slice(5, 7)) - 1, Number(d.slice(8, 10)), 12, 0, 0, 0);
+  return dateShortLabel(d) + ' (' + WEEKDAYS[dt.getDay()] + ')';
+}
+/* 12:00 PM에 올라온 단어인지 알려줘요 — 아이들이 '오늘 것'인지 바로 알 수 있게요 */
+function vocabFreshText(){
+  var v = (state && state.vocab) || {};
+  var ts = num(v.updatedAt, 0);
+  if(!ts) return '';
+  try{ return 'Updated ' + hm(new Date(ts)); }catch(e){ return ''; }
+}
+function vocabSpeechOk(){
+  return !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+}
+function vocabSay(text){
+  var w = String(text || '').trim();
+  if(!w) return;
+  if(!vocabSpeechOk()){ toast('This browser cannot read words aloud'); return; }
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(w);
+    u.lang = 'en-US';
+    u.rate = 0.85;
+    u.pitch = 1;
+    window.speechSynthesis.speak(u);
+  }catch(e){
+    toast('Could not play the word');
+  }
+}
+/* 하루 단어는 앱 밖(매일 12시)에서 올라와요 — 탭을 열 때 한 번씩 새 단어를 확인해요 */
+function vocabLoad(opts){
+  var url = vocabBaseUrl();
+  if(!url || typeof fetch !== 'function') return;
+  if(vocab.loading) return;
+  vocab.loading = true;
+  fetch(url + '.json', { cache: 'no-store' }).then(function(res){
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }).then(function(json){
+    vocab.loading = false;
+    vocab.error = '';
+    if(!isObject(json)) return;
+    var cur = (state && state.vocab) || { date: '', updatedAt: 0, stella: [], luna: [] };
+    var next = normalizeVocab(json, null);
+    if(!next.date && !next.stella.length && !next.luna.length) return;
+    var newer = (next.date > String(cur.date || '')) ||
+      (next.date === String(cur.date || '') && num(next.updatedAt, 0) > num(cur.updatedAt, 0)) ||
+      ((!cur.stella || !cur.stella.length) && !!next.stella.length);
+    if(!newer) return;
+    state.vocab = next;
+    writeLocal();
+    renderVocab();
+  }).catch(function(){
+    vocab.loading = false;
+    vocab.error = 'load';
+  });
+}
+function vocabItemHTML(w, i){
+  var revealed = !!vocab.revealed[String(i)];
+  var masked = !!vocab.mode && !revealed;
+  var cls = 'vocab-item' + (masked ? ' masked' : '') + (revealed ? ' revealed' : '');
+  var rel = '';
+  if(w.syn) rel += '<span class="vi-tag syn"><b>비슷한 말</b>' + esc(w.syn) + '</span>';
+  if(w.ant) rel += '<span class="vi-tag ant"><b>반대말</b>' + esc(w.ant) + '</span>';
+  var pos = w.pos
+    ? '<span class="vi-pos">' + esc(w.pos) + (w.posKo ? ' · ' + esc(w.posKo) : '') + '</span>'
+    : '';
+  return '<article class="' + cls + '" data-i="' + i + '" data-word="' + esc(w.word) + '">' +
+      '<div class="vi-top">' +
+        '<span class="vi-num" aria-hidden="true">' + (i + 1) + '</span>' +
+        '<span class="vi-word">' + esc(w.word) + '</span>' + pos +
+        '<button class="vi-say" type="button" data-say="' + esc(w.word) + '" aria-label="Hear the word ' + esc(w.word) + '"><span aria-hidden="true">🔊</span></button>' +
+      '</div>' +
+      '<div class="vi-body"' + (masked ? ' aria-hidden="true"' : '') + '>' +
+        '<p class="vi-meaning">' + esc(w.meaning) + '</p>' +
+        (rel ? '<div class="vi-rel">' + rel + '</div>' : '') +
+        (w.example ? '<p class="vi-ex">“' + esc(w.example) + '”</p>' : '') +
+        (w.exampleKo ? '<p class="vi-exko">' + esc(w.exampleKo) + '</p>' : '') +
+      '</div>' +
+      '<div class="vi-cover" aria-hidden="true">👀 Tap to see the meaning</div>' +
+    '</article>';
+}
+function renderVocab(){
+  var box = document.getElementById('vocabList');
+  if(!box) return;
+  if(vocab.kid !== 'Stella' && vocab.kid !== 'Luna'){
+    vocab.kid = (state && state.ui && state.ui.kid === 'Luna') ? 'Luna' : 'Stella';
+  }
+  var kidsBox = document.getElementById('vocabKids');
+  if(kidsBox){
+    kidsBox.innerHTML = [['Stella', '4th grade'], ['Luna', '2nd grade']].map(function(k){
+      var on = vocab.kid === k[0];
+      return '<button class="pill' + (on ? ' active' : '') + '" type="button" data-vkid="' + k[0] + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+        '<b>' + k[0] + '</b><span>' + k[1] + '</span></button>';
+    }).join('');
+  }
+  var list = vocabKidList(vocab.kid);
+  var dateEl = document.getElementById('vocabDate');
+  if(dateEl) dateEl.textContent = vocabDateText();
+  var countEl = document.getElementById('vocabCount');
+  if(countEl) countEl.textContent = list.length + (list.length === 1 ? ' word' : ' words');
+  var hide = document.getElementById('vocabHide');
+  if(hide){
+    hide.setAttribute('aria-pressed', vocab.mode ? 'true' : 'false');
+    hide.innerHTML = vocab.mode
+      ? '<span aria-hidden="true">👀</span> Show meanings'
+      : '<span aria-hidden="true">🙈</span> Hide meanings';
+  }
+  var hint = document.getElementById('vocabHint');
+  if(hint){
+    hint.textContent = !list.length
+      ? 'The words for today are not here yet. They are added every day at 12:00 PM.'
+      : (vocab.mode
+        ? 'Study mode: the meanings are hidden. Tap a card to check yourself, then tap it again to hide it.'
+        : 'Turn on study mode to hide the meanings, then tap a card to check yourself. Tap a card or 🔊 to hear the word.');
+  }
+  var foot = document.getElementById('vocabFoot');
+  if(foot){
+    var fresh = vocabFreshText();
+    foot.textContent = 'Stella · Wordly Wise 4 (Grade 4)  ·  Luna · Grade 2' +
+      (fresh ? '  ·  ' + fresh : '') +
+      (vocab.error ? '  ·  Could not check for new words' : '');
+  }
+  if(!list.length){
+    box.innerHTML = '<div class="empty vocab-empty"><span class="em" aria-hidden="true">' +
+      '📚' + '</span>No words yet for ' + esc(vocab.kid) + '.<br>New words come every day at 12:00 PM.</div>';
+    return;
+  }
+  box.innerHTML = list.map(vocabItemHTML).join('');
+}
+
+/* =========================================================
    Tabs + rendering all
    ========================================================= */
 function showTab(name, silent){
@@ -5033,6 +5318,11 @@ function showTab(name, silent){
     photosLoad(photoMonth(), { force: true });
     photosStartAutoRefresh();
   }
+  if(name === 'vocab'){
+    /* 단어장 탭을 열 때마다 최신 단어를 다시 확인해요 (다른 기기·12시 자동 등록 반영) */
+    renderVocab();
+    vocabLoad({ force: true });
+  }
   if(!silent){ window.scrollTo(0, 0); }
   if(name === 'chat') scrollChat();
 }
@@ -5053,6 +5343,9 @@ function renderAll(){
   renderLockBadge();
   renderAlarm();
   renderTimer();
+  /* 단어장은 화면에 떠 있을 때만 다시 그려요 (20개 카드라 필요할 때만) */
+  var vp = document.getElementById('panel-vocab');
+  if(vp && vp.classList.contains('active')) renderVocab();
 }
 
 /* =========================================================
@@ -5321,6 +5614,31 @@ function bindEvents(){
     var b = e.target.closest ? e.target.closest('[data-photo]') : null;
     if(!b) return;
     openPhotoView(b.getAttribute('data-photo'));
+  });
+
+  /* 📚 단어장 */
+  $('#vocabKids').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-vkid]') : null;
+    if(!b) return;
+    vocab.kid = b.getAttribute('data-vkid') === 'Luna' ? 'Luna' : 'Stella';
+    vocab.revealed = {};
+    renderVocab();
+  });
+  $('#vocabHide').addEventListener('click', function(){
+    vocab.mode = !vocab.mode;
+    vocab.revealed = {};
+    renderVocab();
+    toast(vocab.mode ? 'Study mode — tap a card to check the meaning 🙈' : 'Meanings are showing again 👀');
+  });
+  $('#vocabList').addEventListener('click', function(e){
+    var say = e.target.closest ? e.target.closest('[data-say]') : null;
+    if(say){ vocabSay(say.getAttribute('data-say')); return; }
+    var card = e.target.closest ? e.target.closest('.vocab-item') : null;
+    if(!card) return;
+    if(!vocab.mode) return;   /* 뜻을 가린 공부 모드에서만 카드를 눌러 확인해요 */
+    var i = String(card.getAttribute('data-i') || '');
+    vocab.revealed[i] = !vocab.revealed[i];
+    renderVocab();
   });
 
   /* settings */
